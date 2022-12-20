@@ -14,14 +14,28 @@ CORS(app)
 app.config['JSON_AS_ASCII'] = False
 #app.secret_key = os.environ.get('FLASK_SESSION_SECRETKEY') -> 아직 .env 미적용 상태입니다.
 
+
 @app.route('/')
 def index():
     return "Welcome to SKKU AI EDU Platform!!!"
+
 
 #세션 체크의 경우 JWT에 대하여 찾아본 후 적용하는 방향으로 합니다.
 
 #사용되는 모든 api 요청 주소는 /api 로 시작되도록 합니다.
 
-@app.route('/api/login', methods=['GET', 'POST'])
+
+@app.route('/api/signup', methods=['POST'])
+def signup():
+    return jsonify({"state" : ""})
+
+
+@app.route('/api/login', methods=['POST'])
 def login():
-    return jsonify({"state" : "no_login"})
+    return jsonify({"state" : ""})
+
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
