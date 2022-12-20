@@ -1,14 +1,16 @@
 # AI 교육을 위한 새로운 학습 플랫폼 : 학습자 유형을 중심으로
-## Set up
-1. clone the repo
-2. create python venv
+## 설정
+1. 레포지토리를 클론
+2. Python 가상환경 생성
     - `python -m venv venv` 
-        or `python3 -m venv venv`
+        또는 `python3 -m venv venv`
     - `venv\Scripts\activate.bat` -> (venv) 환경 입장 
 3. `pip install -r requirements.txt`
-4. set .env file -> .env 파일 설정이 필요합니다.
-5. `flask run`
-6. open new terminal or cmd
-7. `cd client`
-8. `npm install`
-9. `npm start`
+4. .env 파일 생성 후 설정
+5. 프로젝트 경로에서 새로운 터미널 또는 cmd를 엽니다.
+6. `export FLASK_APP=./api_main.py:app`
+7. `flask run`
+8. 프로젝트 경로에서 새로운 터미널 또는 cmd를 엽니다.
+9. `cd client`
+10. `npm install`
+11. `npm start`
