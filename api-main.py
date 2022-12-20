@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, jsonify, session, url_for, app
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-#import pymysql -> pyAlchemy에 대하여 찾아본 후 더 적합한 것을 적용하는 방향으로 합니다. 
+#import pymysql -> SQLAlchemy에 대하여 찾아본 후 더 적합한 것을 적용하는 방향으로 합니다. 
 from datetime import timedelta
 import datetime
 import secrets
