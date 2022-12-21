@@ -27,11 +27,20 @@ def index():
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    return jsonify({"state" : ""})
+    id_receive = request.form['id_give']
+    nickname_receive = request.form['nickname_give']
+    pw_receive = request.form['pw_give']
+    pwch_receive = request.form['pwch_give']
+    mbti_receive = request.form['mbti']
+    
+    return jsonify({"state" : "success"})
 
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    id_receive = request.form['id_give']
+    pw_receive = request.form['pw_give']
+    
     return jsonify({"state" : ""})
 
 
