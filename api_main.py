@@ -3,7 +3,6 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 #import pymysql -> SQLAlchemy에 대하여 찾아본 후 더 적합한 것을 적용하는 방향으로 합니다. 
-from datetime import timedelta
 import datetime
 import secrets
 import hashlib
@@ -61,8 +60,9 @@ def login():
         
         return jsonify({'state': 'success', 'token': token})
     else:
-        return jsonify({'state': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
-    
+        return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
+
+
 @app.route('/api/main', methods=['POST'])
 def main():
     return jsonify({'state': 'success'})
