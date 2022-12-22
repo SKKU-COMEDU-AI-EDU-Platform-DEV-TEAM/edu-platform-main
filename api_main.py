@@ -67,6 +67,10 @@ def login():
 def main():
     return jsonify({'state': 'success'})
 
+@app.route('/api/survey')
+def survey():
+    return jsonify({'state': 'success'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
