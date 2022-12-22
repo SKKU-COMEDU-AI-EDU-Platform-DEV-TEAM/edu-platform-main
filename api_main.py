@@ -3,7 +3,6 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 #import pymysql -> SQLAlchemy에 대하여 찾아본 후 더 적합한 것을 적용하는 방향으로 합니다. 
-from datetime import timedelta
 import datetime
 import secrets
 import hashlib
@@ -27,8 +26,9 @@ def index():
 #사용되는 모든 api 요청 주소는 /api 로 시작되도록 합니다.
 
 
+#회원가입 api
 @app.route('/api/signup', methods=['POST'])
-def signup():
+def signUp():
     id_receive = request.form['id_give']
     nickname_receive = request.form['nickname_give']
     pw_receive = request.form['pw_give']
@@ -42,6 +42,7 @@ def signup():
     return jsonify({"state" : "success"})
 
 
+#로그인 api
 @app.route('/api/login', methods=['POST'])
 def login():
     id_receive = request.form['id_give']
@@ -54,15 +55,17 @@ def login():
     if result is not None:
         payload = {
             'id': id_receive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=5)    #언제까지 유효한지
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=3)    #언제까지 유효한지
         }
         
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         
         return jsonify({'state': 'success', 'token': token})
     else:
-        return jsonify({'state': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
-    
+        return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
+
+
+#메인페이지 정보 api
 @app.route('/api/main', methods=['POST'])
 def main():
     return jsonify({'state': 'success'})
@@ -70,6 +73,13 @@ def main():
 @app.route('/api/survey')
 def survey():
     return jsonify({'state': 'success'})
+
+
+#첫 로그인 학습자 유형 판단 api
+@app.route('/api/learnertypedef', methods=['POST'])
+def leanerTypeDef():
+    return jsonify({'state': 'success'})
+
 
 
 if __name__ == '__main__':
