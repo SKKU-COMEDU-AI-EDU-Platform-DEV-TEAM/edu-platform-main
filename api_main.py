@@ -82,14 +82,15 @@ def courses():
 
     #db에서 불러오는 부분 있어야 합니다.
     res_json = {}
-    for i in range(1,16):
-        res_json[str(i)] = {}
-        #res_json[str(i)]["subject"] = 
-        res_json[str(i)]["contents"] = {}
+    res_json['data'] = []
+    for i in range(0,15):
+        res_json['data'].append({})
+        #res_json['data'][i]["subject"] = 
+        res_json['data'][i]["contents"] = {}
         #영상 자료 개별 페이지 담는 반복문 필요합니다.
-        #res_json[str(i)]["quiz"] = 
+        #res_json['data'][i]["quiz"] = 
         #학습자 유형 판단 후 메타버스링크 추가하는 조건문 필요합니다.
-        res_json[str(i)]["isdone"] = {}
+        res_json['data'][i]["isdone"] = {}
         #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다.
 
     return jsonify(res_json)
