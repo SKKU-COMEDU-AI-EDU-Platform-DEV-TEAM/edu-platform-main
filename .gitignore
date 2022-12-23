@@ -1,6 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/flask,react
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,react
 
+### Static files ###
+*.pdf
+*.mp4
+
 ### Flask ###
 instance/*
 !instance/.gitignore
