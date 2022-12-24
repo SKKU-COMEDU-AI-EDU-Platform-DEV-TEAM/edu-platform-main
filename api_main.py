@@ -7,6 +7,8 @@ import secrets
 import hashlib
 from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
 from flask_sqlalchemy import SQLAlchemy
+from pytz import timezone
+
 
 load_dotenv()
 
@@ -15,6 +17,7 @@ CORS(app)
 app.config['JSON_AS_ASCII'] = False
 app.secret_key = os.environ.get('FLASK_SESSION_SECRETKEY')
 
+KST = timezone('Asia/Seoul')
 
 #db 설정 부분입니다.
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DB_URL')
@@ -32,20 +35,35 @@ def index():
 
 #사용되는 모든 api 요청 주소는 /api 로 시작되도록 합니다.
 
+#서버가 외부 접근이 되기 전까지는 로컬에 MySQL 환경 구축한 후 테스트하기 바랍니다.
+
 
 #회원가입 api
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    id_receive = request.form['email']
-    pw_receive = request.form['pw']
-    nickname_receive = request.form['name']
-    mbti_receive = request.form['mbti']
+    idReceive = request.form['email']
+    pwReceive = request.form['pw']
+    nicknameReceive = request.form['name']
+    mbtiReceive = request.form['mbti']
     
-    pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
+    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
-    print(id_receive, pw_receive, nickname_receive, mbti_receive)
-    
-    #DB에 넣는 것은 구축 후에 작성하겠습니다.
+    newUser = User(email = idReceive, 
+                    pw = pwHash, 
+                    nName = nicknameReceive, 
+                    usrType = 0, #0이 학습자입니다. 
+                    cDate = datetime.datetime.now(KST), 
+                    uDate = datetime.datetime.now(KST), 
+                    mbti = mbtiReceive, 
+                    kolbType = None, 
+                    lrnLvl = None, 
+                    interestTag = None, 
+                    lrnType = None, 
+                    gamiLvl = 0, 
+                    gamiExp = 0)
+
+    db.session.add(newUser)
+    db.session.commit()
     
     return jsonify({"state" : "success"})
 
@@ -53,10 +71,10 @@ def signup():
 #로그인 api
 @app.route('/api/login', methods=['POST'])
 def login():
-    id_receive = request.form['email']
-    pw_receive = request.form['pw']
+    idReceive = request.form['email']
+    pwReceive = request.form['pw']
     
-    pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
+    pw_hash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
     #DB에서 id, 암호화된 pw를 가지고 해당 유저를 찾습니다.
 
@@ -64,7 +82,7 @@ def login():
     
     if result is not None:
         payload = {
-            'id': id_receive,
+            'id': pwReceive,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=3)    #언제까지 유효한지
         }
         
@@ -92,21 +110,21 @@ def survey():
 def courses():
 
     #db에서 불러오는 부분 있어야 합니다.
-    res_json = {}
-    res_json['data'] = []
+    resJson = {}
+    resJson['data'] = []
     for i in range(0,15):
-        res_json['data'].append({})
-        #res_json['data'][i]['subject'] = 
-        res_json['data'][i]['contents'] = {}
+        resJson['data'].append({})
+        #resJson['data'][i]['subject'] = 
+        resJson['data'][i]['contents'] = {}
         #영상 자료 개별 페이지 담는 반복문 필요합니다.
-        #res_json['data'][i]['quiz'] = 
+        #resJson['data'][i]['quiz'] = 
         #학습자 유형 판단 후 메타버스링크 추가하는 조건문 필요합니다.
-        res_json['data'][i]['isdone'] = {}
+        resJson['data'][i]['isdone'] = {}
         #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다.
     #메타버스 메인 url이 들어갑니다.
-    res_json['metaverse'] = ''
+    resJson['metaverse'] = ''
 
-    return jsonify(res_json)
+    return jsonify(resJson)
 
 
 #학습자 유형 판단 설문 api
