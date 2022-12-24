@@ -1,11 +1,11 @@
-from flask import Flask, request, redirect, jsonify, session, url_for, app
+from flask import Flask, request, redirect, jsonify, session, url_for, app, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import datetime
 import secrets
 import hashlib
-import model
+from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
 from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
@@ -24,7 +24,8 @@ db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
-    return "Welcome to SKKU AI EDU Platform!!!"
+    #return "Welcome to SKKU AI EDU Platform!!!"
+    return render_template('index.html')
 
 
 #세션 체크의 경우 JWT에 대하여 찾아본 후 적용하는 방향으로 합니다.
@@ -36,11 +37,13 @@ def index():
 @app.route('/api/signup', methods=['POST'])
 def signup():
     id_receive = request.form['email']
-    nickname_receive = request.form['name']
     pw_receive = request.form['pw']
+    nickname_receive = request.form['name']
     mbti_receive = request.form['mbti']
     
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
+
+    print(id_receive, pw_receive, nickname_receive, mbti_receive)
     
     #DB에 넣는 것은 구축 후에 작성하겠습니다.
     
@@ -56,6 +59,8 @@ def login():
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
     
     #DB에서 id, 암호화된 pw를 가지고 해당 유저를 찾습니다.
+
+    result = {}
     
     if result is not None:
         payload = {
@@ -63,7 +68,8 @@ def login():
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=3)    #언제까지 유효한지
         }
         
-        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        token = {}
+        #token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         
         return jsonify({'state': 'success', 'token': token})
     else:
@@ -90,13 +96,15 @@ def courses():
     res_json['data'] = []
     for i in range(0,15):
         res_json['data'].append({})
-        #res_json['data'][i]["subject"] = 
-        res_json['data'][i]["contents"] = {}
+        #res_json['data'][i]['subject'] = 
+        res_json['data'][i]['contents'] = {}
         #영상 자료 개별 페이지 담는 반복문 필요합니다.
-        #res_json['data'][i]["quiz"] = 
+        #res_json['data'][i]['quiz'] = 
         #학습자 유형 판단 후 메타버스링크 추가하는 조건문 필요합니다.
-        res_json['data'][i]["isdone"] = {}
+        res_json['data'][i]['isdone'] = {}
         #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다.
+    #메타버스 메인 url이 들어갑니다.
+    res_json['metaverse'] = ''
 
     return jsonify(res_json)
 
