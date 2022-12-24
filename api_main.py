@@ -44,8 +44,8 @@ def signup():
 #로그인 api
 @app.route('/api/login', methods=['POST'])
 def login():
-    id_receive = request.form['id_give']
-    pw_receive = request.form['pw_give']
+    id_receive = request.form['email']
+    pw_receive = request.form['pw']
     
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
     
