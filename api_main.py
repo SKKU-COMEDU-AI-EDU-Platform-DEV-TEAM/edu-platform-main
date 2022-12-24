@@ -77,7 +77,7 @@ def survey():
 
 
 #전체 학습 페이지 api
-@app.route('/api/courses', methods=['GET'])
+@app.route('/api/course', methods=['GET'])
 def courses():
 
     #db에서 불러오는 부분 있어야 합니다.
@@ -96,9 +96,25 @@ def courses():
     return jsonify(res_json)
 
 
-#첫 로그인 학습자 유형 판단 api
-@app.route('/api/learnertypedef', methods=['POST'])
-def leanerTypeDef():
+#학습자 유형 판단 설문 api
+@app.route('/api/test', methods=['GET', 'POST'])
+def test():
+    if request.method == 'GET':
+        return jsonify({'state': 'success'})
+    elif request.method == 'POST':
+        return jsonify({'state': 'success'})
+    else:
+        return jsonify({'state': 'error'})
+
+#학습자 유형 결과 api
+@app.route('/api/testResult', methods=['GET'])
+def testresult():
+    return jsonify({'state': 'success'})
+
+
+#주차 별 퀴즈 점수 api
+@app.route('/api/weekScore', methods=['GET'])
+def weekscore():
     return jsonify({'state': 'success'})
 
 
