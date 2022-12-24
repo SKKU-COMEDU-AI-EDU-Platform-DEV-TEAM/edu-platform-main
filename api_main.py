@@ -29,10 +29,9 @@ def index():
 #회원가입 api
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    id_receive = request.form['id_give']
-    nickname_receive = request.form['nickname_give']
-    pw_receive = request.form['pw_give']
-    pwch_receive = request.form['pwch_give']
+    id_receive = request.form['email']
+    nickname_receive = request.form['name']
+    pw_receive = request.form['pw']
     mbti_receive = request.form['mbti']
     
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
