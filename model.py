@@ -48,8 +48,7 @@ class User(db.Model):
     userGamificationLevel = db.Column(db.Integer, nullable=False, default=0)
     userGamificationExp = db.Column(db.Integer, nullable=False, default=0)
 
-    def __init__(self, id, email, pw, nName, usrType, cDate, uDate, mbti, kolbType, lrnLvl, interestTag, lrnType, gamiLvl, gamiExp):
-        self.userId = id
+    def __init__(self, email, pw, nName, usrType, cDate, uDate, mbti, kolbType, lrnLvl, interestTag, lrnType, gamiLvl, gamiExp):
         self.userEmail = email
         self.userPassword = pw
         self.userNickname = nName
@@ -85,8 +84,7 @@ class Learning_contents(db.Model):
     learningContentType = db.Column(db.String(255, 'utf8mb4_unicode_ci'), nullable=False)
     learningContentLink = db.Column(db.String(2047, 'utf8mb4_unicode_ci'), nullable=False)
 
-    def __init__(self, id, lrnCWeek, lrnCType, lrnCLink):
-        self.learningContentId = id
+    def __init__(self, lrnCWeek, lrnCType, lrnCLink):
         self.learningContentWeek = lrnCWeek
         self.learningContentType = lrnCType
         self.learningContentLink = lrnCLink
@@ -122,8 +120,7 @@ class Quiz(db.Model):
     quizChoice4 = db.Column(db.String(511, 'utf8mb4_unicode_ci'), nullable=False)
     quizAnswer = db.Column(db.String(511, 'utf8mb4_unicode_ci'), nullable=False)
 
-    def __init__(self, id, qWeek, qNum, qQuestion, qChoice1, qChoice2, qChoice3, qChoice4, qAns):
-        self.quizId = id
+    def __init__(self, qWeek, qNum, qQuestion, qChoice1, qChoice2, qChoice3, qChoice4, qAns):
         self.quizWeek = qWeek
         self.quizNumber = qNum
         self.quizQuestion = qQuestion
@@ -154,8 +151,7 @@ class Quiz_result(db.Model):
     quizResultWeek = db.Column(db.Integer, nullable=False)
     quizResultScore = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, id, usrId, qResultWeek, qResultScore):
-        self.quizResultId = id
+    def __init__(self, usrId, qResultWeek, qResultScore):
         self.userId = usrId
         self.quizResultWeek = qResultWeek
         self.quizResultScore = qResultScore
@@ -181,8 +177,7 @@ class Week_learning_check(db.Model):
     weekNumber = db.Column(db.Integer, nullable=False)
     weekLearningChk = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, id, usrId, wNum, wLrnChk):
-        self.weekLearningResult = id
+    def __init__(self, usrId, wNum, wLrnChk):
         self.userId = usrId
         self.weekNumber = wNum
         self.weekLearningChk = wLrnChk
