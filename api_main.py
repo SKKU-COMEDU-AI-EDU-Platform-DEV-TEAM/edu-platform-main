@@ -2,18 +2,24 @@ from flask import Flask, request, redirect, jsonify, session, url_for, app
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-#import pymysql -> SQLAlchemy에 대하여 찾아본 후 더 적합한 것을 적용하는 방향으로 합니다. 
 import datetime
 import secrets
 import hashlib
+import model
+from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 app.config['JSON_AS_ASCII'] = False
-#app.secret_key = os.environ.get('FLASK_SESSION_SECRETKEY') -> 아직 .env 미적용 상태입니다.
+app.secret_key = os.environ.get('FLASK_SESSION_SECRETKEY')
 
+
+#db 설정 부분입니다.
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DB_URL')
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
 
 
 @app.route('/')
