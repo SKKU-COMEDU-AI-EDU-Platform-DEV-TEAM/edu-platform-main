@@ -22,7 +22,7 @@ class User(db.Model):
     | userCreateDate        | date         | NO   |     | NULL    |                |
     | userUpdateDate        | date         | NO   |     | NULL    |                |
     | userMbti              | varchar(50)  | NO   |     | NULL    |                |
-    | userKolbType          | varchar(50)  | NO   |     | NULL    |                |
+    | userKolbType          | varchar(50)  | YES  |     | NULL    |                |
     | userLearningLevel     | varchar(50)  | YES  |     | NULL    |                |
     | userInterestTag       | varchar(255) | YES  |     | NULL    |                |
     | userLearnerType       | varchar(50)  | YES  |     | NULL    |                |
@@ -41,7 +41,7 @@ class User(db.Model):
     userCreateDate = db.Column(db.DateTime, nullable=False, default=datetime.now(KST))
     userUpdateDate = db.Column(db.DateTime, nullable=False, default=datetime.now(KST))
     userMBTI = db.Column(db.String(50, 'utf8mb4_unicode_ci'), nullable=False)
-    userKolbType = db.Column(db.String(50, 'utf8mb4_unicode_ci'), nullable=False)
+    userKolbType = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
     userLearningLevel = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
     userInterestTag = db.Column(db.String(255, 'utf8mb4_unicode_ci'))
     userLearnerType = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
