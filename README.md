@@ -12,5 +12,5 @@
 7. `flask run`
 8. 프로젝트 경로에서 새로운 터미널 또는 cmd를 엽니다.
 9. `cd client`
-10. `npm install`
-11. `npm start`
+10. `npm i`
+11. `npm run dev`
