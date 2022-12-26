@@ -132,7 +132,7 @@ def courses():
         resJson['data'][i]['isdone'] = {}
         resJson['data'][i]['isdone']['video'] = []
         #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다. 지금은 더미 데이터를 보내줍니다.
-        for i in range(0,15):
+        for j in range(0,15):
             resJson['data'][i]['isdone']['video'].append(random.randrange(0,2))
         resJson['data'][i]['isdone']['quiz'] = 0
     #메타버스 메인 url이 들어갑니다.
