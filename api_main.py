@@ -41,10 +41,12 @@ def index():
 #회원가입 api
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    idReceive = request.form['email']
-    pwReceive = request.form['pw']
-    nicknameReceive = request.form['name']
-    mbtiReceive = request.form['mbti']
+    jsonReceive = request.get_json()
+
+    idReceive = jsonReceive['email']
+    pwReceive = jsonReceive['pw']
+    nicknameReceive = jsonReceive['name']
+    mbtiReceive = jsonReceive['mbti']
     
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
@@ -71,8 +73,10 @@ def signup():
 #로그인 api
 @app.route('/api/login', methods=['POST'])
 def login():
-    idReceive = request.form['email']
-    pwReceive = request.form['pw']
+    jsonReceive = request.get_json()
+
+    idReceive = jsonReceive['email']
+    pwReceive = jsonReceive['pw']
     
     pw_hash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
@@ -92,6 +96,7 @@ def login():
         return jsonify({'state': 'success', 'token': token})
     else:
         return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
+
 
 
 #메인페이지 정보 api
