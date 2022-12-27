@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import datetime
 import secrets
+import pymysql
 import hashlib
 from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
 from flask_sqlalchemy import SQLAlchemy
@@ -114,13 +115,13 @@ def survey():
 #전체 학습 페이지 api
 @app.route('/api/course', methods=['GET'])
 def courses():
-
+    
     #db에서 불러오는 부분 있어야 합니다.
     resJson = {}
     resJson['data'] = []
     for i in range(0,15):
         resJson['data'].append({})
-        resJson['data'][i]['subject'] = "강의 제목"
+        resJson['data'][i]['subject'] = f"""강의 제목{i}"""
         resJson['data'][i]['contents'] = {}
         resJson['data'][i]['contents']['video'] = []
         #영상 자료 개별 페이지 담는 반복문 필요합니다.(주차마다 영상 개수 다르므로) 지금은 임의로 2개를 보냅니다.
@@ -132,7 +133,7 @@ def courses():
         resJson['data'][i]['isdone'] = {}
         resJson['data'][i]['isdone']['video'] = []
         #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다. 지금은 더미 데이터를 보내줍니다.
-        for j in range(0,15):
+        for j in range(0,2):
             resJson['data'][i]['isdone']['video'].append(random.randrange(0,2))
         resJson['data'][i]['isdone']['quiz'] = 0
     #메타버스 메인 url이 들어갑니다.
