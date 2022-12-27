@@ -4,6 +4,7 @@
 ### Static files ###
 *.pdf
 *.mp4
+data.csv
 
 ### Flask ###
 instance/*
