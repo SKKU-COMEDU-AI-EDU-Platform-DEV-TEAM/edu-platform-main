@@ -8,6 +8,7 @@ import hashlib
 from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
+import random
 
 
 load_dotenv()
@@ -41,10 +42,12 @@ def index():
 #회원가입 api
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    idReceive = request.form['email']
-    pwReceive = request.form['pw']
-    nicknameReceive = request.form['name']
-    mbtiReceive = request.form['mbti']
+    jsonReceive = request.get_json()
+
+    idReceive = jsonReceive['email']
+    pwReceive = jsonReceive['pw']
+    nicknameReceive = jsonReceive['name']
+    mbtiReceive = jsonReceive['mbti']
     
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
@@ -71,8 +74,10 @@ def signup():
 #로그인 api
 @app.route('/api/login', methods=['POST'])
 def login():
-    idReceive = request.form['email']
-    pwReceive = request.form['pw']
+    jsonReceive = request.get_json()
+
+    idReceive = jsonReceive['email']
+    pwReceive = jsonReceive['pw']
     
     pw_hash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
@@ -83,7 +88,7 @@ def login():
     if result is not None:
         payload = {
             'id': pwReceive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=3)    #언제까지 유효한지
+            'exp': datetime.datetime.now(KST) + datetime.timedelta(hours=3)    #언제까지 유효한지
         }
         
         token = {}
@@ -92,6 +97,7 @@ def login():
         return jsonify({'state': 'success', 'token': token})
     else:
         return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
+
 
 
 #메인페이지 정보 api
@@ -114,15 +120,23 @@ def courses():
     resJson['data'] = []
     for i in range(0,15):
         resJson['data'].append({})
-        #resJson['data'][i]['subject'] = 
+        resJson['data'][i]['subject'] = "강의 제목"
         resJson['data'][i]['contents'] = {}
-        #영상 자료 개별 페이지 담는 반복문 필요합니다.
-        #resJson['data'][i]['quiz'] = 
-        #학습자 유형 판단 후 메타버스링크 추가하는 조건문 필요합니다.
+        resJson['data'][i]['contents']['video'] = []
+        #영상 자료 개별 페이지 담는 반복문 필요합니다.(주차마다 영상 개수 다르므로) 지금은 임의로 2개를 보냅니다.
+        for j in range(2):
+            resJson['data'][i]['contents']['video'].append('/course/'+str(i+1)+'/lecture/'+str(j+1))
+        resJson['data'][i]['contents']['quiz'] = '/course/'+str(i+1)+'/quiz'
+        #주차별 메타버스 링크 필요합니다. 지금은 전부 메타버스 메인 url을 보냅니다.
+        resJson['data'][i]['contents']['multiverse'] = 'https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnToken=oMNzrEjTTn2fWdizR1Hp'
         resJson['data'][i]['isdone'] = {}
-        #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다.
+        resJson['data'][i]['isdone']['video'] = []
+        #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다. 지금은 더미 데이터를 보내줍니다.
+        for j in range(0,15):
+            resJson['data'][i]['isdone']['video'].append(random.randrange(0,2))
+        resJson['data'][i]['isdone']['quiz'] = 0
     #메타버스 메인 url이 들어갑니다.
-    resJson['metaverse'] = ''
+    resJson['metaverse'] = 'https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnToken=oMNzrEjTTn2fWdizR1Hp'
 
     return jsonify(resJson)
 
@@ -136,6 +150,7 @@ def test():
         return jsonify({'state': 'success'})
     else:
         return jsonify({'state': 'error'})
+
 
 #학습자 유형 결과 api
 @app.route('/api/testResult', methods=['GET'])
