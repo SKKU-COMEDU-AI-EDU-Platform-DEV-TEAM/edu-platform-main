@@ -54,7 +54,7 @@ def signup():
                     usrType = 0, #0이 학습자입니다. 
                     cDate = datetime.datetime.now(KST), 
                     uDate = datetime.datetime.now(KST), 
-                    mbti = mbtiReceive, 
+                    mbti = mbtiReceive,
                     kolbType = None, 
                     lrnLvl = None, 
                     interestTag = None, 
