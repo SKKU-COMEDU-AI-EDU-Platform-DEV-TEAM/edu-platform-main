@@ -63,6 +63,9 @@ class User(db.Model):
         self.userGamificationLevel = gamiLvl
         self.userGamificationExp = gamiExp
 
+    def __repr__(self):
+        return '<User %r>' % self.userEmail
+
 
 
 class Learning_contents(db.Model):
