@@ -55,7 +55,7 @@ def signup():
     newUser = User(email = idReceive, 
                     pw = pwHash, 
                     nName = nicknameReceive, 
-                    usrType = 0, #0이 학습자입니다. 
+                    usrType = 0,
                     cDate = datetime.datetime.now(KST), 
                     uDate = datetime.datetime.now(KST), 
                     mbti = mbtiReceive,
@@ -71,6 +71,36 @@ def signup():
     
     return jsonify({"state" : "success"})
 
+@app.route('/api/signup2', methods=['POST'])
+def signup2():
+
+    idReceive = request.form['email']
+    pwReceive = request.form['pw']
+    nicknameReceive = request.form['name']
+    mbtiReceive = request.form['mbti']
+    
+    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
+
+    newUser = User(email = idReceive, 
+                    pw = pwHash, 
+                    nName = nicknameReceive, 
+                    usrType = 0,
+                    cDate = datetime.datetime.now(KST), 
+                    uDate = datetime.datetime.now(KST), 
+                    mbti = mbtiReceive,
+                    kolbType = None, 
+                    lrnLvl = None, 
+                    interestTag = None, 
+                    lrnType = None, 
+                    gamiLvl = 0, 
+                    gamiExp = 0)
+
+    db.session.add(newUser)
+    db.session.commit()
+    
+    
+    
+    return jsonify({"state" : "success"})
 
 #로그인 api
 @app.route('/api/login', methods=['POST'])
@@ -79,7 +109,6 @@ def login():
 
     idReceive = jsonReceive['email']
     pwReceive = jsonReceive['pw']
-    
     pw_hash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
     #DB에서 id, 암호화된 pw를 가지고 해당 유저를 찾습니다.
@@ -104,11 +133,13 @@ def login():
 #메인페이지 정보 api
 @app.route('/api/main', methods=['POST'])
 def main():
+    print(User.query.all())
     return jsonify({'state': 'success'})
 
 
 @app.route('/api/survey')
 def survey():
+    print(User.query.all())
     return jsonify({'state': 'success'})
 
 
@@ -148,6 +179,10 @@ def test():
     if request.method == 'GET':
         return jsonify({'state': 'success'})
     elif request.method == 'POST':
+        user_test_json = request.get_json()
+        user_test_json = user_test_json["result"]
+        
+        
         return jsonify({'state': 'success'})
     else:
         return jsonify({'state': 'error'})
