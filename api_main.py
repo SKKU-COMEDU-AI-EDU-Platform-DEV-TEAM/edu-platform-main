@@ -55,7 +55,7 @@ def signup():
     newUser = User(email = idReceive, 
                     pw = pwHash, 
                     nName = nicknameReceive, 
-                    usrType = 0, #0이 학습자입니다. 
+                    usrType = 0,
                     cDate = datetime.datetime.now(KST), 
                     uDate = datetime.datetime.now(KST), 
                     mbti = mbtiReceive,
@@ -79,7 +79,6 @@ def login():
 
     idReceive = jsonReceive['email']
     pwReceive = jsonReceive['pw']
-    
     pw_hash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
     #DB에서 id, 암호화된 pw를 가지고 해당 유저를 찾습니다.
@@ -148,6 +147,10 @@ def test():
     if request.method == 'GET':
         return jsonify({'state': 'success'})
     elif request.method == 'POST':
+        user_test_json = request.get_json()
+        user_test_json = user_test_json["result"]
+        
+        
         return jsonify({'state': 'success'})
     else:
         return jsonify({'state': 'error'})
