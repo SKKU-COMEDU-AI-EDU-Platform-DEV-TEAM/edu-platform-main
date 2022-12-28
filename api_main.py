@@ -71,6 +71,36 @@ def signup():
     
     return jsonify({"state" : "success"})
 
+@app.route('/api/signup2', methods=['POST'])
+def signup2():
+
+    idReceive = request.form['email']
+    pwReceive = request.form['pw']
+    nicknameReceive = request.form['name']
+    mbtiReceive = request.form['mbti']
+    
+    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
+
+    newUser = User(email = idReceive, 
+                    pw = pwHash, 
+                    nName = nicknameReceive, 
+                    usrType = 0,
+                    cDate = datetime.datetime.now(KST), 
+                    uDate = datetime.datetime.now(KST), 
+                    mbti = mbtiReceive,
+                    kolbType = None, 
+                    lrnLvl = None, 
+                    interestTag = None, 
+                    lrnType = None, 
+                    gamiLvl = 0, 
+                    gamiExp = 0)
+
+    db.session.add(newUser)
+    db.session.commit()
+    
+    
+    
+    return jsonify({"state" : "success"})
 
 #로그인 api
 @app.route('/api/login', methods=['POST'])
@@ -103,11 +133,13 @@ def login():
 #메인페이지 정보 api
 @app.route('/api/main', methods=['POST'])
 def main():
+    print(User.query.all())
     return jsonify({'state': 'success'})
 
 
 @app.route('/api/survey')
 def survey():
+    print(User.query.all())
     return jsonify({'state': 'success'})
 
 
