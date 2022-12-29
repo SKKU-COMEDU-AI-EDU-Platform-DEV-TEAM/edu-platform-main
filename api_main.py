@@ -99,12 +99,6 @@ def main():
     return jsonify({'state': 'success'})
 
 
-@app.route('/api/survey')
-def survey():
-    print(db.session.query(User).all())
-    return jsonify({'state': 'success'})
-
-
 #전체 학습 페이지 api
 @app.route('/api/course', methods=['GET'])
 def courses():
@@ -149,7 +143,7 @@ def quiz(week):
     if week == 7 :
         return jsonify(dummy.quizJson)
     else:
-        return jsonify({'state': 'fail'})
+        return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
 
 
 #학습자 유형 판단 설문 api
@@ -159,7 +153,9 @@ def test():
         return jsonify({'state': 'success'})
     elif request.method == 'POST':
         user_test_json = request.get_json()
-        user_test_json = user_test_json["result"]
+        user = user_test_json["user_id"]
+        result = user_test_json["result"]
+        mbti = user_test_json["mbti"]
         
         
         return jsonify({'state': 'success'})
@@ -170,13 +166,25 @@ def test():
 #학습자 유형 결과 api
 @app.route('/api/testResult', methods=['GET'])
 def testresult():
-    return jsonify({'state': 'success'})
+    user_code = request.get_json()
+    user_code = user_code['user_id']
+    
+    queryres = db.session.query(User).filter_by(userId = user_code).first()
+    
+    result = {}
+    result['type'] = queryres.userKolbType
+    
+    return jsonify(result)
 
 
-#주차 별 퀴즈 점수 api
+#주차별 퀴즈 점수 api
 @app.route('/api/weekScore', methods=['GET'])
 def weekscore():
-    return jsonify({'state': 'success'})
+    
+    scorejson = {}
+    scorejson['score'] = [0, 5, 6, 10, 3, 5, 1, 8, 7, 2, 9, 2, 1, 4, 0]
+    
+    return jsonify(scorejson)
 
 
 
