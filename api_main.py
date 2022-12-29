@@ -10,6 +10,7 @@ from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_chec
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 import random
+import dummy
 
 
 load_dotenv()
@@ -110,12 +111,13 @@ def courses():
     user_code = request.get_json()
     user_code = user_code['email']
     
-
+    #db에서 값을 불러와 조립하는 부분이라 로컬 테스팅 환경에서는 주석처리 합니다.
+    """
     resJson = {}
     resJson['data'] = []
     for i in range(0,15):
         resJson['data'].append({})
-        resJson['data'][i]['subject'] = f"""강의 제목{i}"""
+        resJson['data'][i]['subject'] = '강의 제목'+str(i+1)
         resJson['data'][i]['contents'] = {}
         resJson['data'][i]['contents']['video'] = []
         #영상 자료 개별 페이지 담는 반복문 필요합니다.(주차마다 영상 개수 다르므로) 지금은 임의로 2개를 보냅니다.
@@ -134,6 +136,20 @@ def courses():
     resJson['metaverse'] = 'https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnToken=oMNzrEjTTn2fWdizR1Hp'
 
     return jsonify(resJson)
+    """
+
+    return jsonify(dummy.courseJson)
+
+
+#퀴즈 데이터 api
+@app.route('/api/quiz/<int:week>', methods=['GET'])
+def quiz(week):
+
+    #현재는 7주차에 대한 데이터를 보내줍니다.
+    if week == 7 :
+        return jsonify(dummy.quizJson)
+    else:
+        return jsonify({'state': 'fail'})
 
 
 #학습자 유형 판단 설문 api
