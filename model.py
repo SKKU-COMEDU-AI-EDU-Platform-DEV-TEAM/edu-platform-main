@@ -64,7 +64,7 @@ class User(db.Model):
         self.userGamificationExp = gamiExp
 
     def __repr__(self):
-        return '<User %r>' % self.userEmail
+        return '<User %r %r %r %r>' % self.userNickname % self.userId % self.userEmail % self.userKolbType
 
 
 

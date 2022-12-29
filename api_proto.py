@@ -11,13 +11,6 @@ from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 import random
 
-id_ = "abc@d.e"
-pw_ = "abc!"
-nickname = "choco"
-mbti = "ISFP"
-survey_result = [0, 0, 0, 0, 0, 0]
-type_ = 1
-
 
 load_dotenv()
 
@@ -52,10 +45,29 @@ def index():
 def signup():
     jsonReceive = request.get_json()
 
-    id_ = jsonReceive['email']
-    pw_ = jsonReceive['pw']
-    nickname = jsonReceive['name']
-    mbti = jsonReceive['mbti']
+    idReceive = jsonReceive['email']
+    pwReceive = jsonReceive['pw']
+    nicknameReceive = jsonReceive['name']
+    mbtiReceive = jsonReceive['mbti']
+    
+    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
+
+    newUser = User(email = idReceive, 
+                    pw = pwHash, 
+                    nName = nicknameReceive, 
+                    usrType = 0,
+                    cDate = datetime.datetime.now(KST), 
+                    uDate = datetime.datetime.now(KST), 
+                    mbti = mbtiReceive,
+                    kolbType = None, 
+                    lrnLvl = None, 
+                    interestTag = None, 
+                    lrnType = None, 
+                    gamiLvl = 0, 
+                    gamiExp = 0)
+
+    db.session.add(newUser)
+    db.session.commit()
     
     return jsonify({"state" : "success"})
 
@@ -67,11 +79,24 @@ def login():
 
     idReceive = jsonReceive['email']
     pwReceive = jsonReceive['pw']
+    pw_hash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
-    if (idReceive == id_ & pwReceive == pw_) :
-        return jsonify({'state': 'success'})
-    elif(idReceive == id_) :
-        return jsonify({'state': 'fail', 'msg': '올바른 비밀번호를 입력해주세요.'})
+    queryres = db.session.query(User).filter_by(userEmail ==idReceive, userPassword==pwReceive).first()
+    print(queryres)
+    #DB에서 id, 암호화된 pw를 가지고 해당 유저를 찾습니다.
+
+    result = {}
+    
+    if result is not None:
+        payload = {
+            'id': pwReceive,
+            'exp': datetime.datetime.now(KST) + datetime.timedelta(hours=3)    #언제까지 유효한지
+        }
+        
+        token = {}
+        #token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        
+        return jsonify({'state': 'success', 'token': token})
     else:
         return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
 
@@ -80,17 +105,23 @@ def login():
 #메인페이지 정보 api
 @app.route('/api/main', methods=['POST'])
 def main():
+    queryres = db.session.query(User).filter_by(userEmail='apple11@naver.com').first()
+    print(queryres.userEmail)
     return jsonify({'state': 'success'})
 
 
 @app.route('/api/survey')
 def survey():
+    print(db.session.query(User).all())
     return jsonify({'state': 'success'})
 
 
 #전체 학습 페이지 api
 @app.route('/api/course', methods=['GET'])
 def courses():
+    user_code = request.get_json()
+    user_code = user_code['email']
+    
 
     resJson = {}
     resJson['data'] = []
@@ -99,28 +130,20 @@ def courses():
         resJson['data'][i]['subject'] = f"""강의 제목{i}"""
         resJson['data'][i]['contents'] = {}
         resJson['data'][i]['contents']['video'] = []
-
-        if i % 2 == 1 :
-            for j in range(2):
-                resJson['data'][i]['contents']['video'].append('/course/'+str(i+1)+'/lecture/'+str(j+1))
-        else :
-            j = 1
+        #영상 자료 개별 페이지 담는 반복문 필요합니다.(주차마다 영상 개수 다르므로) 지금은 임의로 2개를 보냅니다.
+        for j in range(2):
             resJson['data'][i]['contents']['video'].append('/course/'+str(i+1)+'/lecture/'+str(j+1))
-
         resJson['data'][i]['contents']['quiz'] = '/course/'+str(i+1)+'/quiz'
-        resJson['data'][i]['contents']['multiverse'] = https://app.gather.town/app/KxbGPczKS6ld3Fxt/SKKUMeta
+        #주차별 메타버스 링크 필요합니다. 지금은 전부 메타버스 메인 url을 보냅니다.
+        resJson['data'][i]['contents']['multiverse'] = 'https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnToken=oMNzrEjTTn2fWdizR1Hp'
         resJson['data'][i]['isdone'] = {}
         resJson['data'][i]['isdone']['video'] = []
         #db에서 불러온 정보를 통해 완료 여부 체크하는 반복문 필요합니다. 지금은 더미 데이터를 보내줍니다.
-
-        if i % 2 == 1 :
-            for j in range(0,2):
-                resJson['data'][i]['isdone']['video'].append(random.randrange(0,2))
-        else :
+        for j in range(0,2):
             resJson['data'][i]['isdone']['video'].append(random.randrange(0,2))
-    
-        resJson['data'][i]['isdone']['quiz'].append(random.randrange(0,2))
-        resJson['metaverse'] = 'https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnToken=oMNzrEjTTn2fWdizR1Hp'
+        resJson['data'][i]['isdone']['quiz'] = 0
+    #메타버스 메인 url이 들어갑니다.
+    resJson['metaverse'] = 'https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnToken=oMNzrEjTTn2fWdizR1Hp'
 
     return jsonify(resJson)
 
@@ -129,21 +152,12 @@ def courses():
 @app.route('/api/test', methods=['GET', 'POST'])
 def test():
     if request.method == 'GET':
-        resQuestion = {}
-        resQuestion['questions'] = [
-            "학습 성향 분석 질문1",
-            "학습 성향 분석 질문2",
-            "학습 성향 분석 질문3",
-            "학습 성향 분석 질문4",
-            "학습 성향 분석 질문5",
-            "학습 성향 분석 질문6"
-            ]
-        return jsonify(resQuestion)
+        return jsonify({'state': 'success'})
     elif request.method == 'POST':
-        resultReceive = request.get_json()
-        resultReceive = resultReceive['result']
-        survey_result = resultReceive
-
+        user_test_json = request.get_json()
+        user_test_json = user_test_json["result"]
+        
+        
         return jsonify({'state': 'success'})
     else:
         return jsonify({'state': 'error'})
@@ -152,14 +166,15 @@ def test():
 #학습자 유형 결과 api
 @app.route('/api/testResult', methods=['GET'])
 def testresult():
-    resType = {}
-    resType['type'] = type_
-    return jsonify(resType)
+    return jsonify({'state': 'success'})
 
 
+#주차 별 퀴즈 점수 api
 @app.route('/api/weekScore', methods=['GET'])
 def weekscore():
     return jsonify({'state': 'success'})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

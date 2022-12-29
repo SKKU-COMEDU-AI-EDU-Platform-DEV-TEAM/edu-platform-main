@@ -29,9 +29,7 @@ db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
-    #return "Welcome to SKKU AI EDU Platform!!!"
     return render_template('index.html')
-
 
 #세션 체크의 경우 JWT에 대하여 찾아본 후 적용하는 방향으로 합니다.
 
@@ -49,11 +47,9 @@ def signup():
     pwReceive = jsonReceive['pw']
     nicknameReceive = jsonReceive['name']
     mbtiReceive = jsonReceive['mbti']
-    
-    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
     newUser = User(email = idReceive, 
-                    pw = pwHash, 
+                    pw = pwReceive, 
                     nName = nicknameReceive, 
                     usrType = 0,
                     cDate = datetime.datetime.now(KST), 
@@ -71,36 +67,6 @@ def signup():
     
     return jsonify({"state" : "success"})
 
-@app.route('/api/signup2', methods=['POST'])
-def signup2():
-
-    idReceive = request.form['email']
-    pwReceive = request.form['pw']
-    nicknameReceive = request.form['name']
-    mbtiReceive = request.form['mbti']
-    
-    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
-
-    newUser = User(email = idReceive, 
-                    pw = pwHash, 
-                    nName = nicknameReceive, 
-                    usrType = 0,
-                    cDate = datetime.datetime.now(KST), 
-                    uDate = datetime.datetime.now(KST), 
-                    mbti = mbtiReceive,
-                    kolbType = None, 
-                    lrnLvl = None, 
-                    interestTag = None, 
-                    lrnType = None, 
-                    gamiLvl = 0, 
-                    gamiExp = 0)
-
-    db.session.add(newUser)
-    db.session.commit()
-    
-    
-    
-    return jsonify({"state" : "success"})
 
 #로그인 api
 @app.route('/api/login', methods=['POST'])
@@ -109,22 +75,16 @@ def login():
 
     idReceive = jsonReceive['email']
     pwReceive = jsonReceive['pw']
-    pw_hash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
-    #DB에서 id, 암호화된 pw를 가지고 해당 유저를 찾습니다.
-
-    result = {}
+    queryres = db.session.query(User).filter_by(userEmail=idReceive, userPassword=pwReceive).first()
     
-    if result is not None:
-        payload = {
-            'id': pwReceive,
-            'exp': datetime.datetime.now(KST) + datetime.timedelta(hours=3)    #언제까지 유효한지
-        }
-        
-        token = {}
-        #token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-        
-        return jsonify({'state': 'success', 'token': token})
+    if queryres is not None:
+        result = {}
+        result['userName'] = queryres.userNickname
+        result['userId'] = queryres.userId
+        result['userEmail'] = queryres.userEmail
+        result['type'] = queryres.userKolbType
+        return jsonify(result)
     else:
         return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
 
@@ -133,21 +93,24 @@ def login():
 #메인페이지 정보 api
 @app.route('/api/main', methods=['POST'])
 def main():
-    print(User.query.all())
+    queryres = db.session.query(User).filter_by(userEmail='apple11@naver.com').first()
+    print(queryres.userEmail)
     return jsonify({'state': 'success'})
 
 
 @app.route('/api/survey')
 def survey():
-    print(User.query.all())
+    print(db.session.query(User).all())
     return jsonify({'state': 'success'})
 
 
 #전체 학습 페이지 api
 @app.route('/api/course', methods=['GET'])
 def courses():
+    user_code = request.get_json()
+    user_code = user_code['email']
     
-    #db에서 불러오는 부분 있어야 합니다.
+
     resJson = {}
     resJson['data'] = []
     for i in range(0,15):
