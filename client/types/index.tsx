@@ -9,9 +9,13 @@ export interface Type {
   type: number;
 }
 
-export interface TypeDescription {
+export interface TypeDescriptionType {
   type: string;
   description: string;
+}
+
+export interface TypeCardType extends TypeDescriptionType {
+  link: string;
 }
 
 export interface Point {
@@ -47,10 +51,6 @@ export interface ScoreList {
   score: number[];
 }
 
-export interface QuestionList {
-  questions: string[];
-}
-
 export interface Id {
   id: number;
 }
@@ -82,4 +82,38 @@ export interface Lecture {
   videoTitle: string;
   video: string;
   pdf: string;
+}
+
+export namespace Types {
+  export type Data = {
+    id: number;
+    name: string;
+    size: number;
+    week: number;
+  };
+
+  export type ForceData = {
+    size: number;
+  };
+}
+export interface IBubbleChartProps {
+  bubblesData: Types.Data[];
+  width: number;
+  height: number;
+  backgroundColor: string;
+  textFillColor: string;
+  minValue: number;
+  maxValue: number;
+  metaverse: string[];
+  type: number;
+}
+
+export interface IBubbleChartState {
+  data: Types.ForceData[];
+}
+
+export interface QuizType {
+  question: string;
+  definition: string;
+  option: string[];
 }

@@ -8,5 +8,5 @@ export default function handler(
   res: NextApiResponse<Lecture>
 ) {
   const { week, id } = req.query;
-  return res.send(mockupLectureList[Number(week) - 1][Number(id) - 1]);
+  return res.send(mockupLectureList[Number(id) - 1]);
 }

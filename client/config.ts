@@ -1,3 +1,5 @@
+import { TypeDescription } from "./types";
+
 export const checkIsValid = (Reg: RegExp, input: string) => {
   if (Reg.test(input)) {
     return false;
@@ -37,4 +39,26 @@ export const mbtiArr = [
   "ESFP",
   "ENFP",
   "ENTP"
+];
+export const TypeDescriptionList: TypeDescription[] = [
+  {
+    type: "강의 듣는",
+    description:
+      "learner Type Description learner Type Description learner Type Description"
+  },
+  {
+    type: "퀴즈 푸는",
+    description:
+      "learner Type Description learner Type Description learner Type Description"
+  },
+  {
+    type: "게임하는",
+    description:
+      "learner Type Description learner Type Description learner Type Description"
+  },
+  {
+    type: "메타버스 이용하는",
+    description:
+      "learner Type Description learner Type Description learner Type Description"
+  }
 ];

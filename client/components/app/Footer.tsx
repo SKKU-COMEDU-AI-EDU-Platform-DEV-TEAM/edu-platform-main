@@ -31,11 +31,6 @@ export default function Footer() {
               Sungkyunkwan University
             </Text>
           </Link>
-          {/* <Link href="https://coe.skku.edu">
-          <Text color="gray.500" fontSize={"xs"}>
-            College of Education
-          </Text>
-        </Link> */}
           <Link href="https://comedu.skku.edu">
             <Text color="gray.500" fontSize={"xs"}>
               Department of Computer Education

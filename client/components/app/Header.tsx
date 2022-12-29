@@ -1,9 +1,7 @@
 import {
   Button,
   Center,
-  Flex,
   Icon,
-  Link,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -38,6 +36,7 @@ export default function Header() {
       px={4}
       backgroundColor={"gray.50"}
       boxShadow={"xs"}
+      zIndex={1}
     >
       <Stack
         direction={"row"}

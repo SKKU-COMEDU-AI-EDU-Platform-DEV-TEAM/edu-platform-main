@@ -8,11 +8,24 @@ import { Point, User } from "../../types";
 export const UserDescription = () => {
   const user = useRecoilValue<User>(userState);
   const point = useRecoilValue<Point>(pointState);
-
+  const link =
+    user.type == 1
+      ? "/video.png"
+      : user.type == 2
+      ? "/quiz.png"
+      : user.type == 3
+      ? "/game.png"
+      : "/metaverse.png";
   return (
     <Box p={5} bg="#F5F5F5" boxShadow={"base"} borderRadius="2xl" pr="10">
       <Flex wrap="wrap">
-        <Avatar m={6} size="2xl" bg="gray.500" src="#" />
+        <Avatar
+          name={user.userName}
+          m={6}
+          size="2xl"
+          bg="rgb(144, 187, 144)"
+          src={link}
+        />
         <Stack>
           <Text fontSize={30} textAlign={"center"} mt={4} fontWeight="bold">
             {user.userName}
@@ -20,7 +33,7 @@ export const UserDescription = () => {
           <Text fontSize={15} textAlign={"center"} fontWeight={"bold"} pb={6}>
             {user.userEmail}
           </Text>
-          {user.type == 1 && (
+          {user.type == 3 && (
             <Box alignSelf={"center"}>
               <Text
                 mb={3}

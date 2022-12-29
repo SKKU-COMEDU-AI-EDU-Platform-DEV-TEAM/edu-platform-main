@@ -32,7 +32,7 @@ export default function CourseLayout({
             {title}
           </Text>
         </Box>
-        {type == 1 && (
+        {type == 4 && (
           <Link href={metaverse} isExternal>
             <Button colorScheme="facebook" fontSize={15} variant="ghost">
               이 과목 메타버스 질문방 바로가기

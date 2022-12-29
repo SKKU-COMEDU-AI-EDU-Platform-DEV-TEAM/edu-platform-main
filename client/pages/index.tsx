@@ -50,15 +50,6 @@ export default function Home() {
   return (
     <EnterLayout>
       <>
-        <Stack direction="row" justifyContent={"space-between"} mb={10}>
-          <Image
-            w={"80%"}
-            objectFit="contain"
-            src="/DIHYEOKGONG.png"
-            alt="DIHYEOKGONG"
-          />
-          <Image w={"10%"} objectFit="contain" src="/SKKU.png" alt="SKKU" />
-        </Stack>
         <FormControl mb={8} isRequired isInvalid={isEmailInvalid}>
           <FormLabel fontSize={16}>Email</FormLabel>
           <Input

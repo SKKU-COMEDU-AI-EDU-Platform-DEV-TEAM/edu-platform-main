@@ -1,11 +1,8 @@
 import { atom, selector } from "recoil";
 import { Point, User } from "../types";
 import { v1 } from "uuid";
-import {
-  mockupPoint,
-  mockupTypeDescriptionList,
-  mockupUser
-} from "./mockupData";
+import { mockupPoint, mockupUser } from "./mockupData";
+import { TypeDescriptionList } from "../config";
 
 export const userState = atom<User>({
   key: `userState/${v1()}`,
@@ -21,7 +18,7 @@ export const typeSelector = selector({
   key: `typeSelector${v1()}`,
   get: ({ get }) => {
     const user = get(userState);
-    return mockupTypeDescriptionList[user.type - 1];
+    return TypeDescriptionList[user.type - 1];
   }
 });
 

@@ -1,11 +1,7 @@
 import { Box, Button, Stack, Text } from "@chakra-ui/react";
-import { useRecoilValue } from "recoil";
-import { userState } from "../../recoil";
 import { useRouter } from "next/router";
-import { User } from "../../types";
 
 export const CourseDescription = () => {
-  const user = useRecoilValue<User>(userState);
   const router = useRouter();
   return (
     <Box

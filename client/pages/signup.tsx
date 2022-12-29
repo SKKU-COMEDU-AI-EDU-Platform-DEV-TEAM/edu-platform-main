@@ -14,7 +14,7 @@ import { useState } from "react";
 import EnterLayout from "../components/EnterLayout";
 import { checkIsValid, emailReg, mbtiArr, pwReg } from "../config";
 
-export const SignupPage = () => {
+export default function SignupPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState<string>("");
@@ -60,15 +60,6 @@ export const SignupPage = () => {
   return (
     <EnterLayout>
       <>
-        <Stack direction="row" justifyContent={"space-between"} mb={10}>
-          <Image
-            alt="DIHYEOKGONG"
-            w={"80%"}
-            objectFit="contain"
-            src="./DIHYEOKGONG.png"
-          />
-          <Image alt="SKKU" w={"10%"} objectFit="contain" src="./SKKU.png" />
-        </Stack>
         <FormControl mb={1} isRequired isInvalid={isEmailInvalid}>
           <FormLabel fontSize={16}>Email</FormLabel>
           <Input

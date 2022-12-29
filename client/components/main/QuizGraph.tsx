@@ -11,8 +11,8 @@ export const QuizGraph = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = (await axios.get("api/weekScore")).data;
-      setScore(response.score);
+      const response = (await axios.get("api/score")).data;
+      setScore(response.data);
       setIsLoading(false);
     };
     fetchData();
