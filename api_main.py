@@ -108,8 +108,8 @@ def survey():
 #전체 학습 페이지 api
 @app.route('/api/course', methods=['GET'])
 def courses():
-    user_code = request.get_json()
-    user_code = user_code['email']
+    #user_code = request.get_json()
+    #user_code = user_code['email']
     
     #db에서 값을 불러와 조립하는 부분이라 로컬 테스팅 환경에서는 주석처리 합니다.
     """
