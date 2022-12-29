@@ -99,12 +99,6 @@ def main():
     return jsonify({'state': 'success'})
 
 
-@app.route('/api/survey')
-def survey():
-    print(db.session.query(User).all())
-    return jsonify({'state': 'success'})
-
-
 #전체 학습 페이지 api
 @app.route('/api/course', methods=['GET'])
 def courses():
@@ -159,7 +153,9 @@ def test():
         return jsonify({'state': 'success'})
     elif request.method == 'POST':
         user_test_json = request.get_json()
-        user_test_json = user_test_json["result"]
+        user = user_test_json["user_id"]
+        result = user_test_json["result"]
+        mbti = user_test_json["mbti"]
         
         
         return jsonify({'state': 'success'})
