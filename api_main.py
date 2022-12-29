@@ -146,6 +146,14 @@ def quiz(week):
         return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
 
 
+#퀴즈 결과 api
+@app.route('/api/result/<int:week>', methods=['GET'])
+def quizResult(week):
+
+    #현재는 채점 로직 없이 더미 결과를 보내주므로 추후 이곳 혹은 새로운 api에 채점해주는 로직을 작성해야합니다.
+    return jsonify(dummy.quizResultJson)
+
+
 #학습자 유형 판단 설문 api
 @app.route('/api/test', methods=['GET', 'POST'])
 def test():
