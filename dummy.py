@@ -84,3 +84,48 @@ quizJson = {
         }
     ]
 }
+
+quizJson2 = {
+    "data":[
+        {
+            "question": "문제1",
+            "definition": "본문",
+            "option": [
+                "선지1",
+                "선지2",
+                "선지3",
+                "선지4"
+            ]
+        },
+        {
+            "question": "문제2",
+            "definition": "본문",
+            "option": [
+                "선지1",
+                "선지2",
+                "선지3",
+                "선지4"
+            ]
+        },
+        {
+            "question": "문제3",
+            "definition": "본문",
+            "option": [
+                "선지1",
+                "선지2",
+                "선지3",
+                "선지4"
+            ]
+        },
+        {
+            "question": "문제4",
+            "definition": "본문",
+            "option": [
+                "선지1",
+                "선지2",
+                "선지3",
+                "선지4"
+            ]
+        }
+    ]
+}
