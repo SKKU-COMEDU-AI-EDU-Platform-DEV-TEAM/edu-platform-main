@@ -117,3 +117,14 @@ export interface QuizType {
   definition: string;
   option: string[];
 }
+
+export interface QuizAnswer {
+  userAnswer: number;
+  correctAnswer: number;
+}
+export interface QuizResultType {
+  totalQuizNum: number;
+  correctQuizNum: number;
+  userAnswer: number[];
+  correctAnswer: number[];
+}

@@ -1,10 +1,9 @@
 import {
   Lecture,
   Point,
+  QuizResultType,
   QuizType,
-  ScoreList,
   Type,
-  TypeDescriptionType,
   Types,
   User
 } from "../types";
@@ -13,7 +12,7 @@ export const mockupUser: User = {
   userName: "userName",
   userId: 1,
   userEmail: "nimod1234@g.skku.edu",
-  type: 2
+  type: 3
 };
 
 export const mockupPoint: Point = {
@@ -90,6 +89,12 @@ export const mockupQuizList: QuizType[] = [
   }
 ];
 
+export const mockupQuizResult: QuizResultType = {
+  totalQuizNum: 4,
+  correctQuizNum: 3,
+  userAnswer: [0, 2, 3, 1],
+  correctAnswer: [2, 2, 3, 1]
+};
 export const mockupMetaverseList: string[] = [
   "https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnTok",
   "https://app.gather.town/app/NJSpYMXBYuorIwIx/DIHYEOKGONG?spawnTok",

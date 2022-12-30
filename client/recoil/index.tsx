@@ -26,3 +26,18 @@ export const pointState = atom<Point>({
   key: `pointState${v1()}`,
   default: mockupPoint
 });
+
+export const quizScoreState = atom<number[]>({
+  key: `quizScoreState/${v1()}`,
+  default: []
+});
+
+export const bestScoreState = atom<number>({
+  key: `bestScoreState/${v1()}`,
+  default: Number.MAX_SAFE_INTEGER
+});
+
+export const moveState = atom<number>({
+  key: `moveState/${v1()}`,
+  default: 0
+});

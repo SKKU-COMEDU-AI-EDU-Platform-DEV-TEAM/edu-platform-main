@@ -3,7 +3,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Image,
   Input,
   Select,
   Stack
@@ -144,4 +143,4 @@ export default function SignupPage() {
       </>
     </EnterLayout>
   );
-};
+}

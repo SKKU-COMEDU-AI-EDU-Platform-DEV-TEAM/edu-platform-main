@@ -1,0 +1,35 @@
+/* body {
+  background: linear-gradient(
+    116.04deg,
+    #fd938b 7.27%,
+    rgba(133, 255, 174, 0.63) 103.41%
+  ) !important ;
+} */
+
+/* */
+#type {
+  color: rgb(144, 187, 144);
+}
+
+//card
+.card {
+  transform-style: preserve-3d;
+
+  // hide and flip card
+  .card-face {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    &.card-back-face {
+      transform: rotateY(180deg);
+    }
+  }
+
+  &.is-flipped {
+    transform: rotateY(180deg);
+  }
+
+  &.is-inactive {
+    opacity: 0;
+  }
+}

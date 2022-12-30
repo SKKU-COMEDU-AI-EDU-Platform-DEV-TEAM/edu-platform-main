@@ -1,4 +1,4 @@
-import { TypeDescription } from "./types";
+import { TypeDescriptionType } from "./types";
 
 export const checkIsValid = (Reg: RegExp, input: string) => {
   if (Reg.test(input)) {
@@ -40,7 +40,7 @@ export const mbtiArr = [
   "ENFP",
   "ENTP"
 ];
-export const TypeDescriptionList: TypeDescription[] = [
+export const TypeDescriptionList: TypeDescriptionType[] = [
   {
     type: "강의 듣는",
     description:
@@ -61,4 +61,19 @@ export const TypeDescriptionList: TypeDescription[] = [
     description:
       "learner Type Description learner Type Description learner Type Description"
   }
+];
+export const arr: string[] = [
+  "군집화",
+  "회귀",
+  "정량 데이터",
+  "정성 데이터",
+  "Descriptive analysis",
+  "Inferential analysis",
+
+  "유사한 집단끼리 군집하여 분류",
+  "변수와 변수 사이의 관계 파악",
+  "평균 기온 데이터",
+  "손글씨 사진 데이터",
+  "데이터를 요약, 집계하여 결과 도출",
+  "샘플-모집단 간의 관계 탐구"
 ];

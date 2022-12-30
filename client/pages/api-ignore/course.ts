@@ -4,7 +4,7 @@ import {
   mockupBubbleChartData,
   mockupMetaverseList
 } from "../../recoil/mockupData";
-import { Quiz, Types } from "../../types";
+import { Types } from "../../types";
 
 type sendWeekData = {
   data: Types.Data[];
