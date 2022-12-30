@@ -174,7 +174,7 @@ quizResultJson = {
         }
     ],
     "totalQuizNum": 4,
-    "correctQuizNum": 3,
-    "userAnswer": [1, 2, 3, 1],
-    "correctAnswer": [2, 2, 3, 1]
+    "correctQuizNum": 0,
+    "userAnswer": [],
+    "correctAnswer": []
 }
