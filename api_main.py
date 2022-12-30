@@ -3,13 +3,12 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import datetime
-import secrets
-import pymysql
 import hashlib
 from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 import random
+from decisionTree import clf
 import dummy
 
 
@@ -28,6 +27,11 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 
+#부득이 이곳에서 필요한 더미데이터를 위한 변수입니다. 추후 전부 삭제바랍니다.
+userAnswerDummy = []
+userCorrectAnswerCntDummy = 0
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -39,7 +43,8 @@ def index():
 #서버가 외부 접근이 되기 전까지는 로컬에 MySQL 환경 구축한 후 테스트하기 바랍니다.
 
 
-#회원가입 api
+
+#[POST] 회원가입 api
 @app.route('/api/signup', methods=['POST'])
 def signup():
     jsonReceive = request.get_json()
@@ -49,8 +54,10 @@ def signup():
     nicknameReceive = jsonReceive['name']
     mbtiReceive = jsonReceive['mbti']
 
+    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
+
     newUser = User(email = idReceive, 
-                    pw = pwReceive, 
+                    pw = pwHash, 
                     nName = nicknameReceive, 
                     usrType = 0,
                     cDate = datetime.datetime.now(KST), 
@@ -69,29 +76,32 @@ def signup():
     return jsonify({"state" : "success"})
 
 
-#로그인 api
+
+#[POST] 로그인 api
 @app.route('/api/login', methods=['POST'])
 def login():
     jsonReceive = request.get_json()
 
     idReceive = jsonReceive['email']
     pwReceive = jsonReceive['pw']
+
+    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
-    queryres = db.session.query(User).filter_by(userEmail=idReceive, userPassword=pwReceive).first()
+    queryRes = db.session.query(User).filter_by(userEmail=idReceive, userPassword=pwHash).first()
     
-    if queryres is not None:
+    if queryRes is not None:
         result = {}
-        result['userName'] = queryres.userNickname
-        result['userId'] = queryres.userId
-        result['userEmail'] = queryres.userEmail
-        result['type'] = queryres.userKolbType
+        result['userName'] = queryRes.userNickname
+        result['userId'] = queryRes.userId
+        result['userEmail'] = queryRes.userEmail
+        result['type'] = queryRes.userKolbType
         return jsonify(result)
     else:
         return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
 
 
 
-#메인페이지 정보 api
+#[POST] 메인페이지 정보 api
 @app.route('/api/main', methods=['POST'])
 def main():
     queryres = db.session.query(User).filter_by(userEmail='apple11@naver.com').first()
@@ -99,7 +109,8 @@ def main():
     return jsonify({'state': 'success'})
 
 
-#전체 학습 페이지 api
+
+#[GET] 전체 학습 페이지 api
 @app.route('/api/course', methods=['GET'])
 def courses():
     #user_code = request.get_json()
@@ -135,49 +146,87 @@ def courses():
     return jsonify(dummy.courseJson)
 
 
-#퀴즈 데이터 api
-@app.route('/api/quiz/<int:week>', methods=['GET'])
+
+#[GET] 퀴즈 데이터 api
+#[POST] 퀴즈 채점 api
+@app.route('/api/quiz/<int:week>', methods=['GET', 'POST'])
 def quiz(week):
-
-    #현재는 7주차에 대한 데이터를 보내줍니다.
-    if week == 7 :
-        return jsonify(dummy.quizJson)
-    else:
-        return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
-
-
-#퀴즈 결과 api
-@app.route('/api/result/<int:week>', methods=['GET'])
-def quizResult(week):
-
-    #현재는 채점 로직 없이 더미 결과를 보내주므로 추후 이곳 혹은 새로운 api에 채점해주는 로직을 작성해야합니다.
-    return jsonify(dummy.quizResultJson)
-
-
-#학습자 유형 판단 설문 api
-@app.route('/api/test', methods=['GET', 'POST'])
-def test():
     if request.method == 'GET':
-        return jsonify({'state': 'success'})
+        #현재는 7주차에 대한 데이터를 보내줍니다.
+        if week == 7 :
+            return jsonify(dummy.quizJson)
+        else:
+            return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
+
     elif request.method == 'POST':
-        user_test_json = request.get_json()
-        user = user_test_json["user_id"]
-        result = user_test_json["result"]
-        mbti = user_test_json["mbti"]
-        
-        
-        return jsonify({'state': 'success'})
+        quizReqJson = request.get_json()
+        userQuizAnswer = quizReqJson['data']
+
+        #현재는 더미데이터를 기준으로 채점 로직을 수행합니다.
+        correctAnswerCnt = 0
+        for i in range(dummy.quizResultJson['totalQuizNum']):
+            userAnswerDummy.append(userQuizAnswer[i])
+            if userQuizAnswer[i] == dummy.quizResultJson['correctAnswer'][i]:
+                correctAnswerCnt += 1
+
+        #추후 db에 update하는 부분을 작성하면 삭제바랍니다.
+        userCorrectAnswerCntDummy = correctAnswerCnt
+
+        return jsonify({"state" : "success"})
+
     else:
         return jsonify({'state': 'error'})
 
 
-#학습자 유형 결과 api
+
+#[GET] 퀴즈 결과 api
+@app.route('/api/quiz/<int:week>/result', methods=['GET'])
+def quizResult(week):
+    #현재는 더미 데이터를 전송합니다. 추후 db 쿼리문을 작성하면 삭제바랍니다.
+    dummy.quizResultJson['correctQuizNum'] = userCorrectAnswerCntDummy
+    dummy.quizResultJson['userAnswer'] = userAnswerDummy
+
+    return jsonify(dummy.quizResultJson)
+
+
+
+#[GET] 영상pdf 데이터 api
+@app.route('/api/lecture/<int:week>/<int:id>', methods=['GET'])
+def lecture(week, id):
+    #현재는 더미 데이터를 전송합니다.
+    return jsonify(dummy.lectureJson)
+
+
+
+#[GET] 학습자 유형 판단 설문 항목 api
+#[POST] 학습자 유형 판단 api
+@app.route('/api/test', methods=['GET', 'POST'])
+def test():
+    if request.method == 'GET':
+        #현재는 더미 데이터를 전송합니다.
+        return jsonify(dummy.testJson)
+
+    elif request.method == 'POST':
+        userTestJson = request.get_json()
+        user = userTestJson["userId"]
+        result = userTestJson["type"]
+        mbti = userTestJson["mbti"]
+
+        userKolbType = clf.predict([mbti])[0]
+        print(userKolbType)
+        
+        return jsonify({'state': 'success'})
+
+    else:
+        return jsonify({'state': 'error'})
+
+
+
+#[GET] 학습자 유형 결과 api
 @app.route('/api/testResult', methods=['GET'])
 def testresult():
-    user_code = request.get_json()
-    user_code = user_code['user_id']
-    
-    queryres = db.session.query(User).filter_by(userId = user_code).first()
+    #추후 userId 정보를 받아 쿼리 진행해야합니다.
+    queryres = db.session.query(User).all().first()
     
     result = {}
     result['type'] = queryres.userKolbType
@@ -185,14 +234,11 @@ def testresult():
     return jsonify(result)
 
 
+
 #주차별 퀴즈 점수 api
 @app.route('/api/weekScore', methods=['GET'])
 def weekscore():
-    
-    scorejson = {}
-    scorejson['score'] = [0, 5, 6, 10, 3, 5, 1, 8, 7, 2, 9, 2, 1, 4, 0]
-    
-    return jsonify(scorejson)
+    return jsonify(dummy.weekScoreJzon)
 
 
 
