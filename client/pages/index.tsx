@@ -40,11 +40,27 @@ export default function Home() {
     }
     //login
 
-    const updatedUser = (
+    const loginRes = (
       await axios.post("api/login", { email: email, pw: password })
     ).data;
-    setUser(updatedUser);
-    router.push("/test");
+    
+    if(loginRes["state"] === "success"){
+      const updatedUser = {
+        userName: loginRes.info.userName,
+        userId: loginRes.info.userId,
+        userEmail: loginRes.info.userEmail,
+        type: (loginRes.info.type === null) ? 1 : loginRes.info.type
+      };
+      setUser(updatedUser);
+
+      localStorage.setItem("token", loginRes["token"]);
+
+      if(loginRes.info.type === null) router.push("/test");
+      else router.push("/main");
+    }
+    else{
+      alert(loginRes["msg"]);
+    }
   };
 
   return (
