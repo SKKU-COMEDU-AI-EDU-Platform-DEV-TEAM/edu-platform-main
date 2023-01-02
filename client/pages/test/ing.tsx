@@ -23,9 +23,9 @@ export default function TestingPage() {
   const [mbtiValue, setmbtiValue] = useState<number[]>([5, 5, 5, 5]);
   const [typeValue, setTypeValue] = useState<number[]>([]);
   const mbti = [
-    ["E", "I"],
-    ["N", "S"],
-    ["F", "T"],
+    ["I", "E"],
+    ["S", "N"],
+    ["T", "F"],
     ["P", "J"]
   ];
   const numList = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -47,8 +47,11 @@ export default function TestingPage() {
       alert("학습 성향 분석 질문 중 답변하지 않은 문항이 있습니다!");
       return;
     }
+
+    const token = localStorage.getItem('token');
+
     const response = (
-      await axios.post("/api/test", { type: typefiltered, mbti: mbtiValue })
+      await axios.post("/api/test", { type: typefiltered, mbti: mbtiValue, token: token })
     ).data;
     //error handling
     router.push("/test/end");
@@ -115,14 +118,14 @@ export default function TestingPage() {
                 key={`slider${i}`}
                 defaultValue={0}
                 min={0}
-                max={7}
+                max={10} //수정
                 step={1}
                 onChange={(e) => handleTypeOnchange(i, e)}
               >
                 <SliderMark value={0.1} {...labelStyles} fontWeight="bold">
                   0
                 </SliderMark>
-                {numList.slice(0, 6).map((num) => (
+                {numList.slice(0, 9).map((num) => ( //수정
                   <SliderMark
                     key={`num${num}`}
                     value={num + 0.1}
@@ -131,8 +134,8 @@ export default function TestingPage() {
                     {num}
                   </SliderMark>
                 ))}
-                <SliderMark value={7.1} {...labelStyles} fontWeight="bold">
-                  7
+                <SliderMark value={10.1} {...labelStyles} fontWeight="bold"> 
+                  10
                 </SliderMark>
                 <SliderMark
                   value={typeValue[i]}
