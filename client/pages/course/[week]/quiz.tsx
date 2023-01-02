@@ -27,8 +27,11 @@ export default function QuizPage() {
   }, []);
 
   const handleOnClick = async () => {
-    const response = (await axios.post(`/api/quiz/${week}`, { data: score }))
+    const token = localStorage.getItem('token');
+
+    const response = (await axios.post(`/api/quiz/${week}`, { data: score, token: token }))
       .data;
+
     //error handling
     router.push(`/course/${week}/quiz/result`);
   };
