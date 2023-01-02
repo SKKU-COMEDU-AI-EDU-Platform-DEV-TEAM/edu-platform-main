@@ -42,7 +42,7 @@ class User(db.Model):
     userUpdateDate = db.Column(db.DateTime, nullable=False, default=datetime.now(KST))
     userMBTI = db.Column(db.String(50, 'utf8mb4_unicode_ci'), nullable=False)
     userKolbType = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
-    userLearningLevel = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
+    userLearningLevel = db.Column(db.Integer)
     userInterestTag = db.Column(db.String(255, 'utf8mb4_unicode_ci'))
     userLearnerType = db.Column(db.Integer)
     userGamificationLevel = db.Column(db.Integer, nullable=False, default=0)
@@ -64,7 +64,7 @@ class User(db.Model):
         self.userGamificationExp = gamiExp
 
     def __repr__(self):
-        return '<User %r %r %r %r>' % self.userNickname % self.userId % self.userEmail % self.userKolbType
+        return '<User %r %r %r %r %r %r>' % (self.userNickname, self.userId, self.userEmail, self.userKolbType, self.userLearningLevel, self.userLearnerType)
 
 
 
