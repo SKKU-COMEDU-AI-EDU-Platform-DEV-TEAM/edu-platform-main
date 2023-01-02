@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import datetime
 import hashlib
+import jwt
 from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
@@ -19,6 +20,7 @@ CORS(app)
 app.config['JSON_AS_ASCII'] = False
 app.secret_key = os.environ.get('FLASK_SESSION_SECRETKEY')
 
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
 KST = timezone('Asia/Seoul')
 
 #db 설정 부분입니다.
@@ -65,7 +67,7 @@ def signup():
                     mbti = mbtiReceive,
                     kolbType = None, 
                     lrnLvl = None, 
-                    interestTag = None, 
+                    interestTag = None,
                     lrnType = None, 
                     gamiLvl = 0, 
                     gamiExp = 0)
@@ -73,7 +75,7 @@ def signup():
     db.session.add(newUser)
     db.session.commit()
     
-    return jsonify({"state" : "success"})
+    return jsonify({"state":"success"})
 
 
 
@@ -87,26 +89,81 @@ def login():
 
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
-    queryRes = db.session.query(User).filter_by(userEmail=idReceive, userPassword=pwHash).first()
+    queryRes = db.session.query(User).filter(User.userEmail == idReceive, User.userPassword == pwHash).first()
     
     if queryRes is not None:
         result = {}
-        result['userName'] = queryRes.userNickname
-        result['userId'] = queryRes.userId
-        result['userEmail'] = queryRes.userEmail
-        result['type'] = queryRes.userKolbType
+        result['state'] = 'success'
+        #result['userName'] = queryRes.userNickname
+        #result['userId'] = queryRes.userId
+        #result['userEmail'] = queryRes.userEmail
+        #result['type'] = queryRes.userLearnerType
+
+        #test
+        result['info'] = {}
+        result['info']['userName'] = queryRes.userNickname
+        result['info']['userId'] = queryRes.userId
+        result['info']['userEmail'] = queryRes.userEmail
+        result['info']['type'] = queryRes.userLearnerType
+
+        #Access Token
+        payload = {
+            'id': idReceive,
+            'exp': datetime.datetime.now(KST) + datetime.timedelta(minutes=5)
+        }
+        token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
+        result['token'] = token
+
+        #Refresh Token
+        """
+        payloadRefresh = {
+            'exp': datetime.datetime.now(KST) + datetime.timedelta(hours=1)
+        }
+        tokenRefresh = jwt.encode(payloadRefresh, JWT_SECRET_KEY, algorithm='HS256')
+        result['refreshToken'] = tokenRefresh
+        """
+
         return jsonify(result)
     else:
-        return jsonify({'state': 'fail', 'msg': '아이디 또는 비밀번호가 일치하지 않습니다.'})
+        return jsonify({'state':'fail', 'msg':'아이디 또는 비밀번호가 일치하지 않습니다.'})
+
+
+
+#[GET] JWT 리프레시 api
+@app.route('/api/refresh', methods=['GET'])
+def refresh():
+    return jsonify({'state':'success'})
 
 
 
 #[POST] 메인페이지 정보 api
 @app.route('/api/main', methods=['POST'])
 def main():
-    queryres = db.session.query(User).filter_by(userEmail='apple11@naver.com').first()
-    print(queryres.userEmail)
-    return jsonify({'state': 'success'})
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                return jsonify({'state':'success', 'type':queryRes.userLearnerType})   
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+        return jsonify({'state':'success', 'type':'2'})
+    else:
+        return jsonify({'state':'fail'})
 
 
 
@@ -159,7 +216,44 @@ def quiz(week):
             return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
 
     elif request.method == 'POST':
-        quizReqJson = request.get_json()
+        reqJson = request.get_json()
+
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                userQuizAnswer = reqJson['data']
+
+                #현재는 더미데이터를 기준으로 채점 로직을 수행합니다.(7주차 기준)
+                correctAnswerCnt = 0
+                userAnswer = []
+                for i in range(dummy.quizResultJson['totalQuizNum']):
+                    userAnswer.append(userQuizAnswer[i])
+                    if userQuizAnswer[i] == dummy.quizResultJson['correctAnswer'][i]:
+                        correctAnswerCnt += 1
+                
+                newQuizResult = Quiz_result(usrId = queryRes.userId, 
+                                            qResultWeek = week,
+                                            qResultScore = correctAnswerCnt)
+                db.session.add(newQuizResult)
+                db.session.commit()
+
+                return jsonify({'state':'success'})   
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
         userQuizAnswer = quizReqJson['data']
 
         #현재는 더미데이터를 기준으로 채점 로직을 수행합니다.
@@ -172,10 +266,10 @@ def quiz(week):
         #추후 db에 update하는 부분을 작성하면 삭제바랍니다.
         userCorrectAnswerCntDummy = correctAnswerCnt
 
-        return jsonify({"state" : "success"})
+        return jsonify({'state':'success'})
 
     else:
-        return jsonify({'state': 'error'})
+        return jsonify({'state':'fail'})
 
 
 
@@ -203,35 +297,107 @@ def lecture(week, id):
 @app.route('/api/test', methods=['GET', 'POST'])
 def test():
     if request.method == 'GET':
-        #현재는 더미 데이터를 전송합니다.
+        #현재는 따로 db에 설문 데이터용 테이블을 만들지 않고 설문 데이터를 직접 전송합니다.
         return jsonify(dummy.testJson)
 
     elif request.method == 'POST':
-        userTestJson = request.get_json()
-        user = userTestJson["userId"]
-        result = userTestJson["type"]
-        mbti = userTestJson["mbti"]
+        reqJson = request.get_json()
 
-        userKolbType = clf.predict([mbti])[0]
-        print(userKolbType)
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                result = reqJson["type"]
+                mbti = reqJson["mbti"]
+
+                userLearningLevel = int(sum(result[0:16])/16)
+
+                kolbTypes = ['Divergers', 'Assimilators', 'Convergers', 'Accommodators'] #분산자, 융합자, 수렴자, 적응자
+                userKolbTypeNum = clf.predict([mbti])[0]
+                userKolbType = kolbTypes[userKolbTypeNum - 1]
+
+                lernerTypes = [4, 3, 2, 1] #메타버스, 게이미피케이션, 퀴즈, 영상
+                userLearnerType = lernerTypes[userKolbTypeNum - 1]
+
+                queryRes.userKolbType = userKolbType
+                queryRes.userLearningLevel = userLearningLevel
+                queryRes.userLearnerType = userLearnerType
+                db.session.commit()
+
+                return jsonify({'state':'success'})   
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+        #userId = reqJson["userId"]
+        result = reqJson["type"]
+        mbti = reqJson["mbti"]
+
+        userLearningLevel = int(sum(result[0:16])/16)
+
+        kolbTypes = ['Divergers', 'Assimilators', 'Convergers', 'Accommodators'] #분산자, 융합자, 수렴자, 적응자
+        userKolbTypeNum = clf.predict([mbti])[0]
+        userKolbType = kolbTypes[userKolbTypeNum - 1]
+
+        lernerTypes = [3, 2, 1, 0] #메타버스, 게이미피케이션, 퀴즈, 영상
+        userLearnerType = lernerTypes[userKolbTypeNum - 1]
+
+
         
-        return jsonify({'state': 'success'})
+        return jsonify({'state':'success'})
 
     else:
-        return jsonify({'state': 'error'})
+        return jsonify({'state':'fail'})
 
 
 
 #[GET] 학습자 유형 결과 api
-@app.route('/api/testResult', methods=['GET'])
+#[POST] 학습자 유형 결과 with JWT api
+@app.route('/api/testResult', methods=['GET', 'POST'])
 def testresult():
-    #추후 userId 정보를 받아 쿼리 진행해야합니다.
-    queryres = db.session.query(User).all().first()
-    
-    result = {}
-    result['type'] = queryres.userKolbType
-    
-    return jsonify(result)
+    if request.method == 'GET':
+        return jsonify({'state':'success'})
+
+    elif request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                resultJson = {}
+                resultJson['state'] = 'success'
+                resultJson['type'] = queryRes.userLearnerType
+                return jsonify(resultJson)
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+        
+    else:
+        return jsonify({'state':'fail'})
 
 
 
@@ -240,6 +406,26 @@ def testresult():
 def weekscore():
     return jsonify(dummy.weekScoreJzon)
 
+
+
+#curl test api
+@app.route('/api/curl', methods=['POST'])
+def curl():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+
+        queryRes = db.session.query(User).filter(User.userEmail == reqJson['id']).first()
+        print(queryRes)
+
+        if queryRes is not None:
+            queryRes.userKolbType = 'userKolbType'
+            queryRes.userLearningLevel = 5
+            queryRes.userLearnerType = 0
+            db.session.commit()
+
+        return jsonify({'state':'success'})
+    else:
+        return jsonify({'state':'fail'})
 
 
 if __name__ == '__main__':
