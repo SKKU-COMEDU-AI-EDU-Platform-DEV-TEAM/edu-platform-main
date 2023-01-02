@@ -44,7 +44,7 @@ class User(db.Model):
     userKolbType = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
     userLearningLevel = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
     userInterestTag = db.Column(db.String(255, 'utf8mb4_unicode_ci'))
-    userLearnerType = db.Column(db.String(50, 'utf8mb4_unicode_ci'))
+    userLearnerType = db.Column(db.Integer)
     userGamificationLevel = db.Column(db.Integer, nullable=False, default=0)
     userGamificationExp = db.Column(db.Integer, nullable=False, default=0)
 
