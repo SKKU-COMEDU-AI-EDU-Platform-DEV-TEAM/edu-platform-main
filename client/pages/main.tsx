@@ -8,9 +8,13 @@ import { useRecoilValue } from "recoil";
 import { userState } from "../recoil";
 import { TypeDescriptionList } from "../config";
 import { TypeCard } from "../components/main/TypeCard";
+import { useRecoilState } from "recoil";
 
 export default function MainPage() {
-  const user = useRecoilValue(userState);
+  //const user = useRecoilValue(userState);
+
+  const [user, setUser] = useRecoilState(userState);
+
   return (
     <Layout>
       <Stack
