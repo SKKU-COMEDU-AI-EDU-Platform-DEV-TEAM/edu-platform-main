@@ -20,7 +20,10 @@ export default function QuizResultPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = (await axios.get(`/api/quiz/${week}/result`)).data;
+      const token = localStorage.getItem('token');
+
+      const response = (await axios.post(`/api/quiz/${week}/result`, { token: token })).data;
+      console.log(response.result);
       setQuiz(response.data);
       setResult(response.result);
       setIsLoading(false);
