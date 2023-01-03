@@ -19,12 +19,14 @@ export default function QuizPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if(!router.isReady) return;
+
       const response = (await axios.get(`/api/quiz/${week}`)).data;
       setQuiz(response.data);
       setIsLoading(false);
     };
     fetchData();
-  }, []);
+  }, [router.isReady]);
 
   const handleOnClick = async () => {
     const token = localStorage.getItem('token');
