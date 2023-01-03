@@ -6,7 +6,7 @@ courseJson = {
         { "id": 4, "name": "이상치", "size": 150, "week": 1 },
         { "id": 5, "name": "정량 데이터", "size": 150, "week": 2 },
         { "id": 6, "name": "정성 데이터", "size": 125, "week": 5 },
-        { "id": 7, "name": "회귀", "size": 230, "week": 3 },
+        { "id": 7, "name": "회귀", "size": 230, "week": 7 },
         { "id": 8, "name": "군집화", "size": 70, "week": 3 },
         { "id": 9, "name": "분류", "size": 70, "week": 15 },
         { "id": 10, "name": "확률", "size": 70, "week": 4 },
@@ -176,7 +176,7 @@ quizResultJson = {
     "totalQuizNum": 4,
     "correctQuizNum": 0,
     "userAnswer": [],
-    "correctAnswer": [3,1,4,3]
+    "correctAnswer": [2,0,3,2]
 }
 
 testJson = {
@@ -215,10 +215,21 @@ testJson = {
 }
 
 weekScoreJzon = {
-    "data": [1, 5, 3, 1, 4, 1, 8, 5, 3, 2, 1, 6, 4, 1]
+    "data": [1, 5, 3, 1, 4, 1, 8, 5, 3, 2, 1, 6, 4, 1, 8]
 }
 
 lectureJson = {
+    "state": "success",
+    "data": {
+        "title": "데이터 분석 방법론",
+        "videoTitle": "데이터 분석 방법론이란?",
+        "video": "/video.mp4",
+        "pdf": "/pdf.pdf"
+    }
+}
+
+lectureJson2 = {
+    "state": "success",
     "data": [
         {
             "title": "강의 이름",
