@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { mockupScore } from "../../recoil/mockupData";
+import { mockupScore } from "../../mockupData";
+
 type sendScoreData = {
   data: number[];
 };

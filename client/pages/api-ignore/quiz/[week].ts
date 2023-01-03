@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { mockupQuizList } from "../../../recoil/mockupData";
+import { mockupQuizList } from "../../../mockupData";
 import { QuizType } from "../../../types";
 type sendQuizData = {
   data: QuizType[];

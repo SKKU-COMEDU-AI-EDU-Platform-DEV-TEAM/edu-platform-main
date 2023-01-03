@@ -4,8 +4,23 @@ import * as d3 from "d3";
 import { Simulation, SimulationNodeDatum } from "d3-force";
 import uuid from "react-uuid";
 import { Box, Link } from "@chakra-ui/react";
-import { IBubbleChartProps, IBubbleChartState, Types } from "../../types";
+import { Types } from "../../types";
 import { schemePaired, schemeTableau10 } from "d3";
+
+interface IBubbleChartState {
+  data: Types.ForceData[];
+}
+interface IBubbleChartProps {
+  bubblesData: Types.Data[];
+  width: number;
+  height: number;
+  backgroundColor: string;
+  textFillColor: string;
+  minValue: number;
+  maxValue: number;
+  metaverse: string[];
+  type: number;
+}
 
 class BubbleChart extends React.Component<
   IBubbleChartProps,

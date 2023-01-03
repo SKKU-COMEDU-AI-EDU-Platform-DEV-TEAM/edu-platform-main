@@ -5,7 +5,22 @@ import { scaleLinear } from "@visx/scale";
 import { AreaClosed, Circle, LinePath } from "@visx/shape";
 import { Group } from "@visx/group";
 import { LEVEL } from "../../config";
-import { ChartProps, LineProps } from "../../types";
+
+interface LineProps {
+  data: number[];
+  color: string;
+}
+
+interface ChartProps {
+  width: number;
+  height: number;
+  margin: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
+}
 
 export const AreaAxis = (props: ChartProps & LineProps) => {
   const { width, height, margin, data } = props;

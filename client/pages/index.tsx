@@ -1,18 +1,13 @@
 import {
-  Box,
   Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Image,
-  Input,
-  Select,
-  Stack,
-  Text
+  Input
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { Component, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil";
 import { checkIsValid } from "../config";

@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { typeSelector, userState } from "../../recoil";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Type, TypeDescriptionType, User } from "../../types";
+import { TypeDescriptionType, User } from "../../types";
 import TestLayout from "../../components/TestLayout";
 
 export default function TestEndPage() {

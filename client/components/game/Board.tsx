@@ -2,11 +2,11 @@
 import { Box, Button, Icon, Img } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
-import { arr } from "../../config";
 import { bestScoreState, moveState } from "../../recoil";
 import Card from "./Card";
-import { AiTwotoneSound } from "react-icons/ai";
 import { MdMusicOff } from "react-icons/md";
+import { useRouter } from "next/router";
+
 
 type BoardProps = {
   cardIds: Array<number>;
@@ -15,11 +15,11 @@ type BoardProps = {
 function Board(props: BoardProps) {
   const [moves, setMoves] = useRecoilState<number>(moveState);
   const [bestScore, setBestScore] = useRecoilState<number>(bestScoreState);
-
   const [openCards, setOpenCards] = useState<Array<number>>([]);
   const [clearedCards, setClearedCards] = useState<Array<number>>([]);
   const [shouldDisableAllCards, setShouldDisableAllCards] =
     useState<boolean>(false);
+
   const timeout = useRef<NodeJS.Timeout>(setTimeout(() => {}));
 
   const disable = () => {
@@ -30,7 +30,7 @@ function Board(props: BoardProps) {
   };
 
   const checkCompletion = () => {
-    if (clearedCards.length === props.cardIds.length) {
+    if (clearedCards.length === props.cardIds.length && moves != 0) {
       const newBestScore = moves < bestScore ? moves : bestScore;
       setBestScore(newBestScore);
       setMoves(0);
@@ -69,7 +69,7 @@ function Board(props: BoardProps) {
   useEffect(() => {
     let timeout: NodeJS.Timeout = setTimeout(() => {});
     if (openCards.length === 2) {
-      timeout = setTimeout(evaluate, 300);
+      timeout = setTimeout(evaluate, 500);
     }
     return () => {
       clearTimeout(timeout);
@@ -87,7 +87,6 @@ function Board(props: BoardProps) {
   const checkIsInactive = (id: number) => {
     return clearedCards.includes(id);
   };
-  console.log(props.cardIds);
   return (
     <Box
       display={"grid"}
@@ -102,7 +101,6 @@ function Board(props: BoardProps) {
         return (
           <Card
             key={`card${i}`}
-            word={arr[i - 1]}
             id={i}
             isDisabled={shouldDisableAllCards}
             isInactive={checkIsInactive(i)}

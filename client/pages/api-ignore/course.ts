@@ -1,9 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import {
-  mockupBubbleChartData,
-  mockupMetaverseList
-} from "../../recoil/mockupData";
+import { mockupBubbleChartData, mockupMetaverseList } from "../../mockupData";
 import { Types } from "../../types";
 
 type sendWeekData = {

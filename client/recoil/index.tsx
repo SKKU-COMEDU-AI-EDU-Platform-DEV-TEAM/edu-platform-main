@@ -1,7 +1,7 @@
 import { atom, selector } from "recoil";
 import { Point, User } from "../types";
 import { v1 } from "uuid";
-import { mockupPoint, mockupUser } from "./mockupData";
+import { mockupPoint, mockupUser } from "../mockupData";
 import { TypeDescriptionList } from "../config";
 
 export const userState = atom<User>({

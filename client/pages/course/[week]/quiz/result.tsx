@@ -8,7 +8,7 @@ import CourseLayout from "../../../../components/CourseLayout";
 import axios from "axios";
 import { Accordion, Box, Button, Text } from "@chakra-ui/react";
 import QuizResult from "../../../../components/course/QuizResult";
-import { mockupQuizResult } from "../../../../recoil/mockupData";
+import { mockupQuizResult } from "../../../../mockupData";
 
 export default function QuizResultPage() {
   const router = useRouter();

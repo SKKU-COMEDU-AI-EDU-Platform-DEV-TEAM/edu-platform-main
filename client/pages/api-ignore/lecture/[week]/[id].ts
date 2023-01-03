@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { mockupLectureList } from "../../../../recoil/mockupData";
+import { mockupLectureList } from "../../../../mockupData";
 import { Lecture } from "../../../../types";
 
 export default function handler(

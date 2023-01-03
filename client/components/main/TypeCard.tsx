@@ -3,13 +3,15 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Center,
   Heading,
   Stack,
   Text
 } from "@chakra-ui/react";
-import { TypeCardType } from "../../types";
+import { TypeDescriptionType } from "../../types";
 
+interface TypeCardType extends TypeDescriptionType {
+  link: string;
+}
 export const TypeCard = (props: TypeCardType) => {
   const { type, description, link } = props;
   return (

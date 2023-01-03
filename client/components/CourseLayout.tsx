@@ -1,10 +1,12 @@
-import { Box, Button, Center, Link, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Link, Stack, Text } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { CourseLayoutProps, LayoutDefaultProps } from "../types";
+import { LayoutDefaultProps } from "../types";
 
+interface CourseLayoutProps {
+  title: string;
+  type: number;
+  metaverse: string;
+}
 export default function CourseLayout({
   children,
   ...props

@@ -1,8 +1,8 @@
-import { Box, Container, Img } from "@chakra-ui/react";
+import { Box, Img, Text } from "@chakra-ui/react";
 import classnames from "classnames";
+import { arr } from "../../config";
 
 type CardProps = {
-  word: string;
   onClick: (id: number) => void;
   id: number;
   isInactive: boolean;
@@ -14,6 +14,7 @@ function Card(props: CardProps) {
   const handleClick = () => {
     !props.isFlipped && !props.isDisabled && props.onClick(props.id);
   };
+
   return (
     <Box
       className={classnames("card", {
@@ -54,7 +55,7 @@ function Card(props: CardProps) {
         fontWeight={"bold"}
         fontSize={props.id < 5 ? 20 : 15}
       >
-        {props.word}
+        {arr[props.id - 1]}
       </Box>
     </Box>
   );

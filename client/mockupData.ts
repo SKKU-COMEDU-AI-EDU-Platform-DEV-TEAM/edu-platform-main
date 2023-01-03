@@ -6,7 +6,7 @@ import {
   Type,
   Types,
   User
-} from "../types";
+} from "./types";
 
 export const mockupUser: User = {
   userName: "userName",

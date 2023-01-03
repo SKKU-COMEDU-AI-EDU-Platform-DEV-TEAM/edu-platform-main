@@ -62,6 +62,7 @@ export const TypeDescriptionList: TypeDescriptionType[] = [
       "learner Type Description learner Type Description learner Type Description"
   }
 ];
+
 export const arr: string[] = [
   "군집화",
   "회귀",

@@ -4,8 +4,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  Select,
-  Stack
+  Select
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";

@@ -9,11 +9,13 @@ import {
   Stack,
   Text
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { quizScoreState } from "../../recoil";
-import { Id, QuizAnswer, QuizType } from "../../types";
-
+import { Id, QuizType } from "../../types";
+ interface QuizAnswer {
+   userAnswer: number;
+   correctAnswer: number;
+ }
 export default function QuizResult(props: Id & QuizType & QuizAnswer) {
   const [score, setQuizScore] = useRecoilState<number[]>(quizScoreState);
   const { id, question, definition, option, correctAnswer, userAnswer } = props;
