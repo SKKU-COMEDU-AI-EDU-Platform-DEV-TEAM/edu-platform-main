@@ -109,7 +109,7 @@ def login():
         #Access Token
         payload = {
             'id': idReceive,
-            'exp': datetime.datetime.now(KST) + datetime.timedelta(minutes=30) #추후 만료 처리 후 수정할 예정입니다.
+            'exp': datetime.datetime.now(KST) + datetime.timedelta(hours=5) #추후 만료 처리 후 수정할 예정입니다.
         }
         token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
         result['token'] = token
