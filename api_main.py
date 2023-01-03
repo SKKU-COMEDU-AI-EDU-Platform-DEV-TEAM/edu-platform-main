@@ -109,7 +109,7 @@ def login():
         #Access Token
         payload = {
             'id': idReceive,
-            'exp': datetime.datetime.now(KST) + datetime.timedelta(minutes=5)
+            'exp': datetime.datetime.now(KST) + datetime.timedelta(minutes=30) #추후 만료 처리 후 수정할 예정입니다.
         }
         token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
         result['token'] = token
@@ -237,11 +237,19 @@ def quiz(week):
                     if userQuizAnswer[i] == dummy.quizResultJson['correctAnswer'][i]:
                         correctAnswerCnt += 1
                 
-                newQuizResult = Quiz_result(usrId = queryRes.userId, 
-                                            qResultWeek = week,
-                                            qResultScore = correctAnswerCnt)
-                db.session.add(newQuizResult)
-                db.session.commit()
+                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizResultWeek == week).first()
+
+                #db 쿼리 결과 퀴즈 응시 내역이 존재하면 퀴즈 점수를 업데이트 하고 존재하지 않으면 데이터를 추가합니다.
+                if quizResultQueryRes is None:
+                    newQuizResult = Quiz_result(usrId = queryRes.userId, 
+                                                qResultWeek = week,
+                                                qResultScore = correctAnswerCnt)
+                    db.session.add(newQuizResult)
+                    db.session.commit()
+                
+                else:
+                    quizResultQueryRes.quizResultScore = correctAnswerCnt
+                    db.session.commit()
 
                 return jsonify({'state':'success'})   
             else:
@@ -274,21 +282,89 @@ def quiz(week):
 
 
 #[GET] 퀴즈 결과 api
-@app.route('/api/quiz/<int:week>/result', methods=['GET'])
+#[POST] 퀴즈 결과 with JWT api
+@app.route('/api/quiz/<int:week>/result', methods=['GET', 'POST'])
 def quizResult(week):
-    #현재는 더미 데이터를 전송합니다. 추후 db 쿼리문을 작성하면 삭제바랍니다.
-    dummy.quizResultJson['correctQuizNum'] = userCorrectAnswerCntDummy
-    dummy.quizResultJson['userAnswer'] = userAnswerDummy
+    if request.method == 'GET':
+        #현재는 더미 데이터를 전송합니다. 추후 db 쿼리문을 작성하면 삭제바랍니다.
+        dummy.quizResultJson['correctQuizNum'] = userCorrectAnswerCntDummy
+        dummy.quizResultJson['userAnswer'] = userAnswerDummy
 
-    return jsonify(dummy.quizResultJson)
+        return jsonify(dummy.quizResultJson)
+    
+    elif request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
 
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizResultWeek == week).first()
+
+                resultJson = {}
+                resultJson['state'] = 'success'
+                #현재는 7주차를 기준으로 전송합니다.
+                resultJson['data'] = dummy.quizResultJson['data']
+
+                resultJson['result'] = {}
+                resultJson['result']['totalQuizNum'] = 4
+                resultJson['result']['correctQuizNum'] = quizResultQueryRes.quizResultScore
+                resultJson['result']['userAnswer'] = [0, 0, 0, 0] #0부터 시작
+                resultJson['result']['correctAnswer'] = [2, 0, 3, 2] #0부터 시작
+
+                return jsonify(resultJson) 
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+    else:
+        return jsonify({'state':'fail'})
+    
 
 
 #[GET] 영상pdf 데이터 api
-@app.route('/api/lecture/<int:week>/<int:id>', methods=['GET'])
+#[POST] 영상pdf 데이터 with JWT api
+@app.route('/api/lecture/<int:week>/<int:id>', methods=['GET', 'POST'])
 def lecture(week, id):
-    #현재는 더미 데이터를 전송합니다.
-    return jsonify(dummy.lectureJson)
+    if request.method == 'GET':
+        #현재는 더미 데이터를 전송합니다.
+        return jsonify(dummy.lectureJson)
+
+    elif request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                #현재는 더미 데이터를 전송합니다.
+                return jsonify(dummy.lectureJson) 
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+    else:
+        return jsonify({'state':'fail'})
 
 
 
@@ -401,9 +477,16 @@ def testresult():
 
 
 
-#주차별 퀴즈 점수 api
+#[GET] 주차별 퀴즈 점수 api
 @app.route('/api/weekScore', methods=['GET'])
 def weekscore():
+    return jsonify(dummy.weekScoreJzon)
+
+
+
+#[GET] 주차별 퀴즈 점수2 api
+@app.route('/api/score', methods=['GET'])
+def weekscore2():
     return jsonify(dummy.weekScoreJzon)
 
 
@@ -414,14 +497,8 @@ def curl():
     if request.method == 'POST':
         reqJson = request.get_json()
 
-        queryRes = db.session.query(User).filter(User.userEmail == reqJson['id']).first()
-        print(queryRes)
-
-        if queryRes is not None:
-            queryRes.userKolbType = 'userKolbType'
-            queryRes.userLearningLevel = 5
-            queryRes.userLearnerType = 0
-            db.session.commit()
+        quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == reqJson['userId'], Quiz_result.quizResultWeek == reqJson['week']).first()
+        print(quizResultQueryRes)
 
         return jsonify({'state':'success'})
     else:
