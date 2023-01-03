@@ -17,18 +17,28 @@ export default function LecturePage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if(!router.isReady) return;
+
+      const token = localStorage.getItem('token');
+
       const response = (
         await axios.post(`/api/lecture/${week}/${id}`, {
-          headers: {
-            "Content-Type": `application/json`
-          }
+          token: token
         })
       ).data;
-      setContent(response);
+
+      const updatedLecture = {
+        title: response.data.title,
+        videoTitle: response.data.videoTitle,
+        video: response.data.video,
+        pdf: response.data.pdf
+      };
+
+      setContent(updatedLecture);
       setIsLoading(false);
     };
     fetchData();
-  }, []);
+  }, [router.isReady]);
 
   return (
     <Layout>
