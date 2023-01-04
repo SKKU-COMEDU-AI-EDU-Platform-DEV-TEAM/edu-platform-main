@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 from sklearn import tree
-# from os import system                
-# system("pip install graphviz")  # 필요 시에 사용해 주세요!
 
 def encodingEI(x):
   if x == '외향 (Extraversion)':
