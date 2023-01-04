@@ -54,7 +54,6 @@ def signup():
     idReceive = jsonReceive['email']
     pwReceive = jsonReceive['pw']
     nicknameReceive = jsonReceive['name']
-    mbtiReceive = jsonReceive['mbti']
 
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
@@ -64,7 +63,7 @@ def signup():
                     usrType = 0,
                     cDate = datetime.datetime.now(KST), 
                     uDate = datetime.datetime.now(KST), 
-                    mbti = mbtiReceive,
+                    mbti = None,
                     kolbType = None, 
                     lrnLvl = None, 
                     interestTag = None,
