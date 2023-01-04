@@ -11,8 +11,8 @@ import {
 export const mockupUser: User = {
   userName: "userName",
   userId: 1,
-  userEmail: "nimod1234@g.skku.edu",
-  type: 3
+  userEmail: "jeongsoo@g.skku.edu",
+  type: 2
 };
 
 export const mockupPoint: Point = {

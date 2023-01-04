@@ -1,3 +1,4 @@
+import styles from "./Quiz.module.css";
 import {
   AccordionButton,
   AccordionIcon,
@@ -42,7 +43,7 @@ export default function QuizResult(props: Id & QuizType & QuizAnswer) {
         </AccordionButton>
       </h2>
       <AccordionPanel>
-        <Text>* Definition: {definition}</Text>
+        <div className='quizDefinition'>* Definition: {definition}</div>
         <RadioGroup pt={4} defaultValue={userAnswer.toString()}>
           <Stack spacing={5}>
             <>
