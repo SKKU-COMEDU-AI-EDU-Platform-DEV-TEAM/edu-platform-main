@@ -3,7 +3,8 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input
+  Input,
+  Text
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -63,13 +64,22 @@ export default function SignupPage() {
   return (
     <EnterLayout>
       <>
+        <Text
+          fontSize={40}
+          color="rgb(144, 187, 144)"
+          textAlign={"center"}
+          fontWeight="bold"
+          pb={5}
+        >
+          SIGN UP
+        </Text>
         <FormControl mb={1} isRequired isInvalid={isEmailInvalid}>
           <FormLabel fontSize={16}>Email</FormLabel>
           <Input
             type="email"
             value={email}
             onChange={handleEmailInputChange}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -83,7 +93,7 @@ export default function SignupPage() {
             type="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -94,7 +104,7 @@ export default function SignupPage() {
             type="password"
             value={pw}
             onChange={handlePwInputChange}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -111,7 +121,7 @@ export default function SignupPage() {
             type="password"
             value={confirmPw}
             onChange={(e) => setConfirmPw(e.target.value)}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -125,8 +135,18 @@ export default function SignupPage() {
           bgColor=" rgb(144, 187, 144)"
           _hover={{ bgColor: "green" }}
           onClick={() => mutate()}
+          mb={5}
         >
           Sign Up
+        </Button>
+        <Button
+          height="40px"
+          width="100%"
+          borderRadius={"5px"}
+          bgColor="#DD9D9"
+          onClick={() => router.push("/")}
+        >
+          Login
         </Button>
       </>
     </EnterLayout>

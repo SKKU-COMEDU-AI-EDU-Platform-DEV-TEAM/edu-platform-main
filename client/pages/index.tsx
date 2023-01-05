@@ -3,7 +3,8 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input
+  Input,
+  Text
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -57,13 +58,22 @@ export default function Home() {
   return (
     <EnterLayout>
       <>
-        <FormControl mb={8} isRequired isInvalid={isEmailInvalid}>
+        <Text
+          fontSize={40}
+          color="rgb(144, 187, 144)"
+          fontWeight="bold"
+          textAlign={"center"}
+          pb={5}
+        >
+          LOGIN
+        </Text>
+        <FormControl mb={4} isRequired isInvalid={isEmailInvalid}>
           <FormLabel fontSize={16}>Email</FormLabel>
           <Input
             type="email"
             value={email}
             onChange={handleEmailInputChange}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -71,13 +81,13 @@ export default function Home() {
             <FormErrorMessage>Email address is invalid.</FormErrorMessage>
           )}
         </FormControl>
-        <FormControl mb={14} isRequired>
+        <FormControl mb={10} isRequired>
           <FormLabel fontSize={16}>Password</FormLabel>
           <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
