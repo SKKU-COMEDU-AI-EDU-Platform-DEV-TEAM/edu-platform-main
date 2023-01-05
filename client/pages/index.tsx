@@ -36,10 +36,9 @@ export default function Home() {
       email: email,
       pw: password
     });
-    console.log("data", data);
     return data;
   };
-  const { mutate, data } = useMutation(login, {
+  const { mutate } = useMutation(login, {
     onMutate: () => {
       if (checkIsValid(emailReg, email)) {
         return;
