@@ -150,7 +150,22 @@ def main():
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
-                return jsonify({'state':'success', 'type':queryRes.userLearnerType})   
+                resultJson = {}
+
+                kolbProba = queryRes.userKolbProbability
+                kolbProba = list(kolbProba.split(','))
+                kolbProba = list(map(int, kolbProba))
+
+                rader = queryRes.userMbtiTest
+                rader = list(rader.split(','))
+                rader = list(map(int, rader))
+
+                resultJson['state'] = 'success'
+                resultJson['mbti'] = queryRes.userMbti
+                resultJson['kolbProba'] = kolbProba
+                resultJson['rader'] = rader
+
+                return jsonify(resultJson)
             else:
                 return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
 
