@@ -12,20 +12,31 @@ import {
   PopoverTrigger,
   Portal,
   Stack,
-  Text
+  Text,
+  StackDivider
 } from "@chakra-ui/react";
 import { GoPencil } from "react-icons/go";
 import { useRecoilValue } from "recoil";
 import { Avatar } from "@chakra-ui/react";
-import NextLink from "next/link";
-import { useState } from "react";
 import { useRouter } from "next/router";
-import { typeSelector, userState } from "../../recoil";
+import { stepSelector, typeSelector, userState } from "../../recoil";
+import { TypeDescriptionType, User } from "../../types";
 
 export default function Header() {
-  const user = useRecoilValue(userState);
-  const type = useRecoilValue(typeSelector);
   const router = useRouter();
+  const user = useRecoilValue<User | null>(userState);
+  const type = useRecoilValue<TypeDescriptionType>(typeSelector);
+  const step = useRecoilValue<string[]>(stepSelector);
+
+  const link =
+    user!.type == 1
+      ? "/video.png"
+      : user!.type == 2
+      ? "/quiz.png"
+      : user!.type == 3
+      ? "/game.png"
+      : "/metaverse.png";
+
   return (
     <Center
       as="nav"
@@ -60,9 +71,14 @@ export default function Header() {
                   p={[4]}
                   color="rgb(144, 187, 144)"
                 >
-                  <Avatar size="xs" bg="gray.500" mr={"2"} />
+                  <Avatar
+                    size="xs"
+                    mr={"2"}
+                    bg="rgb(144, 187, 144)"
+                    src={link}
+                  />
                   <Text fontSize={"md"} fontWeight={600} color="gray.500">
-                    {user.userName}
+                    {user!.userName}
                   </Text>
                 </Button>
               </PopoverTrigger>
@@ -72,16 +88,26 @@ export default function Header() {
                   <PopoverHeader fontWeight={"bold"}>회원정보</PopoverHeader>
                   <PopoverCloseButton />
                   <PopoverBody>
-                    <Text
-                      fontWeight={"bold"}
-                      fontSize={15}
-                      color=" rgb(144, 187, 144)"
+                    <Stack
+                      divider={<StackDivider />}
+                      direction={"row"}
+                      display="flex"
+                      justifyContent="space-between"
                     >
-                      {type.type} 유형
-                    </Text>
-                    <Text fontWeight={"bold"} fontSize={15}>
-                      {user.userEmail}
-                    </Text>
+                      <Text
+                        fontWeight={"bold"}
+                        fontSize={14}
+                        color=" rgb(144, 187, 144)"
+                      >
+                        {type.type} 유형
+                      </Text>
+                      <Text fontWeight={"bold"} fontSize={14}>
+                        {step[0]}
+                      </Text>
+                      <Text fontWeight={"bold"} fontSize={14}>
+                        {user!.userEmail}
+                      </Text>
+                    </Stack>
                   </PopoverBody>
                   <PopoverFooter
                     display={"flex"}

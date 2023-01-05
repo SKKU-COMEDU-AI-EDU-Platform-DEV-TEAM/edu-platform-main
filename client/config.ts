@@ -127,7 +127,7 @@ export const MBTI = [
 ];
 export const numList = [5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5];
 
-export const lectureList = [
+export const lectureList: string[][] = [
   [
     "Python 기초",
     "Python을 이용한 코딩 경험이 거의 없는 학습자에게 적합합니다. Python을 활용해봤거나 기본 문법을 숙지했다면 다음 단계인 자료구조부터 학습하시길 추천합니다!"
