@@ -4,16 +4,16 @@ import Layout from "../components/Layout";
 import { CourseDescription } from "../components/main/CourseDescription";
 import { QuizGraph } from "../components/main/QuizGraph";
 import { UserDescription } from "../components/main/UserDescription";
-import { useRecoilValue } from "recoil";
 import { userState } from "../recoil";
 import { TypeDescriptionList } from "../config";
 import { TypeCard } from "../components/main/TypeCard";
 import { useRecoilState } from "recoil";
+import { User } from "../types";
 
 export default function MainPage() {
   //const user = useRecoilValue(userState);
 
-  const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useRecoilState<User | null>(userState);
 
   return (
     <Layout>
@@ -28,7 +28,7 @@ export default function MainPage() {
           <TypeDescription />
           <CourseDescription />
         </Stack>
-        {user.type == 2 && <QuizGraph />}
+        {user!.type == 2 && <QuizGraph />}
         <Text
           color="rgb(144, 187, 144)"
           textAlign={"center"}
@@ -39,28 +39,28 @@ export default function MainPage() {
           다른 학습 유형도 살펴보기
         </Text>
         <SimpleGrid spacing={20} templateColumns="repeat(3, 1fr)">
-          {user.type != 1 && (
+          {user!.type != 1 && (
             <TypeCard
               type={TypeDescriptionList[0].type}
               description={TypeDescriptionList[0].description}
               link="/video.png"
             />
           )}
-          {user.type != 2 && (
+          {user!.type != 2 && (
             <TypeCard
               type={TypeDescriptionList[1].type}
               description={TypeDescriptionList[1].description}
               link="/quiz.png"
             />
           )}
-          {user.type != 3 && (
+          {user!.type != 3 && (
             <TypeCard
               type={TypeDescriptionList[2].type}
               description={TypeDescriptionList[2].description}
               link="/game.png"
             />
           )}
-          {user.type != 4 && (
+          {user!.type != 4 && (
             <TypeCard
               type={TypeDescriptionList[3].type}
               description={TypeDescriptionList[3].description}

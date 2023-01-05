@@ -1,19 +1,4 @@
-import {
-  Lecture,
-  Point,
-  QuizResultType,
-  QuizType,
-  Type,
-  Types,
-  User
-} from "./types";
-
-export const mockupUser: User = {
-  userName: "userName",
-  userId: 1,
-  userEmail: "nimod1234@g.skku.edu",
-  type: 3
-};
+import { Lecture, Point, QuizResultType, QuizType, Type, Types } from "./types";
 
 export const mockupPoint: Point = {
   level: 10,
@@ -21,8 +6,6 @@ export const mockupPoint: Point = {
 };
 
 export const mockupScore: number[] = [1, 5, 3, 1, 4, 1, 8, 5, 3, 2, 1, 6, 4, 1];
-
-export const mockupType: Type = { type: 2 };
 
 export const mockupQuestionList: string[] = [
   "학습 성향 분석 질문1",

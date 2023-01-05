@@ -22,24 +22,7 @@ export const emailReg = new RegExp("^[a-zA-Z0-9]+@[a-zA-Z0-9.]+$");
 export const pwReg = new RegExp(
   "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*#?&])[A-Za-z0-9@$!%*#?&]{6,}$"
 );
-export const mbtiArr = [
-  "ISTJ",
-  "ISFJ",
-  "INFJ",
-  "INTJ",
-  "ISTP",
-  "ISFP",
-  "INFP",
-  "INTP",
-  "ESTJ",
-  "ESFJ",
-  "ENFJ",
-  "ENTJ",
-  "ESTP",
-  "ESFP",
-  "ENFP",
-  "ENTP"
-];
+
 export const TypeDescriptionList: TypeDescriptionType[] = [
   {
     type: "강의 듣는",

@@ -4,7 +4,7 @@ import { LayoutDefaultProps } from "../types";
 
 interface CourseLayoutProps {
   title: string;
-  type: number;
+  type?: number;
   metaverse: string;
 }
 export default function CourseLayout({

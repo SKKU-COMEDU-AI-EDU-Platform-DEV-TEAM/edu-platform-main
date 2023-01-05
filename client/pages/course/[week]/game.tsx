@@ -12,7 +12,7 @@ import { VStack } from "@chakra-ui/react";
 export default function GamePage() {
   const router = useRouter();
   const { week } = router.query;
-  const user = useRecoilValue<User>(userState);
+  const user = useRecoilValue<User | null>(userState);
   const [cardIds, setCardIds] = useState<number[]>([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function GamePage() {
     <Layout>
       <CourseLayout
         title={`${week}주차 메모리 게임`}
-        type={user.type}
+        type={user!.type}
         metaverse={""}
       >
         <VStack>

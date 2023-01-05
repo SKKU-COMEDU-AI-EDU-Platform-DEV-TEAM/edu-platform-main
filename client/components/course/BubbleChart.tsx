@@ -19,7 +19,7 @@ interface IBubbleChartProps {
   minValue: number;
   maxValue: number;
   metaverse: string[];
-  type: number;
+  type?: number;
 }
 
 class BubbleChart extends React.Component<

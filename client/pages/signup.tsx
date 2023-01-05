@@ -3,14 +3,13 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input,
-  Select
+  Input
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import EnterLayout from "../components/EnterLayout";
-import { checkIsValid, emailReg, mbtiArr, pwReg } from "../config";
+import { checkIsValid, emailReg, pwReg } from "../config";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,7 +18,6 @@ export default function SignupPage() {
   const [name, setName] = useState<string>("");
   const [pw, setPw] = useState<string>("");
   const [confirmPw, setConfirmPw] = useState<string>("");
-  const [mbti, setMBTI] = useState<string>("ISTJ");
   const [isEmailInvalid, setEmailInvalid] = useState<boolean>(false);
   const [isPwInvalid, setPwInvalid] = useState<boolean>(false);
   const isConfirmPwInvalid: boolean = pw != confirmPw;
@@ -48,8 +46,7 @@ export default function SignupPage() {
       await axios.post("api/signup", {
         email: email,
         pw: pw,
-        name: name,
-        mbti: mbti
+        name: name
       })
     ).data;
     //error handling
@@ -113,22 +110,6 @@ export default function SignupPage() {
           {isConfirmPwInvalid && (
             <FormErrorMessage>Pw does not match.</FormErrorMessage>
           )}
-        </FormControl>
-        <FormControl mb={10} isRequired>
-          <FormLabel fontSize={16}>MBTI</FormLabel>
-          <Select
-            borderRadius="2xl"
-            borderWidth={"2px"}
-            borderColor={"rgb(144, 187, 144)"}
-            placeholder="ISTJ"
-            onChange={(e) => setMBTI(e.target.value)}
-          >
-            {mbtiArr.map((mbti) => (
-              <option aria-label={mbti} key={mbti}>
-                {mbti}
-              </option>
-            ))}
-          </Select>
         </FormControl>
         <Button
           width="100%"
