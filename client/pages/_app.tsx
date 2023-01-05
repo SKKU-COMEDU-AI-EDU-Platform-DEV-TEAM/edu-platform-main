@@ -8,7 +8,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
+    queries: {npm i react-query
       retry: 0,
       suspense: true
     }

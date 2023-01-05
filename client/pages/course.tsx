@@ -1,25 +1,9 @@
-import {
-  Box,
-  Progress,
-  Stack,
-  StackDivider,
-  Text,
-  Link,
-  Button
-} from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil";
-import {
-  Content,
-  Id,
-  LayoutDefaultProps,
-  Types,
-  User,
-  WeekData
-} from "../types";
+import { Types, User } from "../types";
 import Layout from "../components/Layout";
 import CourseLayout from "../components/CourseLayout";
 import BubbleChart from "../components/course/BubbleChart";

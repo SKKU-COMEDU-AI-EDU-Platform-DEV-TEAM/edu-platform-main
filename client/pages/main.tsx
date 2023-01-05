@@ -4,7 +4,6 @@ import Layout from "../components/Layout";
 import { CourseDescription } from "../components/main/CourseDescription";
 import { QuizGraph } from "../components/main/QuizGraph";
 import { UserDescription } from "../components/main/UserDescription";
-import { useRecoilValue } from "recoil";
 import { userState } from "../recoil";
 import { TypeDescriptionList } from "../config";
 import { TypeCard } from "../components/main/TypeCard";
