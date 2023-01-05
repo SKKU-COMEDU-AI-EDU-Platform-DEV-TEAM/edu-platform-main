@@ -1,7 +1,13 @@
 import { Box, Image, Stack, Text } from "@chakra-ui/react";
 import { LayoutDefaultProps } from "../types";
 
-export default function TestLayout({ children }: LayoutDefaultProps) {
+type Title = {
+  title: string;
+};
+export default function TestLayout({
+  children,
+  title
+}: LayoutDefaultProps & Title) {
   return (
     <Box
       position="fixed"
@@ -25,7 +31,7 @@ export default function TestLayout({ children }: LayoutDefaultProps) {
           mt={4}
           textAlign={"center"}
         >
-          학습 성향 분석을 위한 설문
+          {title}
         </Text>
         <Image w={"7%"} objectFit="contain" src="/SKKU.png" alt="SKKU" />
       </Stack>
