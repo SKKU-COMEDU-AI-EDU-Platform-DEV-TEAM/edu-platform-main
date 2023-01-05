@@ -13,6 +13,7 @@ import { userState } from "../recoil";
 import { checkIsValid } from "../config";
 import EnterLayout from "../components/EnterLayout";
 import { User } from "../types";
+import { useMutation } from "react-query";
 
 export default function Home() {
   const router = useRouter();
@@ -30,25 +31,29 @@ export default function Home() {
     setEmailInvalid(checkIsValid(emailReg, inputValue));
   };
 
-  const handleLoginOnClick = async () => {
-    if (checkIsValid(emailReg, email)) {
-      return;
-    }
-    //login
-
-    const loginRes = (
-      await axios.post("api/login", { email: email, pw: password })
-    ).data;
-
-    if (loginRes.state === "success") {
-      setUser(loginRes.info);
-
-      if (loginRes.info.type === null) router.push("/test");
-      else router.push("/main");
-    } else {
-      alert(loginRes.msg);
-    }
+  const login = async () => {
+    const { data } = await axios.post("api/login", {
+      email: email,
+      pw: password
+    });
+    console.log("data", data);
+    return data;
   };
+  const { mutate, data } = useMutation(login, {
+    onMutate: () => {
+      if (checkIsValid(emailReg, email)) {
+        return;
+      }
+    },
+    onSuccess: (data) => {
+      setUser(data.info);
+      if (data.info.type === null) router.push("/test");
+      else router.push("/main");
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
 
   return (
     <EnterLayout>
@@ -83,7 +88,7 @@ export default function Home() {
           borderRadius={"5px"}
           bgColor=" rgb(144, 187, 144)"
           _hover={{ bgColor: "green" }}
-          onClick={handleLoginOnClick}
+          onClick={() => mutate()}
           mb={5}
         >
           Login
