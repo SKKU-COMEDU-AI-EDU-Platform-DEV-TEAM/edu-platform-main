@@ -11,22 +11,18 @@ export default function TestEndPage() {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user, setUser] = useRecoilState<User>(userState);
+  const [user, setUser] = useRecoilState<User | null>(userState);
   const type = useRecoilValue<TypeDescriptionType>(typeSelector);
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem('token');
       const response = (
-        await axios.post("/api/testResult", { token: token })
+        await axios.post("/api/testResult", { token: user!.token })
       ).data;
-      const updatedUser = {
-        userName: user.userName,
-        userId: user.userId,
-        userEmail: user.userEmail,
+      setUser({
+        ...user,
         type: response.type
-      };
-      setUser(updatedUser);
+      });
       setIsLoading(false);
     };
     fetchData();
@@ -47,7 +43,7 @@ export default function TestEndPage() {
           consequatur. Esse quidem quam in quia! Nisi pariatur sequi illum?
         </Container>
         <Container maxW="95%" fontSize={23} centerContent mt={10}>
-          {user.userName}님은 {type.type} 유형!
+          {user!.userName}님은 {type.type} 유형!
           <br />
           {type.description}.
         </Container>

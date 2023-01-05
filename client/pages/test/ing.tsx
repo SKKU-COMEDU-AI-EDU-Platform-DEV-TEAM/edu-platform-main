@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  Radio,
-  RadioGroup,
   Slider,
   SliderFilledTrack,
   SliderMark,
@@ -15,6 +13,9 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import TestLayout from "../../components/TestLayout";
+import { User } from "../../types";
+import { useRecoilState } from "recoil";
+import { userState } from "./../../recoil/index";
 
 export default function TestingPage() {
   const router = useRouter();
@@ -22,6 +23,8 @@ export default function TestingPage() {
   const [qList, setQList] = useState<string[]>([]);
   const [mbtiValue, setmbtiValue] = useState<number[]>([5, 5, 5, 5]);
   const [typeValue, setTypeValue] = useState<number[]>([]);
+
+  const [user, setUser] = useRecoilState<User | null>(userState);
   const mbti = [
     ["I", "E"],
     ["S", "N"],
@@ -48,10 +51,12 @@ export default function TestingPage() {
       return;
     }
 
-    const token = localStorage.getItem('token');
-
     const response = (
-      await axios.post("/api/test", { type: typefiltered, mbti: mbtiValue, token: token })
+      await axios.post("/api/test", {
+        type: typefiltered,
+        mbti: mbtiValue,
+        token: user!.token
+      })
     ).data;
     //error handling
     router.push("/test/end");
@@ -125,16 +130,20 @@ export default function TestingPage() {
                 <SliderMark value={0.1} {...labelStyles} fontWeight="bold">
                   0
                 </SliderMark>
-                {numList.slice(0, 9).map((num) => ( //수정
-                  <SliderMark
-                    key={`num${num}`}
-                    value={num + 0.1}
-                    {...labelStyles}
-                  >
-                    {num}
-                  </SliderMark>
-                ))}
-                <SliderMark value={10.1} {...labelStyles} fontWeight="bold"> 
+                {numList.slice(0, 9).map(
+                  (
+                    num //수정
+                  ) => (
+                    <SliderMark
+                      key={`num${num}`}
+                      value={num + 0.1}
+                      {...labelStyles}
+                    >
+                      {num}
+                    </SliderMark>
+                  )
+                )}
+                <SliderMark value={10.1} {...labelStyles} fontWeight="bold">
                   10
                 </SliderMark>
                 <SliderMark

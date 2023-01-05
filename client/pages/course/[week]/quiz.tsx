@@ -14,12 +14,12 @@ export default function QuizPage() {
   const { week } = router.query;
   const [quiz, setQuiz] = useState<QuizType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const user = useRecoilValue<User>(userState);
+  const user = useRecoilValue<User | null>(userState);
   const score = useRecoilValue<number[]>(quizScoreState);
 
   useEffect(() => {
     const fetchData = async () => {
-      if(!router.isReady) return;
+      if (!router.isReady) return;
 
       const response = (await axios.get(`/api/quiz/${week}`)).data;
       setQuiz(response.data);
@@ -29,17 +29,15 @@ export default function QuizPage() {
   }, [router.isReady]);
 
   const handleOnClick = async () => {
-    const token = localStorage.getItem('token');
-
-    const response = (await axios.post(`/api/quiz/${week}`, { data: score, token: token }))
-      .data;
-
+    const response = (
+      await axios.post(`/api/quiz/${week}`, { data: score, token: user!.token })
+    ).data;
     //error handling
     router.push(`/course/${week}/quiz/result`);
   };
   return (
     <Layout>
-      <CourseLayout title={`${week}주차 퀴즈`} type={user.type} metaverse={""}>
+      <CourseLayout title={`${week}주차 퀴즈`} type={user!.type} metaverse={""}>
         <>
           <Accordion defaultIndex={[0]} allowMultiple>
             <>

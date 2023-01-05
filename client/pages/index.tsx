@@ -12,10 +12,11 @@ import { useRecoilState } from "recoil";
 import { userState } from "../recoil";
 import { checkIsValid } from "../config";
 import EnterLayout from "../components/EnterLayout";
+import { User } from "../types";
 
 export default function Home() {
   const router = useRouter();
-  const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useRecoilState<User | null>(userState);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -38,23 +39,14 @@ export default function Home() {
     const loginRes = (
       await axios.post("api/login", { email: email, pw: password })
     ).data;
-    
-    if(loginRes["state"] === "success"){
-      const updatedUser = {
-        userName: loginRes.info.userName,
-        userId: loginRes.info.userId,
-        userEmail: loginRes.info.userEmail,
-        type: (loginRes.info.type === null) ? 1 : loginRes.info.type
-      };
-      setUser(updatedUser);
 
-      localStorage.setItem("token", loginRes["token"]);
+    if (loginRes.state === "success") {
+      setUser(loginRes.info);
 
-      if(loginRes.info.type === null) router.push("/test");
+      if (loginRes.info.type === null) router.push("/test");
       else router.push("/main");
-    }
-    else{
-      alert(loginRes["msg"]);
+    } else {
+      alert(loginRes.msg);
     }
   };
 

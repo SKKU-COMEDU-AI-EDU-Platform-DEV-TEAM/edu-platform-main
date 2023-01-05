@@ -1,11 +1,12 @@
 export interface User extends Type {
-  userName: string;
-  userId: number;
-  userEmail: string;
+  userName?: string;
+  userId?: number;
+  userEmail?: string;
+  token?: string;
 }
 
 export interface Type {
-  type: number;
+  type?: number;
 }
 
 export interface TypeDescriptionType {
