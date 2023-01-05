@@ -5,12 +5,14 @@ import os
 import datetime
 import hashlib
 import jwt
-from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
+from model import User, Learning_contents, Quiz, Quiz_result, Learning_check
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 import random
 from decisionTree import clf
 import dummy
+import userTestQuestion
+import numpy as np
 
 
 load_dotenv()
@@ -64,12 +66,15 @@ def signup():
                     cDate = datetime.datetime.now(KST), 
                     uDate = datetime.datetime.now(KST), 
                     mbti = None,
-                    kolbType = None, 
+                    mbtiTest = None,
+                    kolbType = None,
+                    kolbProba = None,
+                    lrnStep = None,
                     lrnLvl = None, 
-                    interestTag = None,
                     lrnType = None, 
                     gamiLvl = 0, 
-                    gamiExp = 0)
+                    gamiExp = 0,
+                    usrTestTry = 0)
 
     db.session.add(newUser)
     db.session.commit()
@@ -93,17 +98,13 @@ def login():
     if queryRes is not None:
         result = {}
         result['state'] = 'success'
-        #result['userName'] = queryRes.userNickname
-        #result['userId'] = queryRes.userId
-        #result['userEmail'] = queryRes.userEmail
-        #result['type'] = queryRes.userLearnerType
 
-        #test
         result['info'] = {}
         result['info']['userName'] = queryRes.userNickname
         result['info']['userId'] = queryRes.userId
         result['info']['userEmail'] = queryRes.userEmail
         result['info']['type'] = queryRes.userLearnerType
+        result['info']['step'] = queryRes.userLearningStep
 
         #Access Token
         payload = {
@@ -438,6 +439,156 @@ def test():
 
 
 
+#[POST] 학습자 유형 판단 설문 시도 횟수 api
+@app.route('/api/testReady', methods=['POST'])
+def testReady():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                resultJson = {}
+                resultJson['state'] = 'success'
+                resultJson['type'] = queryRes.usrTestTry
+                return jsonify(resultJson)
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 학습자 유형 판단 설문 MBTI api
+@app.route('/api/testMbti', methods=['POST'])
+def testMbti():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                mbti = reqJson["mbti"]
+
+                mbtiTest = str(mbti)
+                mbtiTest = mbtiTest[1:len(mbtiTest)-1].replace(' ','')
+
+                kolbTypes = ['Divergers', 'Assimilators', 'Convergers', 'Accommodators'] #분산자, 융합자, 수렴자, 적응자
+                userKolbTypeNum = clf.predict([mbti])[0]
+                userKolbType = kolbTypes[userKolbTypeNum - 1]
+
+                lernerTypes = [4, 3, 2, 1] #메타버스, 게이미피케이션, 퀴즈, 영상
+                userLearnerType = lernerTypes[userKolbTypeNum - 1]
+
+                kolbProba = np.round(clf.predict_proba([mbti])[0] * 100, 2)
+                kolbProba = str(kolbProba)
+                kolbProba = kolbProba[1:len(kolbProba)-1].replace(' ','')
+
+                queryRes.userMbti = ('I' if mbti[0] <= 5 else 'E') + ('S' if mbti[1] <= 5 else 'N') + ('T' if mbti[2] <= 5 else 'F') + ('P' if mbti[3] <= 5 else 'J')
+                queryRes.userMbtiTest = mbtiTest
+                queryRes.userKolbType = userKolbType
+                queryRes.userKolbProbability = kolbProba
+                queryRes.userLearnerType = userLearnerType
+                db.session.commit()
+
+                return jsonify({'state':'success'})   
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 학습자 유형 판단 설문 Step api
+@app.route('/api/testStep', methods=['POST'])
+def testStep():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                step = reqJson["step"]
+
+                queryRes.userLearningStep = step
+                db.session.commit()
+
+                return jsonify({'state':'success'})   
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 학습자 유형 판단 설문 Type api
+@app.route('/api/testType', methods=['POST'])
+def testType():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                level = reqJson["type"]
+
+                #값에 따라 버블 크기 지정해서 db에 넣어주는 코드 작성 필요합니다.
+
+                db.session.commit()
+
+                return jsonify({'state':'success'})   
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+
 #[GET] 학습자 유형 결과 api
 #[POST] 학습자 유형 결과 with JWT api
 @app.route('/api/testResult', methods=['GET', 'POST'])
@@ -459,6 +610,11 @@ def testresult():
                 resultJson = {}
                 resultJson['state'] = 'success'
                 resultJson['type'] = queryRes.userLearnerType
+                resultJson['step'] = queryRes.userLearningStep
+
+                queryRes.userTestTry = queryRes.userTestTry + 1
+                db.session.commit()
+
                 return jsonify(resultJson)
 
             else:
