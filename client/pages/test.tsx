@@ -6,14 +6,14 @@ import TestLayout from "../components/TestLayout";
 import { TypeDescriptionType, User } from "../types";
 import { typeSelector, userState } from "./../recoil/index";
 import { useMutation } from "react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TypeDescriptionList } from "../config";
 
 export default function TestPage() {
   const router = useRouter();
   const user = useRecoilValue<User | null>(userState);
   const type = useRecoilValue<TypeDescriptionType>(typeSelector);
-  const [userTry, setUserTry] = useState<number>(0);
+  const [userTry, setUserTry] = useState<number>();
 
   const testReady = async () => {
     const { data } = await axios.post("/api/testReady", {
@@ -21,11 +21,17 @@ export default function TestPage() {
     });
     return data;
   };
-  const { data } = useMutation(testReady, {
-    onSuccess: () => {
+  const { mutate } = useMutation(testReady, {
+    onSuccess: (data) => {
       setUserTry(data.userTry);
+    },
+    onError: (err) => {
+      alert(err);
     }
   });
+  useEffect(() => {
+    mutate();
+  }, []);
 
   return (
     <TestLayout title="학습자 유형 및 학습 진도 확인 테스트 안내">
@@ -62,7 +68,7 @@ export default function TestPage() {
               반갑습니다 {user!.userName}님!
               <br />
               {user!.userName}님은 학습자 유형 및 학습 진도 확인을 위한 테스트의{" "}
-              {userTry + 1}번째 시도를 앞두고 있습니다. <br />
+              {userTry! + 1}번째 시도를 앞두고 있습니다. <br />
               <br />
               학습자님은 현재 {type?.type} 유형이며, 테스트 결과에 따라 아래의
               네 유형 중 하나에 재배정되며, 새로운 학습 진도를 배정받게 됩니다.
