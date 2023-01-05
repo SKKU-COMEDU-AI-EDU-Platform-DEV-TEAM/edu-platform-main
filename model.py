@@ -465,4 +465,4 @@ class Ai_step_info(db.Model):
         self.content10 = content10
 
     def __repr__(self):
-        return '<User %r %r %r %r %r %r %r %r %r %r %r %r>' % (self.aiStepInfoId, self.userId, self.content1 self.content2, self.content3, self.content4, self.content5, self.content6, self.content7, self.content8, self.content9, self.content10)
+        return '<User %r %r %r %r %r %r %r %r %r %r %r %r>' % (self.aiStepInfoId, self.userId, self.content1, self.content2, self.content3, self.content4, self.content5, self.content6, self.content7, self.content8, self.content9, self.content10)
