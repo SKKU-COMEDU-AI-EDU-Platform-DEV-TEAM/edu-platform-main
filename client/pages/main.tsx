@@ -1,73 +1,95 @@
-import { SimpleGrid, Stack, Text } from "@chakra-ui/react";
-import { TypeDescription } from "../components/main/TypeDescription";
+import { Flex, Stack, Text } from "@chakra-ui/react";
 import Layout from "../components/Layout";
-import { CourseDescription } from "../components/main/CourseDescription";
 import { QuizGraph } from "../components/main/QuizGraph";
-import { UserDescription } from "../components/main/UserDescription";
-import { userState } from "../recoil";
-import { TypeDescriptionList } from "../config";
-import { TypeCard } from "../components/main/TypeCard";
-import { useRecoilState } from "recoil";
-import { User } from "../types";
+import { stepSelector, typeSelector, userState } from "../recoil";
+import { useRecoilValue } from "recoil";
+import { TypeDescriptionType, User } from "../types";
 
 export default function MainPage() {
-  //const user = useRecoilValue(userState);
-
-  const [user, setUser] = useRecoilState<User | null>(userState);
+  const user = useRecoilValue<User | null>(userState);
+  const type = useRecoilValue<TypeDescriptionType>(typeSelector);
+  const step = useRecoilValue<string[]>(stepSelector);
 
   return (
     <Layout>
       <Stack
         direction={"column"}
         w={{ base: "full", xl: "container.xl" }}
-        spacing={12}
+        spacing={5}
         mb="10"
       >
-        <Stack direction={"row"} justifyContent="space-between" pt={30}>
-          <UserDescription />
-          <TypeDescription />
-          <CourseDescription />
+        <Stack direction="row" justifyContent="space-between" gap={5} pt={30}>
+          <Flex
+            bg="#F5F5F5"
+            borderRadius="5px"
+            boxShadow={"base"}
+            fontWeight="bold"
+            textAlign="center"
+            direction={"column"}
+            p={10}
+            pt={30}
+            pb={30}
+          >
+            <Text fontSize={20} color="gray">
+              Kolb 학습 유형
+            </Text>
+            <Text mt={2} fontSize={30}>
+              {type.type}
+            </Text>
+          </Flex>
+          <Flex
+            bg="#F5F5F5"
+            borderRadius="5px"
+            boxShadow={"base"}
+            fontWeight="bold"
+            textAlign="center"
+            direction={"column"}
+            p={16}
+            pt={30}
+            pb={30}
+          >
+            <Text fontSize={20} color="gray">
+              My MBTI
+            </Text>
+            <Text fontSize={35}>MBTI</Text>
+          </Flex>
+          <Flex
+            bg="#F5F5F5"
+            borderRadius="5px"
+            boxShadow={"base"}
+            fontWeight="bold"
+            textAlign="center"
+            direction={"column"}
+            p={16}
+            pt={30}
+            pb={30}
+          >
+            <Text fontSize={20} color="gray">
+              현재 학습 Level
+            </Text>
+            <Text mt={2} fontSize={30}>
+              {step[0]}
+            </Text>
+          </Flex>
+          <Flex
+            bg="#F5F5F5"
+            borderRadius="5px"
+            boxShadow={"base"}
+            fontWeight="bold"
+            textAlign="center"
+            direction={"column"}
+            p={16}
+            pt={30}
+            pb={30}
+            w="fit-content"
+          >
+            <Text fontSize={20} color="gray">
+              추천 학습 콘텐츠
+            </Text>
+            <Text fontSize={30}>{type.content}</Text>
+          </Flex>
         </Stack>
         {user!.type == 2 && <QuizGraph />}
-        <Text
-          color="rgb(144, 187, 144)"
-          textAlign={"center"}
-          fontWeight={"bold"}
-          fontSize="30"
-          as="ins"
-        >
-          다른 학습 유형도 살펴보기
-        </Text>
-        <SimpleGrid spacing={20} templateColumns="repeat(3, 1fr)">
-          {user!.type != 1 && (
-            <TypeCard
-              type={TypeDescriptionList[0].type}
-              description={TypeDescriptionList[0].description}
-              link="/video.png"
-            />
-          )}
-          {user!.type != 2 && (
-            <TypeCard
-              type={TypeDescriptionList[1].type}
-              description={TypeDescriptionList[1].description}
-              link="/quiz.png"
-            />
-          )}
-          {user!.type != 3 && (
-            <TypeCard
-              type={TypeDescriptionList[2].type}
-              description={TypeDescriptionList[2].description}
-              link="/game.png"
-            />
-          )}
-          {user!.type != 4 && (
-            <TypeCard
-              type={TypeDescriptionList[3].type}
-              description={TypeDescriptionList[3].description}
-              link="/metaverse.png"
-            />
-          )}
-        </SimpleGrid>
       </Stack>
     </Layout>
   );

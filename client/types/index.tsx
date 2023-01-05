@@ -12,6 +12,7 @@ export interface Type {
 
 export interface TypeDescriptionType {
   type: string;
+  content: string;
   description: string;
   characteristic: string;
   dependency: string;

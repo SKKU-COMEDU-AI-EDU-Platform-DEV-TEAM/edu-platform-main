@@ -26,6 +26,7 @@ export const pwReg = new RegExp(
 export const TypeDescriptionList: TypeDescriptionType[] = [
   {
     type: "적응자",
+    content: "Lecture(textbook)",
     description:
       "활동적 문제해결을 시도하며 정보를 처리하고, 구체적 경험을 통해 정보를 지각합니다.",
     characteristic: "적응자는 높은 시각, 청각, 감각의 학습자 특징을 가집니다",
@@ -35,6 +36,7 @@ export const TypeDescriptionList: TypeDescriptionType[] = [
   },
   {
     type: "수렴자",
+    content: "Quiz",
     description:
       "활동적 문제해결을 시도하며 정보를 처리하고, 추상적 개념화를 통해 정보를 지각합니다.",
     characteristic: "수렴자는 낮은 시각, 청각, 감각의 학습자 특징을 가집니다.",
@@ -44,6 +46,7 @@ export const TypeDescriptionList: TypeDescriptionType[] = [
   },
   {
     type: "융합자",
+    content: "Gamification",
     description:
       "반성적으로 주의깊게 관찰하며 정보를 처리하고, 추상적 개념화를 통해 정보를 지각합니다.",
     characteristic: "융합자는 낮은 시각, 청각, 감각의 학습자 특징을 가집니다.",
@@ -53,6 +56,7 @@ export const TypeDescriptionList: TypeDescriptionType[] = [
   },
   {
     type: "분산자",
+    content: "Metaverse",
     description:
       "반성적으로 주의깊게 관찰하며 정보를 처리하고, 구체적 경험을 통해 정보를 지각합니다.",
     characteristic:

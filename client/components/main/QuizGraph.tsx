@@ -1,21 +1,34 @@
-import { Box, Stack, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { ScaleSVG } from "@visx/responsive";
 import { AREA_HEIGHT, AREA_MARGIN, AREA_WIDTH } from "../../config";
 import { AreaAxis, AreaMark } from "./AreaChart";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useMutation } from "react-query";
+import { useRecoilValue } from "recoil";
+import { User } from "../../types";
+import { userState } from "../../recoil";
 
 export const QuizGraph = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [score, setScore] = useState<number[]>([]);
+  const user = useRecoilValue<User | null>(userState);
 
+  const postScore = async () => {
+    const { data } = await axios.post("/api/score", {
+      token: user!.token
+    });
+    return data;
+  };
+  const { mutate } = useMutation(postScore, {
+    onSuccess: (data) => {
+      setScore(data.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
   useEffect(() => {
-    const fetchData = async () => {
-      const response = (await axios.get("api/score")).data;
-      setScore(response.data);
-      setIsLoading(false);
-    };
-    fetchData();
+    mutate();
   }, []);
 
   return (
