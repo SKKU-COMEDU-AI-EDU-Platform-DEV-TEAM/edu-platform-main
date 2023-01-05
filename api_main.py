@@ -502,7 +502,7 @@ def testReady():
             if queryRes is not None:
                 resultJson = {}
                 resultJson['state'] = 'success'
-                resultJson['type'] = queryRes.userTestTry
+                resultJson['userTry'] = queryRes.userTestTry
                 return jsonify(resultJson)
 
             else:
