@@ -5,7 +5,7 @@ import os
 import datetime
 import hashlib
 import jwt
-from model import User, Learning_contents, Quiz, Quiz_result, Learning_check
+from model import User, Learning_contents, Quiz, Quiz_result, Learning_check, Basic_step_info, Data_structure_step_info, Algorithm_step_info, Data_analysis_step_info, Ai_step_info
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 import random
@@ -663,30 +663,174 @@ def testType():
 
             if queryRes is not None:
                 level = reqJson['type']
-
                 sumLevel = sum(level)
-
                 step = queryRes.userLearningStep
+                bubbleSizes = []
 
-                """
                 if step == 0:
-                    bubbleInfoqueryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
-
                     for i in range(10):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
 
+                    bubbleInfoqueryRes = db.session.query(Basic_step_info).filter(Basic_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Basic_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7],
+                                                                content9 = bubbleSizes[8],
+                                                                content10 = bubbleSizes[9])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        bubbleInfoqueryRes.content9 = bubbleSizes[8]
+                        bubbleInfoqueryRes.content10 = bubbleSizes[9]
+                        db.session.commit()
                     
                 elif step == 1:
+                    for i in range(8):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Data_structure_step_info).filter(Data_structure_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Data_structure_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        db.session.commit()
 
                 elif step == 2:
+                    for i in range(8):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Algorithm_step_info).filter(Algorithm_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Algorithm_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        db.session.commit()
 
                 elif step == 3:
+                    for i in range(10):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Data_analysis_step_info).filter(Data_analysis_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Data_analysis_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7],
+                                                                content9 = bubbleSizes[8],
+                                                                content10 = bubbleSizes[9])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        bubbleInfoqueryRes.content9 = bubbleSizes[8]
+                        bubbleInfoqueryRes.content10 = bubbleSizes[9]
+                        db.session.commit()
 
                 elif step == 4:
-                """
+                    for i in range(10):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
 
-                #값에 따라 버블 크기 지정해서 db에 넣어주는 코드 작성 필요합니다.
+                    bubbleInfoqueryRes = db.session.query(Ai_step_info).filter(Ai_step_info.userId == queryRes.userId).first()
 
-                db.session.commit()
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Ai_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7],
+                                                                content9 = bubbleSizes[8],
+                                                                content10 = bubbleSizes[9])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        bubbleInfoqueryRes.content9 = bubbleSizes[8]
+                        bubbleInfoqueryRes.content10 = bubbleSizes[9]
+                        db.session.commit()
+
+                else:
+                    return jsonify({'state':'fail'})
 
                 return jsonify({'state':'success'})   
 
