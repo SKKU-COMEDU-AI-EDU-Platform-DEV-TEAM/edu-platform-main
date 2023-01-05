@@ -97,7 +97,7 @@ export default function SignupPage() {
             </FormErrorMessage>
           )}
         </FormControl>
-        <FormControl mb={1} isRequired isInvalid={isConfirmPwInvalid}>
+        <FormControl mb={8} isRequired isInvalid={isConfirmPwInvalid}>
           <FormLabel fontSize={16}>Confirm Password</FormLabel>
           <Input
             type="password"
