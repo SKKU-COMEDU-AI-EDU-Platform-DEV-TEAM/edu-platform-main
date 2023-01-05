@@ -97,7 +97,7 @@ export default function SignupPage() {
             </FormErrorMessage>
           )}
         </FormControl>
-        <FormControl mb={1} isRequired isInvalid={isConfirmPwInvalid}>
+        <FormControl mb={8} isRequired isInvalid={isConfirmPwInvalid}>
           <FormLabel fontSize={16}>Confirm Password</FormLabel>
           <Input
             type="password"
@@ -113,7 +113,7 @@ export default function SignupPage() {
         </FormControl>
         <Button
           width="100%"
-          borderRadius={"2xl"}
+          borderRadius={"5px"}
           bgColor=" rgb(144, 187, 144)"
           _hover={{ bgColor: "green" }}
           onClick={handleSignupOnClick}
