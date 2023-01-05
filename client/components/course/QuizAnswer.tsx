@@ -18,7 +18,7 @@ import { Id, QuizType } from "../../types";
    userAnswer: number;
    correctAnswer: number;
  }
-export default function QuizResult(props: Id & QuizType & QuizAnswer) {
+export default function QuizAnswer(props: Id & QuizType & QuizAnswer) {
   const [score, setQuizScore] = useRecoilState<number[]>(quizScoreState);
   const { id, question, definition, option, correctAnswer, userAnswer } = props;
   function handleOnChange(v: string) {

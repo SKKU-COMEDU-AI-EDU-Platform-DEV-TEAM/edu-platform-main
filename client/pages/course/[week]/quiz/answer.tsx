@@ -7,7 +7,7 @@ import Layout from "../../../../components/Layout";
 import CourseLayout from "../../../../components/CourseLayout";
 import axios from "axios";
 import { Accordion, Box, Button, Text } from "@chakra-ui/react";
-import QuizResult from "../../../../components/course/QuizResult";
+import QuizAnswer from "../../../../components/course/QuizAnswer";
 import { mockupQuizResult } from "../../../../mockupData";
 
 export default function QuizResultPage() {
@@ -39,7 +39,7 @@ export default function QuizResultPage() {
             <>
               {quiz.map(function (q, i) {
                 return (
-                  <QuizResult
+                  <QuizAnswer
                     key={`quiz${i}`}
                     id={i + 1}
                     question={q.question}
