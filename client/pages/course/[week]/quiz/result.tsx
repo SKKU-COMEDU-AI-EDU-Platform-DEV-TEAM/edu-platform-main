@@ -70,6 +70,7 @@ export default function QuizResultPage() {
               width="20%"
               borderRadius={"2xl"}
               bgColor="rgb(144, 187, 144)"
+              marginLeft="30px"
               onClick={() => router.push(`/course/${week}/quiz/answer`)}
             >
               정답 확인하기
