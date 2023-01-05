@@ -40,7 +40,10 @@ export default function TestingPage() {
 
   const { mutate } = useMutation(testMBTI, {
     onSuccess: () => {
-      router.push("test/step");
+      router.push("step");
+    },
+    onError: (error) => {
+      console.log(error);
     }
   });
 
@@ -50,11 +53,11 @@ export default function TestingPage() {
         <Stack direction="column" spacing={5} m={10}>
           {MBTI.map((mbti, i) => (
             <>
-              <Text fontSize="25" as="b">
+              <Text key={`${mbti[i]}-1`} fontSize="25" as="b">
                 {mbti[0][0]} vs {mbti[1][0]}
               </Text>
               <Slider
-                key={`mbti${i}`}
+                key={`slider${i}`}
                 defaultValue={5}
                 min={0}
                 max={10}
@@ -69,11 +72,11 @@ export default function TestingPage() {
                 >
                   {mbti[0][0]}
                 </SliderMark>
-                {numList.map((num, i) => (
+                {numList.map((num, j) => (
                   <SliderMark
-                    key={`num${num}`}
+                    key={`sliderMark${mbti[i]}${j}`}
                     color={num == 0 ? "gray.400" : "black"}
-                    value={i - 0.1}
+                    value={j - 0.1}
                     {...labelStyles}
                   >
                     {num}
@@ -93,11 +96,11 @@ export default function TestingPage() {
                 </SliderTrack>
                 <SliderThumb />
               </Slider>
-              <Text pt={5} as="i">
+              <Text key={`${mbti[i]}-2`} pt={5} as="i">
                 {mbti[0][0]} 성향을 가진 사람은 이런 것을 선호해요 -{" "}
                 {mbti[0][1]}
               </Text>
-              <Text pb={10} as="i">
+              <Text key={`${mbti[i]}-3`} pb={10} as="i">
                 {mbti[1][0]} 성향을 가진 사람은 이런 것을 선호해요 -{" "}
                 {mbti[1][1]}
               </Text>
@@ -110,7 +113,7 @@ export default function TestingPage() {
             width="30%"
             borderRadius={"5px"}
             bgColor="rgb(144, 187, 144)"
-            onClick={() => mutate}
+            onClick={() => mutate()}
           >
             다음 단계로
           </Button>
