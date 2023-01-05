@@ -3,6 +3,7 @@ export interface User extends Type {
   userId?: number;
   userEmail?: string;
   token?: string;
+  step?: number;
 }
 
 export interface Type {
@@ -12,6 +13,9 @@ export interface Type {
 export interface TypeDescriptionType {
   type: string;
   description: string;
+  characteristic: string;
+  dependency: string;
+  recommend: string;
 }
 
 export interface Point {
@@ -26,16 +30,6 @@ export interface LoginValue {
 
 export interface LayoutDefaultProps {
   children?: React.ReactElement;
-}
-
-export interface WeekData {
-  subject: string;
-  contents: {
-    video: string[];
-    quiz: string;
-    metaverse: string;
-  };
-  isdone: { video: number[]; quiz: number };
 }
 
 export interface Id {
