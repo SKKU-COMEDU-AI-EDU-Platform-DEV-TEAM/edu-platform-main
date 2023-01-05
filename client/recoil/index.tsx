@@ -17,6 +17,13 @@ export const typeSelector = selector({
   }
 });
 
+export const stepSelector = selector({
+  key: `stepSelector${v1()}`,
+  get: ({ get }) => {
+    const userType = get(userState)!.step;
+    return TypeDescriptionList[userType! - 1];
+  }
+});
 export const pointState = atom<Point>({
   key: `pointState${v1()}`,
   default: mockupPoint
