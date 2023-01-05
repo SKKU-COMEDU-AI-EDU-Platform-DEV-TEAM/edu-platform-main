@@ -8,6 +8,7 @@ import {
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useMutation } from "react-query";
 import EnterLayout from "../components/EnterLayout";
 import { checkIsValid, emailReg, pwReg } from "../config";
 
@@ -34,24 +35,31 @@ export default function SignupPage() {
     setPwInvalid(checkIsValid(pwReg, pw));
   };
 
-  const handleSignupOnClick = async () => {
-    if (
-      isConfirmPwInvalid ||
-      checkIsValid(emailReg, email) ||
-      checkIsValid(pwReg, pw)
-    ) {
-      return;
-    }
-    const response = (
-      await axios.post("api/signup", {
-        email: email,
-        pw: pw,
-        name: name
-      })
-    ).data;
-    //error handling
-    router.push("/");
+  const signup = async () => {
+    const { data } = await axios.post("api/signup", {
+      email: email,
+      pw: pw,
+      name: name
+    });
+    return data;
   };
+  const { mutate } = useMutation(signup, {
+    onMutate: () => {
+      if (
+        isConfirmPwInvalid ||
+        checkIsValid(emailReg, email) ||
+        checkIsValid(pwReg, pw)
+      ) {
+        return;
+      }
+    },
+    onSuccess: () => {
+      router.push("/");
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
   return (
     <EnterLayout>
       <>
@@ -116,7 +124,7 @@ export default function SignupPage() {
           borderRadius={"5px"}
           bgColor=" rgb(144, 187, 144)"
           _hover={{ bgColor: "green" }}
-          onClick={handleSignupOnClick}
+          onClick={() => mutate()}
         >
           Sign Up
         </Button>
