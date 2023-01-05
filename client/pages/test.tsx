@@ -72,7 +72,7 @@ export default function TestPage() {
               <br />
               학습자님은 현재 {type?.type} 유형이며, 테스트 결과에 따라 아래의
               네 유형 중 하나에 재배정되며, 새로운 학습 진도를 배정받게 됩니다.
-              <Text as="i" m={2}>
+              <Text as="i" m={2} mt={4}>
                 {TypeDescriptionList[0].type} 유형,{" "}
                 {TypeDescriptionList[1].type} 유형,{" "}
                 {TypeDescriptionList[2].type} 유형,{" "}
