@@ -890,17 +890,14 @@ def testresult():
 
 
 
-#[GET] 주차별 퀴즈 점수 api
-@app.route('/api/weekScore', methods=['GET'])
-def weekscore():
-    return jsonify(dummy.weekScoreJzon)
-
-
-
-#[GET] 주차별 퀴즈 점수2 api
-@app.route('/api/score', methods=['GET'])
-def weekscore2():
-    return jsonify(dummy.weekScoreJzon)
+#[POST] 주차별 퀴즈 점수2 api
+@app.route('/api/score', methods=['POST'])
+def score():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        return jsonify(dummy.weekScoreJzon)
+    else:
+        return jsonify({'state':'fail'})
 
 
 
