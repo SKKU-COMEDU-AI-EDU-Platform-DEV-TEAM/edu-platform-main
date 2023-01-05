@@ -13,6 +13,7 @@ from decisionTree import clf
 import dummy
 import userTestQuestion
 import numpy as np
+import courseData
 
 
 load_dotenv()
@@ -176,7 +177,6 @@ def main():
             return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
         ############################################################################# <여기까지>
 
-        return jsonify({'state':'success', 'type':'2'})
     else:
         return jsonify({'state':'fail'})
 
@@ -383,6 +383,41 @@ def lecture(week, id):
 
 
 
+#[POST] 게이미피케이션 학습 체크 api 
+@app.route('/api/game', methods=['POST'])
+def gameCheck():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                #현재는 더미 데이터를 전송합니다.
+                return jsonify(dummy.lectureJson) 
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 메타버스 학습 체크 api 
+@app.route('/api/metaverse', methods=['POST'])
+def metaverseCheck():
+    return jsonify({})
+
+
+
 #[GET] 학습자 유형 판단 설문 항목 api
 #[POST] 학습자 유형 판단 api
 @app.route('/api/test', methods=['GET', 'POST'])
@@ -431,7 +466,6 @@ def test():
             return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
         ############################################################################# <여기까지>
 
-
         #userId = reqJson["userId"]
         result = reqJson["type"]
         mbti = reqJson["mbti"]
@@ -444,8 +478,6 @@ def test():
 
         lernerTypes = [3, 2, 1, 0] #메타버스, 게이미피케이션, 퀴즈, 영상
         userLearnerType = lernerTypes[userKolbTypeNum - 1]
-
-
         
         return jsonify({'state':'success'})
 
@@ -470,7 +502,7 @@ def testReady():
             if queryRes is not None:
                 resultJson = {}
                 resultJson['state'] = 'success'
-                resultJson['type'] = queryRes.usrTestTry
+                resultJson['type'] = queryRes.userTestTry
                 return jsonify(resultJson)
 
             else:
@@ -569,6 +601,53 @@ def testStep():
 
 
 
+#[POST] 학습자 유형 판단 설문 api
+@app.route('/api/testTypeQuestion', methods=['POST'])
+def testTypeQuestion():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                step = queryRes.userLearningStep
+
+                if step == 0:
+                    return jsonify(userTestQuestion.basic_python_json)
+
+                elif step == 1:
+                    return jsonify(userTestQuestion.data_structure_json)
+
+                elif step == 2:
+                    return jsonify(userTestQuestion.algorithm_json)
+
+                elif step == 3:
+                    return jsonify(userTestQuestion.data_analysis_json)
+
+                elif step == 4:
+                    return jsonify(userTestQuestion.ai_json)
+
+                else:
+                    return jsonify({'state':'fail'})
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+
 #[POST] 학습자 유형 판단 설문 Type api
 @app.route('/api/testType', methods=['POST'])
 def testType():
@@ -583,7 +662,27 @@ def testType():
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
-                level = reqJson["type"]
+                level = reqJson['type']
+
+                sumLevel = sum(level)
+
+                step = queryRes.userLearningStep
+
+                """
+                if step == 0:
+                    bubbleInfoqueryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+                    for i in range(10):
+
+                    
+                elif step == 1:
+
+                elif step == 2:
+
+                elif step == 3:
+
+                elif step == 4:
+                """
 
                 #값에 따라 버블 크기 지정해서 db에 넣어주는 코드 작성 필요합니다.
 
