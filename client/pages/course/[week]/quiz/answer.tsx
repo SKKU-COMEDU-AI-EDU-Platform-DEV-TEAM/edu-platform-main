@@ -22,7 +22,7 @@ export default function QuizResultPage() {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
 
-      const response = (await axios.post(`/api/quiz/${week}/result`, { token: token })).data;
+      const response = (await axios.post(`/api/quiz/${week}/answer`, { token: token })).data;
       console.log(response.result);
       setQuiz(response.data);
       setResult(response.result);
@@ -61,18 +61,9 @@ export default function QuizResultPage() {
               width="20%"
               borderRadius={"2xl"}
               bgColor="rgb(144, 187, 144)"
-              onClick={() => router.push(`/course/${week}/quiz`)}
+              onClick={() => router.push(`/course`)}
             >
-              다시 풀어보기
-            </Button>
-            <Button
-              height="40px"
-              width="20%"
-              borderRadius={"2xl"}
-              bgColor="rgb(144, 187, 144)"
-              onClick={() => router.push(`/course/${week}/quiz/answer`)}
-            >
-              정답 확인하기
+                완료
             </Button>
           </Box>
         </>

@@ -57,7 +57,7 @@ export default function QuizResult(props: Id & QuizType & QuizAnswer) {
           <Stack spacing={5}>
             <>
               {option.map(function (o, i) {
-                if (i == correctAnswer && i == userAnswer) {
+                if (i == correctAnswer) {
                   return (
                     <Radio
                       key={`option${i}`}
