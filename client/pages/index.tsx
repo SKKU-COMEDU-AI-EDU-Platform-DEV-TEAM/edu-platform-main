@@ -80,7 +80,7 @@ export default function Home() {
         </FormControl>
         <Button
           width="100%"
-          borderRadius={"2xl"}
+          borderRadius={"5px"}
           bgColor=" rgb(144, 187, 144)"
           _hover={{ bgColor: "green" }}
           onClick={handleLoginOnClick}
@@ -91,7 +91,7 @@ export default function Home() {
         <Button
           height="40px"
           width="100%"
-          borderRadius={"2xl"}
+          borderRadius={"5px"}
           bgColor="#DD9D9"
           onClick={() => router.push("/signup")}
         >

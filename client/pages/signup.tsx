@@ -113,7 +113,7 @@ export default function SignupPage() {
         </FormControl>
         <Button
           width="100%"
-          borderRadius={"2xl"}
+          borderRadius={"5px"}
           bgColor=" rgb(144, 187, 144)"
           _hover={{ bgColor: "green" }}
           onClick={handleSignupOnClick}
