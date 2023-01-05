@@ -19,7 +19,7 @@ import { userState } from "./../../recoil/index";
 import { User } from "../../types";
 import { labelStyles, MBTI, numList } from "../../config";
 
-export default function TestingPage() {
+export default function TestingMBTIPage() {
   const router = useRouter();
   const user = useRecoilValue<User | null>(userState);
   const [mbtiValue, setmbtiValue] = useState<number[]>([5, 5, 5, 5]);
@@ -53,11 +53,11 @@ export default function TestingPage() {
         <Stack direction="column" spacing={5} m={10}>
           {MBTI.map((mbti, i) => (
             <>
-              <Text key={`${mbti[i]}-1`} fontSize="25" as="b">
+              <Text key={`${mbti[0]}1`} textAlign="center" fontSize="25" as="b">
                 {mbti[0][0]} vs {mbti[1][0]}
               </Text>
               <Slider
-                key={`slider${i}`}
+                key={`slider${mbti[0]}`}
                 defaultValue={5}
                 min={0}
                 max={10}
@@ -74,9 +74,9 @@ export default function TestingPage() {
                 </SliderMark>
                 {numList.map((num, j) => (
                   <SliderMark
-                    key={`sliderMark${mbti[i]}${j}`}
+                    key={`sliderMark${i}${j}`}
                     color={num == 0 ? "gray.400" : "black"}
-                    value={j - 0.1}
+                    value={j + 0.1}
                     {...labelStyles}
                   >
                     {num}
@@ -96,11 +96,11 @@ export default function TestingPage() {
                 </SliderTrack>
                 <SliderThumb />
               </Slider>
-              <Text key={`${mbti[i]}-2`} pt={5} as="i">
+              <Text key={`${mbti[0]}2`} pt={5} as="i">
                 {mbti[0][0]} 성향을 가진 사람은 이런 것을 선호해요 -{" "}
                 {mbti[0][1]}
               </Text>
-              <Text key={`${mbti[i]}-3`} pb={10} as="i">
+              <Text key={`${mbti[0]}3`} pb={10} as="i">
                 {mbti[1][0]} 성향을 가진 사람은 이런 것을 선호해요 -{" "}
                 {mbti[1][1]}
               </Text>

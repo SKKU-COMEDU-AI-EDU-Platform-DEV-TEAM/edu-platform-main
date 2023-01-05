@@ -70,8 +70,8 @@ export default function TestPage() {
               {user!.userName}님은 학습자 유형 및 학습 진도 확인을 위한 테스트의{" "}
               {userTry! + 1}번째 시도를 앞두고 있습니다. <br />
               <br />
-              학습자님은 현재 {type?.type} 유형이며, 테스트 결과에 따라 아래의
-              네 유형 중 하나에 재배정되며, 새로운 학습 진도를 배정받게 됩니다.
+              학습자님은 현재 {type.type} 유형이며, 테스트 결과에 따라 아래의 네
+              유형 중 하나에 재배정되며, 새로운 학습 진도를 배정받게 됩니다.
               <Text as="i" m={2} mt={4}>
                 {TypeDescriptionList[0].type} 유형,{" "}
                 {TypeDescriptionList[1].type} 유형,{" "}

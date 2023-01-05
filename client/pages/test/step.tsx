@@ -9,7 +9,7 @@ import { lectureList } from "../../config";
 import { User } from "../../types";
 import { userState } from "./../../recoil/index";
 
-export default function TestingPage() {
+export default function TestingStepPage() {
   const router = useRouter();
   const user = useRecoilValue<User | null>(userState);
   const [step, setStep] = useState<number>(0);
@@ -24,12 +24,12 @@ export default function TestingPage() {
 
   const { mutate } = useMutation(testStep, {
     onSuccess: () => {
-      router.push("test/type");
+      router.push("type");
     }
   });
 
   return (
-    <TestLayout title="학습 레벨 확인 테스트">
+    <TestLayout title="학습 진도 확인 조사">
       <>
         <Text pt={2} textAlign={"center"}>
           5개의 강의 중에서 현재 자신의 학습 진도에 맞는 강의를 선택하세요!
@@ -64,9 +64,9 @@ export default function TestingPage() {
           <Button
             height="40px"
             width="30%"
-            borderRadius={"2xl"}
+            borderRadius={"5px"}
             bgColor="rgb(144, 187, 144)"
-            onClick={() => mutate}
+            onClick={() => mutate()}
           >
             다음 단계로
           </Button>

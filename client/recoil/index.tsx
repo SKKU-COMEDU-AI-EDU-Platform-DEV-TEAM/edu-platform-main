@@ -2,7 +2,7 @@ import { atom, selector } from "recoil";
 import { Point, User } from "../types";
 import { v1 } from "uuid";
 import { mockupPoint } from "../mockupData";
-import { TypeDescriptionList } from "../config";
+import { lectureList, TypeDescriptionList } from "../config";
 
 export const userState = atom<User | null>({
   key: `userState/${v1()}`,
@@ -12,7 +12,7 @@ export const userState = atom<User | null>({
 export const typeSelector = selector({
   key: `typeSelector${v1()}`,
   get: ({ get }) => {
-    const userType = get(userState)!.type;
+    const userType = get(userState)?.type;
     return TypeDescriptionList[userType! - 1];
   }
 });
@@ -21,12 +21,8 @@ export const stepSelector = selector({
   key: `stepSelector${v1()}`,
   get: ({ get }) => {
     const userType = get(userState)!.step;
-    return TypeDescriptionList[userType! - 1];
+    return lectureList[userType! - 1];
   }
-});
-export const pointState = atom<Point>({
-  key: `pointState${v1()}`,
-  default: mockupPoint
 });
 
 export const quizScoreState = atom<number[]>({
@@ -42,4 +38,9 @@ export const bestScoreState = atom<number>({
 export const moveState = atom<number>({
   key: `moveState/${v1()}`,
   default: 0
+});
+
+export const pointState = atom<Point>({
+  key: `pointState${v1()}`,
+  default: mockupPoint
 });

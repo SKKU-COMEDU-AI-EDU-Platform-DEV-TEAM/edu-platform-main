@@ -19,7 +19,7 @@ export default function TestLayout({
       w="3xl"
       maxH="2xl"
       borderWidth="1px"
-      borderRadius="2xl"
+      borderRadius="5px"
       p={10}
       overflow="scroll"
     >
