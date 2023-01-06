@@ -178,9 +178,76 @@ def main():
 
 
 
+#[POST] 전체 학습 페이지 api
+@app.route('/api/course', methods=['POST'])
+def course():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                if queryRes.userLearningStep == 0:
+                    learningKeywords = courseData.basic_python
+                    bubbleSizesQueryRes = db.session.query(Basic_step_info).filter(Basic_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8, bubbleSizesQueryRes.content9, bubbleSizesQueryRes.content10]
+
+                elif queryRes.userLearningStep == 1:
+                    learningKeywords = courseData.data_structure
+                    bubbleSizesQueryRes = db.session.query(Data_structure_step_info).filter(Data_structure_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8]
+
+                elif queryRes.userLearningStep == 2:
+                    learningKeywords = courseData.algorithm
+                    bubbleSizesQueryRes = db.session.query(Algorithm_step_info).filter(Algorithm_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8]
+
+                elif queryRes.userLearningStep == 3:
+                    learningKeywords = courseData.data_analysis
+                    bubbleSizesQueryRes = db.session.query(Data_analysis_step_info).filter(Data_analysis_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8, bubbleSizesQueryRes.content9, bubbleSizesQueryRes.content10]
+
+                elif queryRes.userLearningStep == 4:
+                    learningKeywords = courseData.ai
+                    bubbleSizesQueryRes = db.session.query(Ai_step_info).filter(Ai_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8, bubbleSizesQueryRes.content9, bubbleSizesQueryRes.content10]
+                
+                resultJson = {}
+                resultJson['state'] = 'success'
+                resultJson['data'] = []
+                resultJson['metaverse'] = []
+                for i in range(len(learningKeywords)):
+                    resultJson['data'].append({})
+                    resultJson['data'][i]['id'] = i + 1
+                    resultJson['data'][i]['name'] = learningKeywords[i]
+                    resultJson['data'][i]['size'] = bubbleSizes[i]
+                    resultJson['data'][i]['week'] = i + 1
+                    resultJson['metaverse'].append('https://app.gather.town/app/KxbGPczKS6ld3Fxt/SKKUMeta') #현재는 고정 값을 보내줍니다.
+
+                return jsonify(resultJson)
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+    else:
+        return jsonify({'state':'fail'})
+
+
+
 #[GET] 전체 학습 페이지 api
-@app.route('/api/course', methods=['GET'])
-def courses():
+@app.route('/api/courseLegacy', methods=['GET'])
+def courseLegacy():
     #user_code = request.get_json()
     #user_code = user_code['email']
     
