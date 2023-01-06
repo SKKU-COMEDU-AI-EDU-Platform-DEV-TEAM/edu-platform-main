@@ -33,7 +33,6 @@ export const QuizGraph = () => {
 
   return (
     <Box
-      bg="#F5F5F5"
       h={"fit-content"}
       p={30}
       display="flex"

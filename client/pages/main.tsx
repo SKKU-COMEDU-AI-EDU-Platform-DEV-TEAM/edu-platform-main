@@ -7,7 +7,13 @@ import { QuizGraph } from "../components/main/QuizGraph";
 import { RadarAxis, RadarMark } from "../components/main/RaderChart";
 import { stepSelector, typeSelector, userState } from "../recoil";
 import { TypeDescriptionType, User } from "../types";
-import { AVERAGE, RADAR_HEIGHT, RADAR_WIDTH, RADER_MARGIN } from "../config";
+import {
+  AVERAGE,
+  RADAR_HEIGHT,
+  RADAR_WIDTH,
+  RADER_MARGIN,
+  TypeDescriptionList
+} from "../config";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { useMutation } from "react-query";
@@ -20,9 +26,9 @@ export default function MainPage() {
   const user = useRecoilValue<User | null>(userState);
   const type = useRecoilValue<TypeDescriptionType>(typeSelector);
   const step = useRecoilValue<string[]>(stepSelector);
-  const [mbti, setMbti] = useState<string>();
-  const [kolb, setKolb] = useState<number[]>();
-  const [rader, setRader] = useState<number[]>();
+  const [mbti, setMbti] = useState<string>("");
+  const [kolb, setKolb] = useState<number[]>([]);
+  const [rader, setRader] = useState<number[]>([]);
 
   const main = async () => {
     const { data } = await axios.post("/api/main", {
@@ -34,7 +40,11 @@ export default function MainPage() {
     onSuccess: (data) => {
       setMbti(data.mbti);
       setKolb(data.kolbProba);
-      setRader(data.rader);
+      var arr = [...data.rader];
+      for (const v of data.rader) {
+        arr.push(10 - v);
+      }
+      setRader(arr);
     },
     onError: (err) => {
       alert(err);
@@ -69,7 +79,7 @@ export default function MainPage() {
               Kolb 학습 유형
             </Text>
             <Text mt={2} fontSize={30}>
-              {type.type}
+              {type?.type}
             </Text>
           </Flex>
           <Flex
@@ -102,14 +112,14 @@ export default function MainPage() {
             pt={30}
             pb={0}
           >
-            <Stack>
+            <Flex direction={"column"} wordBreak="break-word">
               <Text fontSize={20} color="gray">
                 추천 학습 콘텐츠
               </Text>
-              <Text fontSize={30}>{type.content}</Text>
-            </Stack>
+              <Text fontSize={30}>{type?.content}</Text>
+            </Flex>
             <Divider orientation="vertical" ml={5} mr={5} />
-            <Stack>
+            <Flex direction={"column"}>
               <Text fontSize={20} color="gray">
                 강의 바로가기
               </Text>
@@ -128,50 +138,91 @@ export default function MainPage() {
               >
                 {step[0]}
               </Button>
-            </Stack>
+            </Flex>
           </Flex>
         </Stack>
-        {/* <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
-          <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
-            <RadarAxis
-              width={RADAR_WIDTH}
-              height={RADAR_HEIGHT}
-              margin={RADER_MARGIN}
-            />
-            <RadarMark
-              data={rader}
-              color={COLOR[0]}
-              width={RADAR_WIDTH}
-              height={RADAR_HEIGHT}
-              margin={RADER_MARGIN}
-            />
-            <RadarMark
-              data={AVERAGE}
-              color={COLOR[7]}
-              width={RADAR_WIDTH}
-              height={RADAR_HEIGHT}
-              margin={RADER_MARGIN}
-            />
-            <VisxTtext
-              x="80"
-              y="90"
-              fontWeight="bold"
-              fontSize="8px"
-              fill="#7f7f7f"
-            >
-              ■ Student Score
-            </VisxTtext>
-            <VisxTtext
-              x="80"
-              y="80"
-              fontSize="8px"
-              fontWeight="bold"
-              fill="#1f77b4"
-            >
-              ■ My Score
-            </VisxTtext>
-          </Group>
-        </ScaleSVG> */}
+        <Stack direction="row" justifyContent="space-between" gap={5}>
+          <Flex borderRadius="5px" boxShadow={"base"} p={10} w="50%">
+            <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
+              <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
+                <RadarAxis
+                  width={RADAR_WIDTH}
+                  height={RADAR_HEIGHT}
+                  margin={RADER_MARGIN}
+                />
+
+                {AVERAGE.map((average, i) => (
+                  <>
+                    <RadarMark
+                      key={`mark${i}`}
+                      data={average}
+                      color={COLOR[i + 1]}
+                      width={RADAR_WIDTH}
+                      height={RADAR_HEIGHT}
+                      margin={RADER_MARGIN}
+                    />
+                    <VisxTtext
+                      key={`text${i}`}
+                      x="80"
+                      y={50 + 10 * i}
+                      fontSize="8px"
+                      fontWeight="bold"
+                      fill={COLOR[i + 1]}
+                    >
+                      {`■ ${TypeDescriptionList[i].type}`}
+                    </VisxTtext>
+                  </>
+                ))}
+              </Group>
+            </ScaleSVG>
+          </Flex>
+          <Flex borderRadius="5px" boxShadow={"base"} p={10} w="50%">
+            <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
+              <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
+                <RadarAxis
+                  width={RADAR_WIDTH}
+                  height={RADAR_HEIGHT}
+                  margin={RADER_MARGIN}
+                />
+                <RadarMark
+                  data={rader}
+                  color={COLOR[0]}
+                  width={RADAR_WIDTH}
+                  height={RADAR_HEIGHT}
+                  margin={RADER_MARGIN}
+                />
+
+                <RadarMark
+                  key={`mark${2}`}
+                  data={AVERAGE[user!.type - 1]}
+                  color={COLOR[user!.type]}
+                  width={RADAR_WIDTH}
+                  height={RADAR_HEIGHT}
+                  margin={RADER_MARGIN}
+                />
+                <VisxTtext
+                  key={`text${2}`}
+                  x="80"
+                  y={50}
+                  fontSize="8px"
+                  fontWeight="bold"
+                  fill={COLOR[user!.type]}
+                >
+                  {`■ ${TypeDescriptionList[user!.type - 1].type}`}
+                </VisxTtext>
+                <VisxTtext
+                  x="80"
+                  y={35}
+                  fontWeight="bold"
+                  fontSize="8px"
+                  fill={COLOR[0]}
+                >
+                  ■ 나의 MBTI
+                </VisxTtext>
+              </Group>
+            </ScaleSVG>
+          </Flex>
+        </Stack>
         {user!.type == 2 && <QuizGraph />}
       </Stack>
     </Layout>

@@ -1,4 +1,4 @@
-import { Scores, TypeDescriptionType } from "./types";
+import { TypeDescriptionType } from "./types";
 
 export const checkIsValid = (Reg: RegExp, input: string) => {
   if (Reg.test(input)) {
@@ -16,14 +16,16 @@ export const RADER_MARGIN = {
   left: 60
 };
 
-export const AVERAGE: Scores = {
-  cohesion: 3.13,
-  syntax: 3.03,
-  vocabulary: 3.24,
-  phraseology: 3.12,
-  grammar: 3.03,
-  conventions: 3.08
-};
+export type Attribute = "E" | "N" | "F" | "P" | "I" | "S" | "T" | "J";
+export const VALUE: Attribute[] = ["J", "E", "N", "F", "P", "I", "S", "T"];
+
+export const AVERAGE: number[][] = [
+  [8, 5, 5, 8, 2, 5, 5, 2], //적응자
+  [4, 3, 4, 5, 6, 7, 6, 5], //수렴자
+  [3, 8, 3, 5, 7, 2, 7, 5], //융합자
+  [6, 7, 7, 4, 4, 3, 3, 6] //분산자
+];
+
 export const AREA_WIDTH = 900;
 export const AREA_HEIGHT = 260;
 export const AREA_MARGIN = {
