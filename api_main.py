@@ -156,8 +156,11 @@ def main():
                 kolbProba = queryRes.userKolbProbability
                 kolbProba = list(kolbProba.split(','))
                 kolbProba = list(map(float, kolbProba))
+
                 rader = queryRes.userMbtiTest
-                rader = list(map(int, rader.split(',')))
+                rader = list(rader.split(','))
+                rader = list(map(int, rader))
+
                 resultJson['state'] = 'success'
                 resultJson['mbti'] = queryRes.userMbti
                 resultJson['kolbProba'] = kolbProba
@@ -616,7 +619,7 @@ def testMbti():
                 userLearnerType = lernerTypes[userKolbTypeNum - 1]
 
                 kolbProba = np.round(clf.predict_proba([mbti])[0] * 100, 2)
-                kolbProba = str(kolbProba)
+                kolbProba = str(list(kolbProba))
                 kolbProba = kolbProba[1:len(kolbProba)-1].replace(' ','')
 
                 queryRes.userMbti = ('I' if mbti[0] <= 5 else 'E') + ('S' if mbti[1] <= 5 else 'N') + ('T' if mbti[2] <= 5 else 'F') + ('P' if mbti[3] <= 5 else 'J')
