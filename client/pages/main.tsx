@@ -1,7 +1,7 @@
 import { Group } from "@visx/group";
 import { Text as VisxTtext } from "@visx/text";
 import { ScaleSVG } from "@visx/responsive";
-import { Divider, Flex, Stack, Text } from "@chakra-ui/react";
+import { Button, Divider, Flex, Stack, Text } from "@chakra-ui/react";
 import Layout from "../components/Layout";
 import { QuizGraph } from "../components/main/QuizGraph";
 import { RadarAxis, RadarMark } from "../components/main/RaderChart";
@@ -13,14 +13,17 @@ import { useRecoilValue } from "recoil";
 import { useMutation } from "react-query";
 import { useEffect, useState } from "react";
 import { schemeCategory10 as COLOR } from "d3-scale-chromatic";
+import { useRouter } from "next/router";
 
 export default function MainPage() {
+  const router = useRouter();
   const user = useRecoilValue<User | null>(userState);
   const type = useRecoilValue<TypeDescriptionType>(typeSelector);
   const step = useRecoilValue<string[]>(stepSelector);
   const [mbti, setMbti] = useState<string>();
   const [kolb, setKolb] = useState<number[]>();
   const [rader, setRader] = useState<number[]>();
+
   const main = async () => {
     const { data } = await axios.post("/api/main", {
       token: user!.token
@@ -97,22 +100,34 @@ export default function MainPage() {
             direction={"row"}
             p={10}
             pt={30}
-            pb={30}
+            pb={0}
           >
-            <Stack>
-              <Text fontSize={20} color="gray">
-                현재 학습 Level
-              </Text>
-              <Text mt={2} fontSize={30}>
-                {step[0]}
-              </Text>
-            </Stack>
-            <Divider orientation="vertical" ml={5} mr={5} />
             <Stack>
               <Text fontSize={20} color="gray">
                 추천 학습 콘텐츠
               </Text>
               <Text fontSize={30}>{type.content}</Text>
+            </Stack>
+            <Divider orientation="vertical" ml={5} mr={5} />
+            <Stack>
+              <Text fontSize={20} color="gray">
+                강의 바로가기
+              </Text>
+              <Button
+                mt={5}
+                borderRadius={"5px"}
+                colorScheme={"green"}
+                variant="outline"
+                borderWidth={"2px"}
+                onClick={() => router.push("/course")}
+                p={7}
+                pt={5}
+                pb={5}
+                fontWeight={"bold"}
+                fontSize={20}
+              >
+                {step[0]}
+              </Button>
             </Stack>
           </Flex>
         </Stack>
