@@ -55,7 +55,7 @@ export default function QuizAnswer(props: Id & QuizType & QuizAnswer) {
                       value={i.toString()}
                       isReadOnly
                     >
-                      {o}
+                      {o} (Answer)
                     </Radio>
                   );
                 } else if (i == userAnswer) {
@@ -67,7 +67,7 @@ export default function QuizAnswer(props: Id & QuizType & QuizAnswer) {
                       isInvalid
                       isReadOnly
                     >
-                      {o} (Answer)
+                      {o} 
                     </Radio>
                   );
                 } else {

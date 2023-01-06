@@ -67,7 +67,7 @@ export default function QuizResult(props: Id & QuizType & QuizAnswer) {
                       isInvalid
                       isReadOnly
                     >
-                      {o} (Answer)
+                      {o}
                     </Radio>
                   );
                 } else {
