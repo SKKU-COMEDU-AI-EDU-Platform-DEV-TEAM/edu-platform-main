@@ -305,31 +305,35 @@ def quiz(week):
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
-                userQuizAnswer = reqJson['data']
+                userQuizAnswer = reqJson['data'] #프론트에서 문제 선택지 번호가 0부터 시작하는 것인지 궁금합니다.
 
                 #현재는 더미데이터를 기준으로 채점 로직을 수행합니다.(7주차 기준)
                 correctAnswerCnt = 0
-                userAnswer = []
                 for i in range(dummy.quizResultJson['totalQuizNum']):
-                    userAnswer.append(userQuizAnswer[i])
-                    if userQuizAnswer[i] == dummy.quizResultJson['correctAnswer'][i]:
+                    if userQuizAnswer[i] == dummy.quizResultJson['correctAnswer'][i]: #비교하는 더미데이터도 일단 0부터 시작으로 합니다.
                         correctAnswerCnt += 1
+
+                userQuizAnswer = str(userQuizAnswer)
+                userQuizAnswer = userQuizAnswer[1:len(userQuizAnswer)-1].replace(' ','')
                 
-                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizResultWeek == week).first()
+                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizStep == queryRes.userLearningStep, Quiz_result.quizWeek == week).first()
 
                 #db 쿼리 결과 퀴즈 응시 내역이 존재하면 퀴즈 점수를 업데이트 하고 존재하지 않으면 데이터를 추가합니다.
                 if quizResultQueryRes is None:
                     newQuizResult = Quiz_result(usrId = queryRes.userId, 
-                                                qResultWeek = week,
-                                                qResultScore = correctAnswerCnt)
+                                                qStep = queryRes.userLearningStep,
+                                                qWeek = week,
+                                                qResultAns = userQuizAnswer,
+                                                qResultScr = correctAnswerCnt)
                     db.session.add(newQuizResult)
                     db.session.commit()
                 
                 else:
+                    quizResultQueryRes.quizResultAnswer = userQuizAnswer
                     quizResultQueryRes.quizResultScore = correctAnswerCnt
                     db.session.commit()
 
-                return jsonify({'state':'success'})   
+                return jsonify({'state':'success'})
             else:
                 return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
 
@@ -381,7 +385,11 @@ def quizResult(week):
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
-                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizResultWeek == week).first()
+                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizStep == queryRes.userLearningStep, Quiz_result.quizWeek == week).first()
+
+                userAnswer = quizResultQueryRes.quizResultAnswer
+                userAnswer = list(userAnswer.split(','))
+                userAnswer = list(map(int, userAnswer))
 
                 resultJson = {}
                 resultJson['state'] = 'success'
@@ -391,8 +399,8 @@ def quizResult(week):
                 resultJson['result'] = {}
                 resultJson['result']['totalQuizNum'] = 4
                 resultJson['result']['correctQuizNum'] = quizResultQueryRes.quizResultScore
-                resultJson['result']['userAnswer'] = [0, 0, 0, 0] #0부터 시작
-                resultJson['result']['correctAnswer'] = [2, 0, 3, 2] #0부터 시작
+                resultJson['result']['userAnswer'] = userAnswer #0부터 시작
+                resultJson['result']['correctAnswer'] = dummy.quizResultJson['correctAnswer'] #0부터 시작
 
                 return jsonify(resultJson) 
             else:
