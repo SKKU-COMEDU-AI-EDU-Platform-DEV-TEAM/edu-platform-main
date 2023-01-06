@@ -165,6 +165,9 @@ def main():
                 resultJson['mbti'] = queryRes.userMbti
                 resultJson['kolbProba'] = kolbProba
                 resultJson['rader'] = rader
+                #아래의 두 값은 현재는 더미데이터를 보내줍니다.
+                resultJson['totalUserProgress'] = dummy.mainJson['totalUserProgress']
+                resultJson['userProgress'] = dummy.mainJson['userProgress']
 
                 return jsonify(resultJson)
             else:
