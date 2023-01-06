@@ -349,6 +349,13 @@ class Algorithm_step_info(db.Model):
     algorithmStepInfoId = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     userId = db.Column(db.Integer, ForeignKey('user.userId'), nullable=False)
     content1 = db.Column(db.Integer, nullable=False)
+    content2 = db.Column(db.Integer, nullable=False)
+    content3 = db.Column(db.Integer, nullable=False)
+    content4 = db.Column(db.Integer, nullable=False)
+    content5 = db.Column(db.Integer, nullable=False)
+    content6 = db.Column(db.Integer, nullable=False)
+    content7 = db.Column(db.Integer, nullable=False)
+    content8 = db.Column(db.Integer, nullable=False)
 
     def __init__(self, usrId, content1, content2, content3, content4, content5, content6, content7, content8):
         self.userId = usrId
