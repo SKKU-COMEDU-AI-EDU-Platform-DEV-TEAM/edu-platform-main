@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil";
 import { Types, User } from "../types";
@@ -24,7 +23,6 @@ export default function CoursePage() {
     onSuccess: (data) => {
       setMetaverse(data.metaverse);
       setWord(data.data);
-      console.log(data);
     },
     onError: (err) => {
       alert(err);
