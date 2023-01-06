@@ -169,7 +169,8 @@ class Quiz_result(db.Model):
     +------------------+--------------+------+-----+---------+----------------+
     | quizResultId     | int          | NO   | PRI | NULL    | auto_increment |
     | userId           | int          | NO   | MUL | NULL    |                |
-    | quizId           | int          | NO   | MUL | NULL    |                |
+    | quizStep         | int          | NO   |     | NULL    |                |
+    | quizWeek         | int          | NO   |     | NULL    |                |
     | quizResultAnswer | varchar(255) | NO   |     | NULL    |                |
     | quizResultScore  | int          | NO   |     | NULL    |                |
     +------------------+--------------+------+-----+---------+----------------+
@@ -179,18 +180,20 @@ class Quiz_result(db.Model):
 
     quizResultId = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     userId = db.Column(db.Integer, ForeignKey('user.userId'), nullable=False)
-    quizId = db.Column(db.Integer, ForeignKey('quiz.quizId'), nullable=False)
+    quizStep = db.Column(db.Integer, nullable=False)
+    quizWeek = db.Column(db.Integer, nullable=False)
     quizResultAnswer = db.Column(db.String(255, 'utf8mb4_unicode_ci'), nullable=False)
     quizResultScore = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, usrId, qId, qResultAns, qResultScr):
+    def __init__(self, usrId, qStep, qWeek, qResultAns, qResultScr):
         self.userId = usrId
-        self.quizId = qId
+        self.quizStep = qStep
+        self.quizWeek = qWeek
         self.quizResultAnswer = qResultAns
         self.quizResultScore = qResultScr
 
     def __repr__(self):
-        return '<User %r %r %r %r %r>' % (self.quizResultId, self.userId, self.quizId, self.quizResultAnswer, self.quizResultScore)
+        return '<User %r %r %r %r %r %r>' % (self.quizResultId, self.userId, self.quizStep, self.quizWeek, self.quizResultAnswer, self.quizResultScore)
 
 
 
