@@ -44,7 +44,7 @@ export default function CoursePage() {
         <BubbleChart
           bubblesData={word}
           width={1400}
-          height={700}
+          height={650}
           textFillColor="black"
           backgroundColor="#fff"
           minValue={10}
