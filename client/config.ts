@@ -1,4 +1,4 @@
-import { TypeDescriptionType } from "./types";
+import { Scores, TypeDescriptionType } from "./types";
 
 export const checkIsValid = (Reg: RegExp, input: string) => {
   if (Reg.test(input)) {
@@ -7,7 +7,23 @@ export const checkIsValid = (Reg: RegExp, input: string) => {
     return true;
   }
 };
+export const RADAR_HEIGHT = 200;
+export const RADAR_WIDTH = 300;
+export const RADER_MARGIN = {
+  top: 20,
+  right: 60,
+  bottom: 20,
+  left: 60
+};
 
+export const AVERAGE: Scores = {
+  cohesion: 3.13,
+  syntax: 3.03,
+  vocabulary: 3.24,
+  phraseology: 3.12,
+  grammar: 3.03,
+  conventions: 3.08
+};
 export const AREA_WIDTH = 900;
 export const AREA_HEIGHT = 260;
 export const AREA_MARGIN = {
@@ -120,12 +136,12 @@ export const MBTI = [
   ],
   [
     [
-      "P",
-      "유동적인 목적과 방향 선호 / 자율적, 즉흥적 / 상황에 따라 적응 / 결정을 유보"
-    ],
-    [
       "J",
       "분명한 목적과 방향 선호 / 계획적, 체계적 / 기한 엄수 / 정리정돈을 좋아함"
+    ],
+    [
+      "P",
+      "유동적인 목적과 방향 선호 / 자율적, 즉흥적 / 상황에 따라 적응 / 결정을 유보"
     ]
   ]
 ];
