@@ -245,3 +245,8 @@ lectureJson2 = {
         }
     ]
 }
+
+mainJson = {
+    'totalUserProgress': 50,
+    'userProgress': 40
+}
