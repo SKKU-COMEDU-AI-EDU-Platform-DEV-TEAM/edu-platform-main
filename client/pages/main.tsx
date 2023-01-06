@@ -1,7 +1,7 @@
 import { Group } from "@visx/group";
 import { Text as VisxTtext } from "@visx/text";
 import { ScaleSVG } from "@visx/responsive";
-import { Button, Divider, Flex, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Stack, Text } from "@chakra-ui/react";
 import Layout from "../components/Layout";
 import { QuizGraph } from "../components/main/QuizGraph";
 import { RadarAxis, RadarMark } from "../components/main/RaderChart";
@@ -152,10 +152,28 @@ export default function MainPage() {
         </Stack>
 
         <Stack direction="row" justifyContent="space-between" gap={5}>
-          <Flex borderRadius="5px" boxShadow={"base"}>
+          <Flex
+            borderRadius="5px"
+            boxShadow={"base"}
+            direction="column"
+            p={5}
+            pb={0}
+          >
+            <Text textAlign={"center"} fontSize="20" fontWeight={"bold"}>
+              Kolb 유형 검사 결과
+            </Text>
             <PieChart width={300} height={300} letters={kolb} />
           </Flex>
-          <Flex borderRadius="5px" boxShadow={"base"} w="33%">
+          <Flex
+            borderRadius="5px"
+            boxShadow={"base"}
+            direction="column"
+            w="100%"
+            h="100%"
+          >
+            <Text textAlign={"center"} fontSize="20" fontWeight={"bold"} pt={5}>
+              Kolb 유형 별 MBTI 평균
+            </Text>
             <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
               <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
                 <RadarAxis
@@ -189,7 +207,16 @@ export default function MainPage() {
               </Group>
             </ScaleSVG>
           </Flex>
-          <Flex borderRadius="5px" boxShadow={"base"} w="33%">
+          <Flex
+            borderRadius="5px"
+            boxShadow={"base"}
+            direction="column"
+            h="100%"
+            w="100%"
+          >
+            <Text textAlign={"center"} fontSize="20" fontWeight={"bold"} pt={5}>
+              나의 MBTI 값과 비교
+            </Text>
             <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
               <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
                 <RadarAxis
