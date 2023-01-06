@@ -6,9 +6,10 @@ import Layout from "../components/Layout";
 import { QuizGraph } from "../components/main/QuizGraph";
 import { RadarAxis, RadarMark } from "../components/main/RaderChart";
 import { stepSelector, typeSelector, userState } from "../recoil";
-import { TypeDescriptionType, User } from "../types";
+import { LetterFrequency, TypeDescriptionType, User } from "../types";
 import {
   AVERAGE,
+  Kolb,
   RADAR_HEIGHT,
   RADAR_WIDTH,
   RADER_MARGIN,
@@ -18,8 +19,9 @@ import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { useMutation } from "react-query";
 import { useEffect, useState } from "react";
-import { schemeCategory10 as COLOR } from "d3-scale-chromatic";
+import { schemeTableau10 as COLOR } from "d3-scale-chromatic";
 import { useRouter } from "next/router";
+import PieChart from "../components/main/PieChart";
 
 export default function MainPage() {
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function MainPage() {
   const type = useRecoilValue<TypeDescriptionType>(typeSelector);
   const step = useRecoilValue<string[]>(stepSelector);
   const [mbti, setMbti] = useState<string>("");
-  const [kolb, setKolb] = useState<number[]>([]);
+  const [kolb, setKolb] = useState<LetterFrequency[]>([]);
   const [rader, setRader] = useState<number[]>([]);
 
   const main = async () => {
@@ -39,7 +41,14 @@ export default function MainPage() {
   const { mutate } = useMutation(main, {
     onSuccess: (data) => {
       setMbti(data.mbti);
-      setKolb(data.kolbProba);
+      var arr1 = [...data.kolbProba];
+      data.kolbProba.forEach((value: number, index: number) => {
+        arr1.push({
+          letter: Kolb[index],
+          frequency: value
+        });
+      });
+      setKolb(arr1);
       var arr = [...data.rader];
       for (const v of data.rader) {
         arr.push(10 - v);
@@ -141,8 +150,12 @@ export default function MainPage() {
             </Flex>
           </Flex>
         </Stack>
+
         <Stack direction="row" justifyContent="space-between" gap={5}>
-          <Flex borderRadius="5px" boxShadow={"base"} p={10} w="50%">
+          <Flex borderRadius="5px" boxShadow={"base"}>
+            <PieChart width={300} height={300} letters={kolb} />
+          </Flex>
+          <Flex borderRadius="5px" boxShadow={"base"} w="33%">
             <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
               <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
                 <RadarAxis
@@ -176,7 +189,7 @@ export default function MainPage() {
               </Group>
             </ScaleSVG>
           </Flex>
-          <Flex borderRadius="5px" boxShadow={"base"} p={10} w="50%">
+          <Flex borderRadius="5px" boxShadow={"base"} w="33%">
             <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
               <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
                 <RadarAxis

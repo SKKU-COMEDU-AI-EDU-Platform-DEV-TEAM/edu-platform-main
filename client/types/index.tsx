@@ -76,11 +76,7 @@ export interface QuizResultType {
   correctAnswer: number[];
 }
 
-export interface Scores {
-  cohesion: number;
-  conventions: number;
-  syntax: number;
-  vocabulary: number;
-  phraseology: number;
-  grammar: number;
+export interface LetterFrequency {
+  letter: string;
+  frequency: number;
 }

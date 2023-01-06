@@ -1,5 +1,7 @@
 import { TypeDescriptionType } from "./types";
 
+export const Kolb = ["분산자", "융합자", "수렴자", "적응자"];
+
 export const checkIsValid = (Reg: RegExp, input: string) => {
   if (Reg.test(input)) {
     return false;
