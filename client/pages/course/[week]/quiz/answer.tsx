@@ -7,7 +7,7 @@ import Layout from "../../../../components/Layout";
 import CourseLayout from "../../../../components/CourseLayout";
 import axios from "axios";
 import { Accordion, Box, Button, Text } from "@chakra-ui/react";
-import QuizResult from "../../../../components/course/QuizResult";
+import QuizAnswer from "../../../../components/course/QuizAnswer";
 import { mockupQuizResult } from "../../../../mockupData";
 
 export default function QuizResultPage() {
@@ -15,14 +15,15 @@ export default function QuizResultPage() {
   const { week } = router.query;
   const [quiz, setQuiz] = useState<QuizType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const user = useRecoilValue<User | null>(userState);
+  const user = useRecoilValue<User>(userState);
   const [result, setResult] = useState<QuizResultType>(mockupQuizResult);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = (
-        await axios.post(`/api/quiz/${week}/result`, { token: user!.token })
-      ).data;
+      const token = localStorage.getItem('token');
+
+      const response = (await axios.post(`/api/quiz/${week}/answer`, { token: token })).data;
+      console.log(response.result);
       setQuiz(response.data);
       setResult(response.result);
       setIsLoading(false);
@@ -32,13 +33,13 @@ export default function QuizResultPage() {
 
   return (
     <Layout>
-      <CourseLayout title={`${week}주차 퀴즈`} type={user!.type} metaverse={""}>
+      <CourseLayout title={`${week}주차 퀴즈`} type={user.type} metaverse={""}>
         <>
           <Accordion allowMultiple>
             <>
               {quiz.map(function (q, i) {
                 return (
-                  <QuizResult
+                  <QuizAnswer
                     key={`quiz${i}`}
                     id={i + 1}
                     question={q.question}
@@ -60,19 +61,9 @@ export default function QuizResultPage() {
               width="20%"
               borderRadius={"2xl"}
               bgColor="rgb(144, 187, 144)"
-              onClick={() => router.push(`/course/${week}/quiz`)}
+              onClick={() => router.push(`/course`)}
             >
-              다시 풀어보기
-            </Button>
-            <Button
-              height="40px"
-              width="20%"
-              borderRadius={"2xl"}
-              bgColor="rgb(144, 187, 144)"
-              marginLeft="30px"
-              onClick={() => router.push(`/course/${week}/quiz/answer`)}
-            >
-              정답 확인하기
+                완료
             </Button>
           </Box>
         </>

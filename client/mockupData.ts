@@ -1,3 +1,4 @@
+
 import { Lecture, Point, QuizResultType, QuizType, Type, Types } from "./types";
 
 export const mockupPoint: Point = {
