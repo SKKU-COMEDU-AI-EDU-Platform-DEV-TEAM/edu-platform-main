@@ -41,7 +41,7 @@ export default function PieChart({
     ]
   });
   return (
-    <svg>
+    <svg width={width} height={height}>
       <Group top={top} left={left}>
         <Pie
           data={letters}
