@@ -286,20 +286,11 @@ def courseLegacy():
 
 
 
-#[GET] 퀴즈 데이터 api
-#[POST] 퀴즈 채점 api
-@app.route('/api/quiz/<int:week>', methods=['GET', 'POST'])
-def quiz(week):
-    if request.method == 'GET':
-        #현재는 7주차에 대한 데이터를 보내줍니다.
-        if week == 7 :
-            return jsonify(dummy.quizJson)
-        else:
-            return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
-
-    elif request.method == 'POST':
+#[POST] 퀴즈 데이터 api
+@app.route('/api/quiz', methods=['POST'])
+def quiz():
+    if request.method == 'POST':
         reqJson = request.get_json()
-
         ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
         tokenReceive = reqJson['token']
 
@@ -308,7 +299,42 @@ def quiz(week):
 
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
+            week = reqJson['week']
+
             if queryRes is not None:
+                #현재는 7주차에 대한 데이터를 보내줍니다.
+                if week == 7 :
+                    return jsonify(dummy.quizJson)
+                else:
+                    return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+#[POST] 퀴즈 채점 api
+@app.route('/api/quizGrade', methods=['POST'])
+def quizGrade():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+
+        ###################################################################### db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                week = reqJson['week']
                 userQuizAnswer = reqJson['data'] #프론트에서 문제 선택지 번호가 0부터 시작하는 것인지 궁금합니다.
 
                 #현재는 더미데이터를 기준으로 채점 로직을 수행합니다.(7주차 기준)
@@ -346,7 +372,7 @@ def quiz(week):
 
         except jwt.exceptions.DecodeError:
             return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
-        ############################################################################# <여기까지>
+        ###################################################################### <여기까지>
 
         userQuizAnswer = quizReqJson['data']
 
@@ -369,8 +395,8 @@ def quiz(week):
 
 #[GET] 퀴즈 결과 api
 #[POST] 퀴즈 결과 with JWT api
-@app.route('/api/quiz/<int:week>/result', methods=['GET', 'POST'])
-def quizResult(week):
+@app.route('/api/quiz/result', methods=['GET', 'POST'])
+def quizResult():
     if request.method == 'GET':
         #현재는 더미 데이터를 전송합니다. 추후 db 쿼리문을 작성하면 삭제바랍니다.
         dummy.quizResultJson['correctQuizNum'] = userCorrectAnswerCntDummy
@@ -389,6 +415,8 @@ def quizResult(week):
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
+                week = reqJson['week']
+
                 quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizStep == queryRes.userLearningStep, Quiz_result.quizWeek == week).first()
 
                 userAnswer = quizResultQueryRes.quizResultAnswer
@@ -424,8 +452,8 @@ def quizResult(week):
 
 #[GET] 영상pdf 데이터 api
 #[POST] 영상pdf 데이터 with JWT api
-@app.route('/api/lecture/<int:week>/<int:id>', methods=['GET', 'POST'])
-def lecture(week, id):
+@app.route('/api/lecture', methods=['GET', 'POST'])
+def lecture():
     if request.method == 'GET':
         #현재는 더미 데이터를 전송합니다.
         return jsonify(dummy.lectureJson)
@@ -434,6 +462,9 @@ def lecture(week, id):
         reqJson = request.get_json()
         ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
         tokenReceive = reqJson['token']
+
+        week = reqJson['week']
+        id = reqJson['id']
 
         try:
             payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
