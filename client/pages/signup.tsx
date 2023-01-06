@@ -4,13 +4,14 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  Select
+  Text
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useMutation } from "react-query";
 import EnterLayout from "../components/EnterLayout";
-import { checkIsValid, emailReg, mbtiArr, pwReg } from "../config";
+import { checkIsValid, emailReg, pwReg } from "../config";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,7 +20,6 @@ export default function SignupPage() {
   const [name, setName] = useState<string>("");
   const [pw, setPw] = useState<string>("");
   const [confirmPw, setConfirmPw] = useState<string>("");
-  const [mbti, setMBTI] = useState<string>("ISTJ");
   const [isEmailInvalid, setEmailInvalid] = useState<boolean>(false);
   const [isPwInvalid, setPwInvalid] = useState<boolean>(false);
   const isConfirmPwInvalid: boolean = pw != confirmPw;
@@ -36,35 +36,50 @@ export default function SignupPage() {
     setPwInvalid(checkIsValid(pwReg, pw));
   };
 
-  const handleSignupOnClick = async () => {
-    if (
-      isConfirmPwInvalid ||
-      checkIsValid(emailReg, email) ||
-      checkIsValid(pwReg, pw)
-    ) {
-      return;
-    }
-    const response = (
-      await axios.post("api/signup", {
-        email: email,
-        pw: pw,
-        name: name,
-        mbti: mbti
-      })
-    ).data;
-    //error handling
-    router.push("/");
+  const signup = async () => {
+    const { data } = await axios.post("api/signup", {
+      email: email,
+      pw: pw,
+      name: name
+    });
+    return data;
   };
+  const { mutate } = useMutation(signup, {
+    onMutate: () => {
+      if (
+        isConfirmPwInvalid ||
+        checkIsValid(emailReg, email) ||
+        checkIsValid(pwReg, pw)
+      ) {
+        return;
+      }
+    },
+    onSuccess: () => {
+      router.push("/");
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
   return (
     <EnterLayout>
       <>
+        <Text
+          fontSize={40}
+          color="rgb(144, 187, 144)"
+          textAlign={"center"}
+          fontWeight="bold"
+          pb={5}
+        >
+          SIGN UP
+        </Text>
         <FormControl mb={1} isRequired isInvalid={isEmailInvalid}>
           <FormLabel fontSize={16}>Email</FormLabel>
           <Input
             type="email"
             value={email}
             onChange={handleEmailInputChange}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -78,7 +93,7 @@ export default function SignupPage() {
             type="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -89,7 +104,7 @@ export default function SignupPage() {
             type="password"
             value={pw}
             onChange={handlePwInputChange}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -100,13 +115,13 @@ export default function SignupPage() {
             </FormErrorMessage>
           )}
         </FormControl>
-        <FormControl mb={1} isRequired isInvalid={isConfirmPwInvalid}>
+        <FormControl mb={8} isRequired isInvalid={isConfirmPwInvalid}>
           <FormLabel fontSize={16}>Confirm Password</FormLabel>
           <Input
             type="password"
             value={confirmPw}
             onChange={(e) => setConfirmPw(e.target.value)}
-            borderRadius="2xl"
+            borderRadius="5px"
             borderWidth={"2px"}
             borderColor={"rgb(144, 187, 144)"}
           />
@@ -114,30 +129,24 @@ export default function SignupPage() {
             <FormErrorMessage>Pw does not match.</FormErrorMessage>
           )}
         </FormControl>
-        <FormControl mb={10} isRequired>
-          <FormLabel fontSize={16}>MBTI</FormLabel>
-          <Select
-            borderRadius="2xl"
-            borderWidth={"2px"}
-            borderColor={"rgb(144, 187, 144)"}
-            placeholder="ISTJ"
-            onChange={(e) => setMBTI(e.target.value)}
-          >
-            {mbtiArr.map((mbti) => (
-              <option aria-label={mbti} key={mbti}>
-                {mbti}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
         <Button
           width="100%"
-          borderRadius={"2xl"}
+          borderRadius={"5px"}
           bgColor=" rgb(144, 187, 144)"
           _hover={{ bgColor: "green" }}
-          onClick={handleSignupOnClick}
+          onClick={() => mutate()}
+          mb={5}
         >
           Sign Up
+        </Button>
+        <Button
+          height="40px"
+          width="100%"
+          borderRadius={"5px"}
+          bgColor="#DD9D9"
+          onClick={() => router.push("/")}
+        >
+          Login
         </Button>
       </>
     </EnterLayout>

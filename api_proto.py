@@ -6,7 +6,7 @@ import datetime
 import secrets
 import pymysql
 import hashlib
-from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
+from modelLegacy import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 import random

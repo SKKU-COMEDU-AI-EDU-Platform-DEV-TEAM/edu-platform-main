@@ -13,28 +13,19 @@ export default function LecturePage() {
   const { week, id } = router.query;
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [content, setContent] = useState<Lecture>();
-  const user = useRecoilValue<User>(userState);
+  const user = useRecoilValue<User | null>(userState);
 
   useEffect(() => {
     const fetchData = async () => {
-      if(!router.isReady) return;
-
-      const token = localStorage.getItem('token');
+      if (!router.isReady) return;
 
       const response = (
         await axios.post(`/api/lecture/${week}/${id}`, {
-          token: token
+          token: user!.token
         })
       ).data;
 
-      const updatedLecture = {
-        title: response.data.title,
-        videoTitle: response.data.videoTitle,
-        video: response.data.video,
-        pdf: response.data.pdf
-      };
-
-      setContent(updatedLecture);
+      setContent(response.data);
       setIsLoading(false);
     };
     fetchData();
@@ -44,7 +35,7 @@ export default function LecturePage() {
     <Layout>
       <CourseLayout
         title={`${week}주차 | ${content?.title} `}
-        type={user.type}
+        type={user!.type}
         metaverse={""}
       >
         <>
@@ -54,7 +45,7 @@ export default function LecturePage() {
                 {String(id).padStart(2, "0")}.
               </Text>
               <Text fontWeight={"bold"} textAlign={"left"} pl={2}>
-                {content?.videoTitle}
+                {content!.videoTitle}
               </Text>
             </Stack>
           </Box>
@@ -68,13 +59,13 @@ export default function LecturePage() {
           >
             <AspectRatio ratio={16 / 9}>
               <iframe
-                title={content?.title}
-                src={content?.video}
+                title={content!.title}
+                src={content!.video}
                 allowFullScreen
               />
             </AspectRatio>
             <AspectRatio ratio={16 / 9}>
-              <embed src={content?.pdf} type="application/pdf" />
+              <embed src={content!.pdf} type="application/pdf" />
             </AspectRatio>
           </Stack>
         </>

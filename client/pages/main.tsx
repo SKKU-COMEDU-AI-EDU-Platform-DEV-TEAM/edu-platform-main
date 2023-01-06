@@ -1,73 +1,178 @@
-import { SimpleGrid, Stack, Text } from "@chakra-ui/react";
-import { TypeDescription } from "../components/main/TypeDescription";
+import { Group } from "@visx/group";
+import { Text as VisxTtext } from "@visx/text";
+import { ScaleSVG } from "@visx/responsive";
+import { Button, Divider, Flex, Stack, Text } from "@chakra-ui/react";
 import Layout from "../components/Layout";
-import { CourseDescription } from "../components/main/CourseDescription";
 import { QuizGraph } from "../components/main/QuizGraph";
-import { UserDescription } from "../components/main/UserDescription";
+import { RadarAxis, RadarMark } from "../components/main/RaderChart";
+import { stepSelector, typeSelector, userState } from "../recoil";
+import { TypeDescriptionType, User } from "../types";
+import { AVERAGE, RADAR_HEIGHT, RADAR_WIDTH, RADER_MARGIN } from "../config";
+import axios from "axios";
 import { useRecoilValue } from "recoil";
-import { userState } from "../recoil";
-import { TypeDescriptionList } from "../config";
-import { TypeCard } from "../components/main/TypeCard";
-import { useRecoilState } from "recoil";
+import { useMutation } from "react-query";
+import { useEffect, useState } from "react";
+import { schemeCategory10 as COLOR } from "d3-scale-chromatic";
+import { useRouter } from "next/router";
 
 export default function MainPage() {
-  //const user = useRecoilValue(userState);
+  const router = useRouter();
+  const user = useRecoilValue<User | null>(userState);
+  const type = useRecoilValue<TypeDescriptionType>(typeSelector);
+  const step = useRecoilValue<string[]>(stepSelector);
+  const [mbti, setMbti] = useState<string>();
+  const [kolb, setKolb] = useState<number[]>();
+  const [rader, setRader] = useState<number[]>();
 
-  const [user, setUser] = useRecoilState(userState);
+  const main = async () => {
+    const { data } = await axios.post("/api/main", {
+      token: user!.token
+    });
+    return data;
+  };
+  const { mutate } = useMutation(main, {
+    onSuccess: (data) => {
+      setMbti(data.mbti);
+      setKolb(data.kolbProba);
+      setRader(data.rader);
+    },
+    onError: (err) => {
+      alert(err);
+    }
+  });
+  useEffect(() => {
+    mutate();
+  }, []);
 
   return (
     <Layout>
       <Stack
         direction={"column"}
         w={{ base: "full", xl: "container.xl" }}
-        spacing={12}
+        spacing={5}
         mb="10"
       >
-        <Stack direction={"row"} justifyContent="space-between" pt={30}>
-          <UserDescription />
-          <TypeDescription />
-          <CourseDescription />
+        <Stack direction="row" justifyContent="space-between" gap={5} pt={30}>
+          <Flex
+            bg="#F5F5F5"
+            borderRadius="5px"
+            boxShadow={"base"}
+            fontWeight="bold"
+            textAlign="center"
+            direction={"column"}
+            p={10}
+            pt={30}
+            pb={30}
+            w="23%"
+          >
+            <Text fontSize={20} color="gray">
+              Kolb 학습 유형
+            </Text>
+            <Text mt={2} fontSize={30}>
+              {type.type}
+            </Text>
+          </Flex>
+          <Flex
+            bg="#F5F5F5"
+            borderRadius="5px"
+            boxShadow={"base"}
+            fontWeight="bold"
+            textAlign={"center"}
+            direction={"column"}
+            w="23%"
+            p={16}
+            pt={30}
+            pb={30}
+          >
+            <Text fontSize={20} color="gray">
+              My MBTI
+            </Text>
+            <Text fontSize={35}>{mbti}</Text>
+          </Flex>
+          <Flex
+            w="50%"
+            bg="#F5F5F5"
+            justifyContent="space-around"
+            borderRadius="5px"
+            boxShadow={"base"}
+            fontWeight="bold"
+            textAlign="center"
+            direction={"row"}
+            p={10}
+            pt={30}
+            pb={0}
+          >
+            <Stack>
+              <Text fontSize={20} color="gray">
+                추천 학습 콘텐츠
+              </Text>
+              <Text fontSize={30}>{type.content}</Text>
+            </Stack>
+            <Divider orientation="vertical" ml={5} mr={5} />
+            <Stack>
+              <Text fontSize={20} color="gray">
+                강의 바로가기
+              </Text>
+              <Button
+                mt={5}
+                borderRadius={"5px"}
+                colorScheme={"green"}
+                variant="outline"
+                borderWidth={"2px"}
+                onClick={() => router.push("/course")}
+                p={7}
+                pt={5}
+                pb={5}
+                fontWeight={"bold"}
+                fontSize={20}
+              >
+                {step[0]}
+              </Button>
+            </Stack>
+          </Flex>
         </Stack>
-        {user.type == 2 && <QuizGraph />}
-        <Text
-          color="rgb(144, 187, 144)"
-          textAlign={"center"}
-          fontWeight={"bold"}
-          fontSize="30"
-          as="ins"
-        >
-          다른 학습 유형도 살펴보기
-        </Text>
-        <SimpleGrid spacing={20} templateColumns="repeat(3, 1fr)">
-          {user.type != 1 && (
-            <TypeCard
-              type={TypeDescriptionList[0].type}
-              description={TypeDescriptionList[0].description}
-              link="/video.png"
+        {/* <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
+          <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
+            <RadarAxis
+              width={RADAR_WIDTH}
+              height={RADAR_HEIGHT}
+              margin={RADER_MARGIN}
             />
-          )}
-          {user.type != 2 && (
-            <TypeCard
-              type={TypeDescriptionList[1].type}
-              description={TypeDescriptionList[1].description}
-              link="/quiz.png"
+            <RadarMark
+              data={rader}
+              color={COLOR[0]}
+              width={RADAR_WIDTH}
+              height={RADAR_HEIGHT}
+              margin={RADER_MARGIN}
             />
-          )}
-          {user.type != 3 && (
-            <TypeCard
-              type={TypeDescriptionList[2].type}
-              description={TypeDescriptionList[2].description}
-              link="/game.png"
+            <RadarMark
+              data={AVERAGE}
+              color={COLOR[7]}
+              width={RADAR_WIDTH}
+              height={RADAR_HEIGHT}
+              margin={RADER_MARGIN}
             />
-          )}
-          {user.type != 4 && (
-            <TypeCard
-              type={TypeDescriptionList[3].type}
-              description={TypeDescriptionList[3].description}
-              link="/metaverse.png"
-            />
-          )}
-        </SimpleGrid>
+            <VisxTtext
+              x="80"
+              y="90"
+              fontWeight="bold"
+              fontSize="8px"
+              fill="#7f7f7f"
+            >
+              ■ Student Score
+            </VisxTtext>
+            <VisxTtext
+              x="80"
+              y="80"
+              fontSize="8px"
+              fontWeight="bold"
+              fill="#1f77b4"
+            >
+              ■ My Score
+            </VisxTtext>
+          </Group>
+        </ScaleSVG> */}
+        {user!.type == 2 && <QuizGraph />}
       </Stack>
     </Layout>
   );

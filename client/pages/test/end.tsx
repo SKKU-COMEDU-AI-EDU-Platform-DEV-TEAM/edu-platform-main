@@ -1,39 +1,48 @@
-import { Box, Button, Container } from "@chakra-ui/react";
+import { Box, Button, Container, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { typeSelector, userState } from "../../recoil";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { TypeDescriptionType, User } from "../../types";
 import TestLayout from "../../components/TestLayout";
+import { useMutation } from "react-query";
+import { useEffect } from "react";
 
 export default function TestEndPage() {
   const router = useRouter();
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user, setUser] = useRecoilState<User>(userState);
+  const [user, setUser] = useRecoilState<User | null>(userState);
   const type = useRecoilValue<TypeDescriptionType>(typeSelector);
 
+  const testResult = async () => {
+    const { data } = await axios.post("/api/testResult", {
+      token: user!.token
+    });
+    return data;
+  };
+  const { mutate } = useMutation(testResult, {
+    onSuccess: (data) => {
+      console.log(data);
+      setUser({
+        ...user,
+        type: data.type,
+        step: data.step
+      });
+      console.log({
+        ...user,
+        type: data.type,
+        step: data.step
+      });
+    },
+    onError: (error) => {
+      alert(error);
+    }
+  });
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      const response = (
-        await axios.post("/api/testResult", { token: token })
-      ).data;
-      const updatedUser = {
-        userName: user.userName,
-        userId: user.userId,
-        userEmail: user.userEmail,
-        type: response.type
-      };
-      setUser(updatedUser);
-      setIsLoading(false);
-    };
-    fetchData();
+    mutate();
   }, []);
 
   return (
-    <TestLayout>
+    <TestLayout title="학습 유형 테스트 결과">
       <>
         <Container
           maxW="95%"
@@ -42,20 +51,24 @@ export default function TestEndPage() {
           mt={10}
           wordBreak="keep-all"
         >
-          설문 마무리 멘트 Lorem ipsum dolor sit amet consectetur adipisicing
-          elit. Ut ipsa sit ad, possimus sunt quidem a omnis magni beatae! Quo,
-          consequatur. Esse quidem quam in quia! Nisi pariatur sequi illum?
-        </Container>
-        <Container maxW="95%" fontSize={23} centerContent mt={10}>
-          {user.userName}님은 {type.type} 유형!
+          에듀버블스는 adaptive learning을 기반한 코딩학습 툴로, 사용자의 MBTI로
+          예측한 Kolb 학습자 유형과, 사용자의 학습 수준에 따라 개개인에게 알맞은
+          학습 진도와 컨텐츠를 추천합니다.
+          <br /> <br />
+          {user!.userName}님은 {type?.type} 유형!
           <br />
-          {type.description}.
+          해당 유형은 {type?.description}
+          <br />
+          {type?.characteristic} {type?.dependency}
+          <br />
+          <br />
+          따라서 {user!.userName}님에게 추천하는 학습 컨텐츠는 {type?.recommend}
         </Container>
         <Box display="flex" justifyContent={"right"} mt={10}>
           <Button
             height="40px"
             width="30%"
-            borderRadius={"2xl"}
+            borderRadius={"5px"}
             bgColor="rgb(144, 187, 144)"
             onClick={() => router.push("/main")}
           >

@@ -1,5 +1,5 @@
 import { LayoutDefaultProps } from "../types";
-import { Box, Image, Stack } from "@chakra-ui/react";
+import { Box, Divider, Image, Stack } from "@chakra-ui/react";
 
 export default function EnterLayout({ children }: LayoutDefaultProps) {
   return (
@@ -12,11 +12,11 @@ export default function EnterLayout({ children }: LayoutDefaultProps) {
       boxShadow={"base"}
       w="xl"
       borderWidth="1px"
-      borderRadius="2xl"
+      borderRadius="5px"
       p={16}
       pt={12}
     >
-      <Stack direction="row" justifyContent={"space-between"} mb={10}>
+      <Stack direction="row" justifyContent={"space-between"}>
         <Image
           w={"80%"}
           objectFit="contain"
@@ -25,6 +25,7 @@ export default function EnterLayout({ children }: LayoutDefaultProps) {
         />
         <Image w={"10%"} objectFit="contain" src="/SKKU.png" alt="SKKU" />
       </Stack>
+      <Divider mt={3} mb={3} />
       {children}
     </Box>
   );

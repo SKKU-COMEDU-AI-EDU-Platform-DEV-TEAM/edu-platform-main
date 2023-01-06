@@ -5,12 +5,15 @@ import os
 import datetime
 import hashlib
 import jwt
-from model import User, Learning_contents, Quiz, Quiz_result, Week_learning_check
+from model import User, Learning_contents, Quiz, Quiz_result, Learning_check, Basic_step_info, Data_structure_step_info, Algorithm_step_info, Data_analysis_step_info, Ai_step_info
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 import random
 from decisionTree import clf
 import dummy
+import userTestQuestion
+import numpy as np
+import courseData
 
 
 load_dotenv()
@@ -64,12 +67,15 @@ def signup():
                     cDate = datetime.datetime.now(KST), 
                     uDate = datetime.datetime.now(KST), 
                     mbti = None,
-                    kolbType = None, 
+                    mbtiTest = None,
+                    kolbType = None,
+                    kolbProba = None,
+                    lrnStep = None,
                     lrnLvl = None, 
-                    interestTag = None,
                     lrnType = None, 
                     gamiLvl = 0, 
-                    gamiExp = 0)
+                    gamiExp = 0,
+                    usrTestTry = 0)
 
     db.session.add(newUser)
     db.session.commit()
@@ -93,17 +99,13 @@ def login():
     if queryRes is not None:
         result = {}
         result['state'] = 'success'
-        #result['userName'] = queryRes.userNickname
-        #result['userId'] = queryRes.userId
-        #result['userEmail'] = queryRes.userEmail
-        #result['type'] = queryRes.userLearnerType
 
-        #test
         result['info'] = {}
         result['info']['userName'] = queryRes.userNickname
         result['info']['userId'] = queryRes.userId
         result['info']['userEmail'] = queryRes.userEmail
         result['info']['type'] = queryRes.userLearnerType
+        result['info']['step'] = queryRes.userLearningStep
 
         #Access Token
         payload = {
@@ -149,7 +151,19 @@ def main():
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
-                return jsonify({'state':'success', 'type':queryRes.userLearnerType})   
+                resultJson = {}
+
+                kolbProba = queryRes.userKolbProbability
+                kolbProba = list(kolbProba.split(','))
+                kolbProba = list(map(float, kolbProba))
+                rader = queryRes.userMbtiTest
+                rader = list(map(int, rader.split(',')))
+                resultJson['state'] = 'success'
+                resultJson['mbti'] = queryRes.userMbti
+                resultJson['kolbProba'] = kolbProba
+                resultJson['rader'] = rader
+
+                return jsonify(resultJson)
             else:
                 return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
 
@@ -160,15 +174,81 @@ def main():
             return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
         ############################################################################# <여기까지>
 
-        return jsonify({'state':'success', 'type':'2'})
+    else:
+        return jsonify({'state':'fail'})
+
+
+
+#[POST] 전체 학습 페이지 api
+@app.route('/api/course', methods=['POST'])
+def course():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                if queryRes.userLearningStep == 0:
+                    learningKeywords = courseData.basic_python
+                    bubbleSizesQueryRes = db.session.query(Basic_step_info).filter(Basic_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8, bubbleSizesQueryRes.content9, bubbleSizesQueryRes.content10]
+
+                elif queryRes.userLearningStep == 1:
+                    learningKeywords = courseData.data_structure
+                    bubbleSizesQueryRes = db.session.query(Data_structure_step_info).filter(Data_structure_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8]
+
+                elif queryRes.userLearningStep == 2:
+                    learningKeywords = courseData.algorithm
+                    bubbleSizesQueryRes = db.session.query(Algorithm_step_info).filter(Algorithm_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8]
+
+                elif queryRes.userLearningStep == 3:
+                    learningKeywords = courseData.data_analysis
+                    bubbleSizesQueryRes = db.session.query(Data_analysis_step_info).filter(Data_analysis_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8, bubbleSizesQueryRes.content9, bubbleSizesQueryRes.content10]
+
+                elif queryRes.userLearningStep == 4:
+                    learningKeywords = courseData.ai
+                    bubbleSizesQueryRes = db.session.query(Ai_step_info).filter(Ai_step_info.userId == queryRes.userId).first()
+                    bubbleSizes = [bubbleSizesQueryRes.content1, bubbleSizesQueryRes.content2, bubbleSizesQueryRes.content3, bubbleSizesQueryRes.content4, bubbleSizesQueryRes.content5, bubbleSizesQueryRes.content6, bubbleSizesQueryRes.content7, bubbleSizesQueryRes.content8, bubbleSizesQueryRes.content9, bubbleSizesQueryRes.content10]
+                
+                resultJson = {}
+                resultJson['state'] = 'success'
+                resultJson['data'] = []
+                resultJson['metaverse'] = []
+                for i in range(len(learningKeywords)):
+                    resultJson['data'].append({})
+                    resultJson['data'][i]['id'] = i + 1
+                    resultJson['data'][i]['name'] = learningKeywords[i]
+                    resultJson['data'][i]['size'] = bubbleSizes[i]
+                    resultJson['data'][i]['week'] = i + 1
+                    resultJson['metaverse'].append('https://app.gather.town/app/KxbGPczKS6ld3Fxt/SKKUMeta') #현재는 고정 값을 보내줍니다.
+
+                return jsonify(resultJson)
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
     else:
         return jsonify({'state':'fail'})
 
 
 
 #[GET] 전체 학습 페이지 api
-@app.route('/api/course', methods=['GET'])
-def courses():
+@app.route('/api/courseLegacy', methods=['GET'])
+def courseLegacy():
     #user_code = request.get_json()
     #user_code = user_code['email']
     
@@ -226,31 +306,35 @@ def quiz(week):
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
-                userQuizAnswer = reqJson['data']
+                userQuizAnswer = reqJson['data'] #프론트에서 문제 선택지 번호가 0부터 시작하는 것인지 궁금합니다.
 
                 #현재는 더미데이터를 기준으로 채점 로직을 수행합니다.(7주차 기준)
                 correctAnswerCnt = 0
-                userAnswer = []
                 for i in range(dummy.quizResultJson['totalQuizNum']):
-                    userAnswer.append(userQuizAnswer[i])
-                    if userQuizAnswer[i] == dummy.quizResultJson['correctAnswer'][i]:
+                    if userQuizAnswer[i] == dummy.quizResultJson['correctAnswer'][i]: #비교하는 더미데이터도 일단 0부터 시작으로 합니다.
                         correctAnswerCnt += 1
+
+                userQuizAnswer = str(userQuizAnswer)
+                userQuizAnswer = userQuizAnswer[1:len(userQuizAnswer)-1].replace(' ','')
                 
-                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizResultWeek == week).first()
+                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizStep == queryRes.userLearningStep, Quiz_result.quizWeek == week).first()
 
                 #db 쿼리 결과 퀴즈 응시 내역이 존재하면 퀴즈 점수를 업데이트 하고 존재하지 않으면 데이터를 추가합니다.
                 if quizResultQueryRes is None:
                     newQuizResult = Quiz_result(usrId = queryRes.userId, 
-                                                qResultWeek = week,
-                                                qResultScore = correctAnswerCnt)
+                                                qStep = queryRes.userLearningStep,
+                                                qWeek = week,
+                                                qResultAns = userQuizAnswer,
+                                                qResultScr = correctAnswerCnt)
                     db.session.add(newQuizResult)
                     db.session.commit()
                 
                 else:
+                    quizResultQueryRes.quizResultAnswer = userQuizAnswer
                     quizResultQueryRes.quizResultScore = correctAnswerCnt
                     db.session.commit()
 
-                return jsonify({'state':'success'})   
+                return jsonify({'state':'success'})
             else:
                 return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
 
@@ -302,7 +386,11 @@ def quizResult(week):
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
-                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizResultWeek == week).first()
+                quizResultQueryRes = db.session.query(Quiz_result).filter(Quiz_result.userId == queryRes.userId, Quiz_result.quizStep == queryRes.userLearningStep, Quiz_result.quizWeek == week).first()
+
+                userAnswer = quizResultQueryRes.quizResultAnswer
+                userAnswer = list(userAnswer.split(','))
+                userAnswer = list(map(int, userAnswer))
 
                 resultJson = {}
                 resultJson['state'] = 'success'
@@ -312,8 +400,8 @@ def quizResult(week):
                 resultJson['result'] = {}
                 resultJson['result']['totalQuizNum'] = 4
                 resultJson['result']['correctQuizNum'] = quizResultQueryRes.quizResultScore
-                resultJson['result']['userAnswer'] = [0, 0, 0, 0] #0부터 시작
-                resultJson['result']['correctAnswer'] = [2, 0, 3, 2] #0부터 시작
+                resultJson['result']['userAnswer'] = userAnswer #0부터 시작
+                resultJson['result']['correctAnswer'] = dummy.quizResultJson['correctAnswer'] #0부터 시작
 
                 return jsonify(resultJson) 
             else:
@@ -367,6 +455,41 @@ def lecture(week, id):
 
 
 
+#[POST] 게이미피케이션 학습 체크 api 
+@app.route('/api/game', methods=['POST'])
+def gameCheck():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                #현재는 더미 데이터를 전송합니다.
+                return jsonify(dummy.lectureJson) 
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 메타버스 학습 체크 api 
+@app.route('/api/metaverse', methods=['POST'])
+def metaverseCheck():
+    return jsonify({})
+
+
+
 #[GET] 학습자 유형 판단 설문 항목 api
 #[POST] 학습자 유형 판단 api
 @app.route('/api/test', methods=['GET', 'POST'])
@@ -415,7 +538,6 @@ def test():
             return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
         ############################################################################# <여기까지>
 
-
         #userId = reqJson["userId"]
         result = reqJson["type"]
         mbti = reqJson["mbti"]
@@ -428,13 +550,372 @@ def test():
 
         lernerTypes = [3, 2, 1, 0] #메타버스, 게이미피케이션, 퀴즈, 영상
         userLearnerType = lernerTypes[userKolbTypeNum - 1]
-
-
         
         return jsonify({'state':'success'})
 
     else:
         return jsonify({'state':'fail'})
+
+
+
+#[POST] 학습자 유형 판단 설문 시도 횟수 api
+@app.route('/api/testReady', methods=['POST'])
+def testReady():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                resultJson = {}
+                resultJson['state'] = 'success'
+                resultJson['userTry'] = queryRes.userTestTry
+                return jsonify(resultJson)
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 학습자 유형 판단 설문 MBTI api
+@app.route('/api/testMbti', methods=['POST'])
+def testMbti():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                mbti = reqJson["mbti"]
+
+                mbtiTest = str(mbti)
+                mbtiTest = mbtiTest[1:len(mbtiTest)-1].replace(' ','')
+
+                kolbTypes = ['Divergers', 'Assimilators', 'Convergers', 'Accommodators'] #분산자, 융합자, 수렴자, 적응자
+                userKolbTypeNum = clf.predict([mbti])[0]
+                userKolbType = kolbTypes[userKolbTypeNum - 1]
+
+                lernerTypes = [4, 3, 2, 1] #메타버스, 게이미피케이션, 퀴즈, 영상
+                userLearnerType = lernerTypes[userKolbTypeNum - 1]
+
+                kolbProba = np.round(clf.predict_proba([mbti])[0] * 100, 2)
+                kolbProba = str(kolbProba)
+                kolbProba = kolbProba[1:len(kolbProba)-1].replace(' ','')
+
+                queryRes.userMbti = ('I' if mbti[0] <= 5 else 'E') + ('S' if mbti[1] <= 5 else 'N') + ('T' if mbti[2] <= 5 else 'F') + ('P' if mbti[3] <= 5 else 'J')
+                queryRes.userMbtiTest = mbtiTest
+                queryRes.userKolbType = userKolbType
+                queryRes.userKolbProbability = kolbProba
+                queryRes.userLearnerType = userLearnerType
+                db.session.commit()
+
+                return jsonify({'state':'success'})   
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 학습자 유형 판단 설문 Step api
+@app.route('/api/testStep', methods=['POST'])
+def testStep():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                step = reqJson["step"]
+
+                queryRes.userLearningStep = step
+                db.session.commit()
+
+                return jsonify({'state':'success'})   
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+#[POST] 학습자 유형 판단 설문 api
+@app.route('/api/testTypeQuestion', methods=['POST'])
+def testTypeQuestion():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                step = queryRes.userLearningStep
+
+                if step == 0:
+                    return jsonify(userTestQuestion.basic_python_json)
+
+                elif step == 1:
+                    return jsonify(userTestQuestion.data_structure_json)
+
+                elif step == 2:
+                    return jsonify(userTestQuestion.algorithm_json)
+
+                elif step == 3:
+                    return jsonify(userTestQuestion.data_analysis_json)
+
+                elif step == 4:
+                    return jsonify(userTestQuestion.ai_json)
+
+                else:
+                    return jsonify({'state':'fail'})
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
+
+
+
+#[POST] 학습자 유형 판단 설문 Type api
+@app.route('/api/testType', methods=['POST'])
+def testType():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        ############################################################################# db 없이 테스트 하는 경우 주석 처리해주세요. <여기부터>
+        tokenReceive = reqJson['token']
+
+        try:
+            payload = jwt.decode(tokenReceive, JWT_SECRET_KEY, algorithms=['HS256'])
+
+            queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
+
+            if queryRes is not None:
+                level = reqJson['type']
+                sumLevel = sum(level)
+                step = queryRes.userLearningStep
+                bubbleSizes = []
+
+                if step == 0:
+                    for i in range(10):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Basic_step_info).filter(Basic_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Basic_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7],
+                                                                content9 = bubbleSizes[8],
+                                                                content10 = bubbleSizes[9])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        bubbleInfoqueryRes.content9 = bubbleSizes[8]
+                        bubbleInfoqueryRes.content10 = bubbleSizes[9]
+                        db.session.commit()
+                    
+                elif step == 1:
+                    for i in range(8):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Data_structure_step_info).filter(Data_structure_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Data_structure_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        db.session.commit()
+
+                elif step == 2:
+                    for i in range(8):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Algorithm_step_info).filter(Algorithm_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Algorithm_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        db.session.commit()
+
+                elif step == 3:
+                    for i in range(10):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Data_analysis_step_info).filter(Data_analysis_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Data_analysis_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7],
+                                                                content9 = bubbleSizes[8],
+                                                                content10 = bubbleSizes[9])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        bubbleInfoqueryRes.content9 = bubbleSizes[8]
+                        bubbleInfoqueryRes.content10 = bubbleSizes[9]
+                        db.session.commit()
+
+                elif step == 4:
+                    for i in range(10):
+                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+
+                    bubbleInfoqueryRes = db.session.query(Ai_step_info).filter(Ai_step_info.userId == queryRes.userId).first()
+
+                    if bubbleInfoqueryRes is None:
+                        newBubbleInfoResult = Ai_step_info(usrId = queryRes.userId, 
+                                                                content1 = bubbleSizes[0],
+                                                                content2 = bubbleSizes[1],
+                                                                content3 = bubbleSizes[2],
+                                                                content4 = bubbleSizes[3],
+                                                                content5 = bubbleSizes[4],
+                                                                content6 = bubbleSizes[5],
+                                                                content7 = bubbleSizes[6],
+                                                                content8 = bubbleSizes[7],
+                                                                content9 = bubbleSizes[8],
+                                                                content10 = bubbleSizes[9])
+                        db.session.add(newBubbleInfoResult)
+                        db.session.commit()
+                    
+                    else:
+                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                        bubbleInfoqueryRes.content9 = bubbleSizes[8]
+                        bubbleInfoqueryRes.content10 = bubbleSizes[9]
+                        db.session.commit()
+
+                else:
+                    return jsonify({'state':'fail'})
+
+                return jsonify({'state':'success'})   
+
+            else:
+                return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({'state':'fail', 'msg':'로그인 시간이 만료되었습니다.'})
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({'state':'fail', 'msg':'로그인 정보가 존재하지 않습니다.'})
+        ############################################################################# <여기까지>
+
 
 
 
@@ -459,6 +940,11 @@ def testresult():
                 resultJson = {}
                 resultJson['state'] = 'success'
                 resultJson['type'] = queryRes.userLearnerType
+                resultJson['step'] = queryRes.userLearningStep
+
+                queryRes.userTestTry = queryRes.userTestTry + 1
+                db.session.commit()
+
                 return jsonify(resultJson)
 
             else:
@@ -476,17 +962,14 @@ def testresult():
 
 
 
-#[GET] 주차별 퀴즈 점수 api
-@app.route('/api/weekScore', methods=['GET'])
-def weekscore():
-    return jsonify(dummy.weekScoreJzon)
-
-
-
-#[GET] 주차별 퀴즈 점수2 api
-@app.route('/api/score', methods=['GET'])
-def weekscore2():
-    return jsonify(dummy.weekScoreJzon)
+#[POST] 주차별 퀴즈 점수2 api
+@app.route('/api/score', methods=['POST'])
+def score():
+    if request.method == 'POST':
+        reqJson = request.get_json()
+        return jsonify(dummy.weekScoreJzon)
+    else:
+        return jsonify({'state':'fail'})
 
 
 
