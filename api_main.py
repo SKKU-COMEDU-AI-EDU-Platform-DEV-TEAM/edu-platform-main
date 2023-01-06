@@ -154,7 +154,8 @@ def main():
                 resultJson = {}
 
                 kolbProba = queryRes.userKolbProbability
-                kolbProba = list(map(int, kolbProba.split('.')))
+                kolbProba = list(kolbProba.split(','))
+                kolbProba = list(map(float, kolbProba))
                 rader = queryRes.userMbtiTest
                 rader = list(map(int, rader.split(',')))
                 resultJson['state'] = 'success'
