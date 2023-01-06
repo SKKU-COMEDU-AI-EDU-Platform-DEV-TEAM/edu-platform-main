@@ -637,7 +637,17 @@ def testMbti():
             queryRes = db.session.query(User).filter(User.userEmail == payload['id']).first()
 
             if queryRes is not None:
+                #프론트에서 오는 MBTI 정보       | decisionTree 변환
+                #E[0,1,2,3,4] I[6,7,8,9,10] | I [1 ~ 10] E
+                #N[0,1,2,3,4] S[6,7,8,9,10] | S [1 ~ 10] N
+                #F[0,1,2,3,4] T[6,7,8,9,10] | T [1 ~ 10] F
+                #J[0,1,2,3,4] P[6,7,8,9,10] | P [1 ~ 10] J
                 mbti = reqJson["mbti"]
+                for i in range(4):
+                    if mbti[i] < 5:
+                        mbti[i] = 10 - mbti[i]
+                    else:
+                        mbti[i] = 10 - mbti[i] + 1
 
                 mbtiTest = str(mbti)
                 mbtiTest = mbtiTest[1:len(mbtiTest)-1].replace(' ','')
