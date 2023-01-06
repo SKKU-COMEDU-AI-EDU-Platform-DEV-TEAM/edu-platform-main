@@ -1,12 +1,18 @@
+import { Group } from "@visx/group";
+import { Text as VisxTtext } from "@visx/text";
+import { ScaleSVG } from "@visx/responsive";
 import { Divider, Flex, Stack, Text } from "@chakra-ui/react";
 import Layout from "../components/Layout";
 import { QuizGraph } from "../components/main/QuizGraph";
+import { RadarAxis, RadarMark } from "../components/main/RaderChart";
 import { stepSelector, typeSelector, userState } from "../recoil";
-import { useRecoilValue } from "recoil";
 import { TypeDescriptionType, User } from "../types";
+import { AVERAGE, RADAR_HEIGHT, RADAR_WIDTH, RADER_MARGIN } from "../config";
 import axios from "axios";
+import { useRecoilValue } from "recoil";
 import { useMutation } from "react-query";
 import { useEffect, useState } from "react";
+import { schemeCategory10 as COLOR } from "d3-scale-chromatic";
 
 export default function MainPage() {
   const user = useRecoilValue<User | null>(userState);
@@ -110,6 +116,47 @@ export default function MainPage() {
             </Stack>
           </Flex>
         </Stack>
+        {/* <ScaleSVG width={RADAR_WIDTH} height={RADAR_HEIGHT}>
+          <Group top={RADAR_HEIGHT / 2} left={RADAR_WIDTH / 2}>
+            <RadarAxis
+              width={RADAR_WIDTH}
+              height={RADAR_HEIGHT}
+              margin={RADER_MARGIN}
+            />
+            <RadarMark
+              data={rader}
+              color={COLOR[0]}
+              width={RADAR_WIDTH}
+              height={RADAR_HEIGHT}
+              margin={RADER_MARGIN}
+            />
+            <RadarMark
+              data={AVERAGE}
+              color={COLOR[7]}
+              width={RADAR_WIDTH}
+              height={RADAR_HEIGHT}
+              margin={RADER_MARGIN}
+            />
+            <VisxTtext
+              x="80"
+              y="90"
+              fontWeight="bold"
+              fontSize="8px"
+              fill="#7f7f7f"
+            >
+              ■ Student Score
+            </VisxTtext>
+            <VisxTtext
+              x="80"
+              y="80"
+              fontSize="8px"
+              fontWeight="bold"
+              fill="#1f77b4"
+            >
+              ■ My Score
+            </VisxTtext>
+          </Group>
+        </ScaleSVG> */}
         {user!.type == 2 && <QuizGraph />}
       </Stack>
     </Layout>

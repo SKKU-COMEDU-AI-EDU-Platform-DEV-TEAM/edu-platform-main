@@ -21,7 +21,13 @@ export default function TestEndPage() {
   };
   const { mutate } = useMutation(testResult, {
     onSuccess: (data) => {
+      console.log(data);
       setUser({
+        ...user,
+        type: data.type,
+        step: data.step
+      });
+      console.log({
         ...user,
         type: data.type,
         step: data.step
@@ -49,14 +55,14 @@ export default function TestEndPage() {
           예측한 Kolb 학습자 유형과, 사용자의 학습 수준에 따라 개개인에게 알맞은
           학습 진도와 컨텐츠를 추천합니다.
           <br /> <br />
-          {user!.userName}님은 {type.type} 유형!
+          {user!.userName}님은 {type?.type} 유형!
           <br />
-          해당 유형은 {type.description}
+          해당 유형은 {type?.description}
           <br />
-          {type.characteristic} {type.dependency}
+          {type?.characteristic} {type?.dependency}
           <br />
           <br />
-          따라서 {user!.userName}님에게 추천하는 학습 컨텐츠는 {type.recommend}
+          따라서 {user!.userName}님에게 추천하는 학습 컨텐츠는 {type?.recommend}
         </Container>
         <Box display="flex" justifyContent={"right"} mt={10}>
           <Button

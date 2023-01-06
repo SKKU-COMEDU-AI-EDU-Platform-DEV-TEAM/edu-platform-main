@@ -21,7 +21,7 @@ export const stepSelector = selector({
   key: `stepSelector${v1()}`,
   get: ({ get }) => {
     const userType = get(userState)!.step;
-    return lectureList[userType! - 1];
+    return lectureList[userType!];
   }
 });
 
