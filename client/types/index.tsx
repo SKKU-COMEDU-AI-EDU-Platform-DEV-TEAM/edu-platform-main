@@ -75,3 +75,12 @@ export interface QuizResultType {
   userAnswer: number[];
   correctAnswer: number[];
 }
+
+export interface Scores {
+  cohesion: number;
+  conventions: number;
+  syntax: number;
+  vocabulary: number;
+  phraseology: number;
+  grammar: number;
+}

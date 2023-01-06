@@ -21,13 +21,7 @@ export default function TestEndPage() {
   };
   const { mutate } = useMutation(testResult, {
     onSuccess: (data) => {
-      console.log(data);
       setUser({
-        ...user,
-        type: data.type,
-        step: data.step
-      });
-      console.log({
         ...user,
         type: data.type,
         step: data.step

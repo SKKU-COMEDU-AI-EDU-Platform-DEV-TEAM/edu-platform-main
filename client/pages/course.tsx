@@ -1,27 +1,35 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil";
 import { Types, User } from "../types";
 import Layout from "../components/Layout";
 import CourseLayout from "../components/CourseLayout";
 import BubbleChart from "../components/course/BubbleChart";
+import { useMutation } from "react-query";
 
 export default function CoursePage() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [metaverse, setMetaverse] = useState<string[]>([]);
   const user = useRecoilValue<User | null>(userState);
-  const [data, setData] = useState<Types.Data[]>([]);
+  const [metaverse, setMetaverse] = useState<string[]>([]);
+  const [word, setWord] = useState<Types.Data[]>([]);
 
+  const course = async () => {
+    const { data } = await axios.post("/api/course", {
+      token: user!.token
+    });
+    return data;
+  };
+  const { mutate } = useMutation(course, {
+    onSuccess: (data) => {
+      setMetaverse(data.metaverse);
+      setWord(data.data);
+    },
+    onError: (err) => {
+      alert(err);
+    }
+  });
   useEffect(() => {
-    const fetchData = async () => {
-      const response = (await axios.get("api/course")).data;
-      setMetaverse(response.metaverse);
-      setData(response.data);
-      setIsLoading(false);
-    };
-    fetchData();
+    mutate();
   }, []);
 
   return (
@@ -32,9 +40,9 @@ export default function CoursePage() {
         metaverse={metaverse[0]}
       >
         <BubbleChart
-          bubblesData={data}
+          bubblesData={word}
           width={1400}
-          height={700}
+          height={650}
           textFillColor="black"
           backgroundColor="#fff"
           minValue={10}

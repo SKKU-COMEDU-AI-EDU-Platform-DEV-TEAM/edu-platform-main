@@ -1,3 +1,5 @@
+import styles from "./Quiz.module.css";
+import icon from './quizIcon.jpg';
 import {
   AccordionButton,
   AccordionIcon,
@@ -34,7 +36,15 @@ export default function Quiz(props: Id & QuizType) {
         </AccordionButton>
       </h2>
       <AccordionPanel>
-        <Text>* Definition: {definition}</Text>
+        <div className={styles.quizDefinitionBox}>
+          <div className={styles.quizDefinitionTitle}>
+            Definition
+            <img src={icon.src} alt='icon' />
+          </div>
+          <div className={styles.quizDefinitionText}>
+            {definition}
+          </div>
+        </div>
         <RadioGroup pt={4} onChange={(v) => handleOnChange(v)}>
           <Stack spacing={5}>
             <>

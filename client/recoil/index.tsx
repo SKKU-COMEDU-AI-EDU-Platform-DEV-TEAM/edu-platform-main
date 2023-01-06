@@ -1,7 +1,6 @@
 import { atom, selector } from "recoil";
 import { Point, User } from "../types";
 import { v1 } from "uuid";
-import { mockupPoint } from "../mockupData";
 import { lectureList, TypeDescriptionList } from "../config";
 
 export const userState = atom<User | null>({
@@ -38,9 +37,4 @@ export const bestScoreState = atom<number>({
 export const moveState = atom<number>({
   key: `moveState/${v1()}`,
   default: 0
-});
-
-export const pointState = atom<Point>({
-  key: `pointState${v1()}`,
-  default: mockupPoint
 });
