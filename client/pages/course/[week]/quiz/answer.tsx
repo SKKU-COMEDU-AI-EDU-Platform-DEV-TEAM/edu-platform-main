@@ -8,32 +8,38 @@ import CourseLayout from "../../../../components/CourseLayout";
 import axios from "axios";
 import { Accordion, Box, Button, Text } from "@chakra-ui/react";
 import QuizAnswer from "../../../../components/course/QuizAnswer";
-import { mockupQuizResult } from "../../../../mockupData";
+import { useMutation } from "react-query";
 
-export default function QuizResultPage() {
+export default function QuizAnswerPage() {
   const router = useRouter();
   const { week } = router.query;
   const [quiz, setQuiz] = useState<QuizType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const user = useRecoilValue<User>(userState);
-  const [result, setResult] = useState<QuizResultType>(mockupQuizResult);
+  const user = useRecoilValue<User | null>(userState);
+  const [result, setResult] = useState<QuizResultType>();
 
+  const getQuiz = async () => {
+    const { data } = await axios.post(`/api/quiz/result`, {
+      week: week,
+      token: user!.token
+    });
+    return data;
+  };
+  const { mutate } = useMutation(getQuiz, {
+    onSuccess: (data) => {
+      setQuiz(data.data);
+      setResult(data.result);
+    },
+    onError: (err) => {
+      alert(err);
+    }
+  });
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-
-      const response = (await axios.post(`/api/quiz/${week}/answer`, { token: token })).data;
-      console.log(response.result);
-      setQuiz(response.data);
-      setResult(response.result);
-      setIsLoading(false);
-    };
-    fetchData();
+    mutate();
   }, []);
 
   return (
     <Layout>
-      <CourseLayout title={`${week}주차 퀴즈`} type={user.type} metaverse={""}>
+      <CourseLayout title={`${week}주차 퀴즈`} type={user!.type} metaverse={""}>
         <>
           <Accordion allowMultiple>
             <>
@@ -45,25 +51,25 @@ export default function QuizResultPage() {
                     question={q.question}
                     definition={q.definition}
                     option={q.option}
-                    correctAnswer={result.correctAnswer[i]}
-                    userAnswer={result.userAnswer[i]}
+                    correctAnswer={result!.correctAnswer[i]}
+                    userAnswer={result!.userAnswer[i]}
                   />
                 );
               })}
             </>
           </Accordion>
           <Text pl={5} pt={5} fontWeight={"bold"} fontSize={24}>
-            Score: {result.correctQuizNum}/{result.totalQuizNum}
+            Score: {result?.correctQuizNum}/{result?.totalQuizNum}
           </Text>
           <Box display="flex" justifyContent={"left"}>
             <Button
               height="40px"
               width="20%"
-              borderRadius={"2xl"}
+              borderRadius={"5px"}
               bgColor="rgb(144, 187, 144)"
               onClick={() => router.push(`/course`)}
             >
-                완료
+              완료
             </Button>
           </Box>
         </>

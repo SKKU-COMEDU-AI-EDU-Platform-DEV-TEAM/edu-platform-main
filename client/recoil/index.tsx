@@ -19,7 +19,7 @@ export const typeSelector = selector({
 export const stepSelector = selector({
   key: `stepSelector${v1()}`,
   get: ({ get }) => {
-    const userType = get(userState)!.step;
+    const userType = get(userState)?.step;
     return lectureList[userType!];
   }
 });

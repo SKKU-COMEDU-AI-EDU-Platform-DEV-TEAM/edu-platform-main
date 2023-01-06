@@ -42,7 +42,7 @@ export const pwReg = new RegExp(
 export const TypeDescriptionList: TypeDescriptionType[] = [
   {
     type: "적응자",
-    content: "Lecture(textbook)",
+    content: "Lecture (textbook)",
     description:
       "활동적 문제해결을 시도하며 정보를 처리하고, 구체적 경험을 통해 정보를 지각합니다.",
     characteristic: "적응자는 높은 시각, 청각, 감각의 학습자 특징을 가집니다",

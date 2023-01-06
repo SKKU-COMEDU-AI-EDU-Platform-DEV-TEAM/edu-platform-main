@@ -1,5 +1,5 @@
 import styles from "./Quiz.module.css";
-import icon from './quizIcon.jpg';
+import icon from "./quizIcon.jpg";
 import {
   AccordionButton,
   AccordionIcon,
@@ -8,24 +8,16 @@ import {
   Box,
   Radio,
   RadioGroup,
-  Stack,
-  Text
+  Stack
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { quizScoreState } from "../../recoil";
 import { Id, QuizType } from "../../types";
- interface QuizAnswer {
-   userAnswer: number;
-   correctAnswer: number;
- }
+interface QuizAnswer {
+  userAnswer: number;
+  correctAnswer: number;
+}
 export default function QuizResult(props: Id & QuizType & QuizAnswer) {
-  const [score, setQuizScore] = useRecoilState<number[]>(quizScoreState);
   const { id, question, definition, option, correctAnswer, userAnswer } = props;
-  function handleOnChange(v: string) {
-    const copyArray = [...score];
-    copyArray[id - 1] = Number(v);
-    setQuizScore(copyArray);
-  }
+
   const color = correctAnswer == userAnswer ? "green" : "red";
   return (
     <AccordionItem>
@@ -44,14 +36,12 @@ export default function QuizResult(props: Id & QuizType & QuizAnswer) {
         </AccordionButton>
       </h2>
       <AccordionPanel>
-      <div className={styles.quizDefinitionBox}>
+        <div className={styles.quizDefinitionBox}>
           <div className={styles.quizDefinitionTitle}>
             Definition
-            <img src={icon.src} alt='icon' />
+            <img src={icon.src} alt="icon" />
           </div>
-          <div className={styles.quizDefinitionText}>
-            {definition}
-          </div>
+          <div className={styles.quizDefinitionText}>{definition}</div>
         </div>
         <RadioGroup pt={4} defaultValue={userAnswer.toString()}>
           <Stack spacing={5}>
