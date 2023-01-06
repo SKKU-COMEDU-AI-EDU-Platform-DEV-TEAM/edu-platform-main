@@ -20,6 +20,7 @@ interface IBubbleChartProps {
   maxValue: number;
   metaverse: string[];
   type?: number;
+  selectedCircle: (link: string) => void;
 }
 
 class BubbleChart extends React.Component<
@@ -108,6 +109,7 @@ class BubbleChart extends React.Component<
           : props.type == 3
           ? `/course/${week}/game`
           : props.metaverse[week];
+
       return (
         <g
           key={`g-${uuid()}`}
@@ -115,11 +117,36 @@ class BubbleChart extends React.Component<
             props.height / 2 + item.y
           })`}
         >
-          <Link href={link} isExternal={props.type == 4}>
+          {props.type == 4 ? (
+            <Link href={link} isExternal>
+              <>
+                <circle
+                  style={{ cursor: "pointer" }}
+                  r={this.radiusScale(
+                    (item as unknown as Types.ForceData).size
+                  )}
+                  fill={
+                    week < 11
+                      ? schemePaired[week - 1]
+                      : schemeTableau10[week - 11]
+                  }
+                />
+                <text
+                  fill={this.props.textFillColor}
+                  textAnchor="middle"
+                  fontSize={`${fontSize}px`}
+                  fontWeight="bold"
+                >
+                  {props.bubblesData[index].name}
+                </text>
+              </>
+            </Link>
+          ) : (
             <>
               <circle
                 style={{ cursor: "pointer" }}
                 r={this.radiusScale((item as unknown as Types.ForceData).size)}
+                onClick={() => this.props.selectedCircle(link)}
                 fill={
                   week < 11
                     ? schemePaired[week - 1]
@@ -135,7 +162,7 @@ class BubbleChart extends React.Component<
                 {props.bubblesData[index].name}
               </text>
             </>
-          </Link>
+          )}
         </g>
       );
     });

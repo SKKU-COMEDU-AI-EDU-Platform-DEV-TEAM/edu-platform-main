@@ -7,8 +7,11 @@ import Layout from "../components/Layout";
 import CourseLayout from "../components/CourseLayout";
 import BubbleChart from "../components/course/BubbleChart";
 import { useMutation } from "react-query";
+import { Router } from "express";
+import { useRouter } from "next/router";
 
 export default function CoursePage() {
+  const router = useRouter();
   const user = useRecoilValue<User | null>(userState);
   const [metaverse, setMetaverse] = useState<string[]>([]);
   const [word, setWord] = useState<Types.Data[]>([]);
@@ -32,6 +35,10 @@ export default function CoursePage() {
     mutate();
   }, []);
 
+  const selectedKeyHandler = (link: string) => {
+    router.push(link);
+  };
+
   return (
     <Layout>
       <CourseLayout
@@ -49,6 +56,7 @@ export default function CoursePage() {
           maxValue={60}
           metaverse={metaverse}
           type={user!.type}
+          selectedCircle={selectedKeyHandler}
         />
       </CourseLayout>
     </Layout>
