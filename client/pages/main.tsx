@@ -1,7 +1,16 @@
 import { Group } from "@visx/group";
 import { Text as VisxTtext } from "@visx/text";
 import { ScaleSVG } from "@visx/responsive";
-import { Box, Button, Divider, Flex, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Progress,
+  Stack,
+  StackDivider,
+  Text
+} from "@chakra-ui/react";
 import Layout from "../components/Layout";
 import { QuizGraph } from "../components/main/QuizGraph";
 import { RadarAxis, RadarMark } from "../components/main/RaderChart";
@@ -31,7 +40,8 @@ export default function MainPage() {
   const [mbti, setMbti] = useState<string>("");
   const [kolb, setKolb] = useState<LetterFrequency[]>([]);
   const [rader, setRader] = useState<number[]>([]);
-
+  const [totalUserProgress, setTotalProgress] = useState<number>(0);
+  const [userProgress, setUserProgress] = useState<number>(0);
   const main = async () => {
     const { data } = await axios.post("/api/main", {
       token: user!.token
@@ -54,6 +64,8 @@ export default function MainPage() {
         arr.push(10 - v);
       }
       setRader(arr);
+      setTotalProgress(data.totalUserProgress);
+      setUserProgress(data.userProgress);
     },
     onError: (err) => {
       alert(err);
@@ -150,7 +162,6 @@ export default function MainPage() {
             </Flex>
           </Flex>
         </Stack>
-
         <Stack direction="row" justifyContent="space-between" gap={5}>
           <Flex
             borderRadius="5px"
@@ -262,6 +273,56 @@ export default function MainPage() {
               </Group>
             </ScaleSVG>
           </Flex>
+        </Stack>
+        <Stack
+          borderRadius="5px"
+          boxShadow={"base"}
+          gap={10}
+          direction="row"
+          p={10}
+          pt={5}
+          pb={5}
+          bg="#F5F5F5"
+          divider={<StackDivider />}
+        >
+          <Stack w="100%">
+            <Text fontWeight={"bold"} fontSize={20}>
+              학습자 평균 진행 상황
+            </Text>
+            <Stack direction="row">
+              <Progress
+                mt={2}
+                borderRadius={10}
+                width="100%"
+                size="lg"
+                colorScheme="green"
+                bg={"rgba(144, 187, 144,0.2)"}
+                value={totalUserProgress}
+              />
+              <Text pl={5} fontWeight={"bold"} fontSize={18}>
+                {totalUserProgress}%
+              </Text>
+            </Stack>
+          </Stack>
+          <Stack w="100%">
+            <Text fontWeight={"bold"} fontSize={20}>
+              나의 현재 진행 상황
+            </Text>
+            <Stack direction="row">
+              <Progress
+                mt={2}
+                borderRadius={10}
+                width="100%"
+                size="lg"
+                value={userProgress}
+                colorScheme="green"
+                bg={"rgba(144, 187, 144,0.2)"}
+              />
+              <Text pl={5} fontWeight={"bold"} fontSize={18}>
+                {userProgress}%
+              </Text>
+            </Stack>
+          </Stack>
         </Stack>
         {user!.type == 2 && <QuizGraph />}
       </Stack>
