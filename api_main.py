@@ -785,7 +785,7 @@ def testType():
 
                 if step == 0:
                     for i in range(10):
-                        bubbleSizes.append(int((level[i] / sumLevel) * 100))
+                        bubbleSizes.append(100 - int((level[i] / sumLevel) * 100))
 
                     bubbleInfoqueryRes = db.session.query(Basic_step_info).filter(Basic_step_info.userId == queryRes.userId).first()
 
@@ -1029,6 +1029,7 @@ def curl():
         return jsonify({'state':'success'})
     else:
         return jsonify({'state':'fail'})
+
 
 
 if __name__ == '__main__':
