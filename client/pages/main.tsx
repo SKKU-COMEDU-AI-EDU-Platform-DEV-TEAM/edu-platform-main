@@ -287,7 +287,7 @@ export default function MainPage() {
         >
           <Stack w="100%">
             <Text fontWeight={"bold"} fontSize={20}>
-              학습자 평균 진행 상황
+              {type?.content} 학습자의 "{step[0]}" 평균 학습 진행률
             </Text>
             <Stack direction="row">
               <Progress
@@ -306,7 +306,7 @@ export default function MainPage() {
           </Stack>
           <Stack w="100%">
             <Text fontWeight={"bold"} fontSize={20}>
-              나의 현재 진행 상황
+              나의 "{step[0]}" 현재 학습 진행률
             </Text>
             <Stack direction="row">
               <Progress
