@@ -968,12 +968,16 @@ def testType():
 
             if queryRes is not None:
                 level = reqJson['type']
-                sumLevel = sum(level)
                 step = queryRes.userLearningStep
 
+                invertedBubbleSizes = []
+                for i in range(len(courseData.integrated_version[step])):
+                    invertedBubbleSizes.append(8 - level[i])
+
+                sumInvertedLevel = sum(invertedBubbleSizes)
                 bubbleSizes = []
                 for i in range(len(courseData.integrated_version[step])):
-                    bubbleSizes.append(int((((sumLevel / len(level)) * 2 - level[i]) / sumLevel) * 100))
+                    bubbleSizes.append(int((invertedBubbleSizes[i] / sumInvertedLevel) * 100))
 
                 bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == step).first()
 
