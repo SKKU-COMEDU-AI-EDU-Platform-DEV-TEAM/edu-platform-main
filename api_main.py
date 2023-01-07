@@ -163,12 +163,17 @@ def main():
 
                 userProgQueryRes = db.session.query(Learning_check, Learning_contents).filter(Learning_check.learningContentId == Learning_contents.learningContentId, Learning_check.userId == queryRes.userId, Learning_contents.learningContentStep == queryRes.userLearningStep).all()
 
+                rmvDup = []
+                for i in range(len(userProgQueryRes)):
+                    rmvDup.append(userProgQueryRes[i][0].learningContentId)
+                rmvDup = set(rmvDup)
+
                 resultJson['state'] = 'success'
                 resultJson['mbti'] = queryRes.userMbti
                 resultJson['kolbProba'] = kolbProba
                 resultJson['rader'] = rader
                 resultJson['totalUserProgress'] = dummy.mainJson['totalUserProgress'] #totalUserProgress는 더미데이터를 보내줍니다.
-                resultJson['userProgress'] = int(((len(userProgQueryRes) / 2) / len(courseData.integrated_version[queryRes.userLearningStep])) * 100) #db에 learning_check가 두 번씩 들어가서 2로 나누고 있습니다.
+                resultJson['userProgress'] = int((len(rmvDup) / len(courseData.integrated_version[queryRes.userLearningStep])) * 100)
 
                 return jsonify(resultJson)
             else:
@@ -1086,9 +1091,6 @@ def curl():
 
     elif request.method == 'POST':
         reqJson = request.get_json()
-
-        joinQueryRes = db.session.query(Learning_check, Learning_contents).filter(Learning_check.learningContentId == Learning_contents.learningContentId).all()
-        print(joinQueryRes)
 
         return jsonify({'state':'success'})
     
