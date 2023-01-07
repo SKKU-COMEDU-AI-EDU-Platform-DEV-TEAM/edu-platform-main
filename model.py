@@ -226,6 +226,62 @@ class Learning_check(db.Model):
 
 
 
+class User_bubble_size_info(db.Model):
+    """
+    +----------------------+------+------+-----+---------+----------------+
+    | Field                | Type | Null | Key | Default | Extra          |
+    +----------------------+------+------+-----+---------+----------------+
+    | userBubbleSizeInfoId | int  | NO   | PRI | NULL    | auto_increment |
+    | userId               | int  | NO   | MUL | NULL    |                |
+    | userLearningStep     | int  | NO   |     | NULL    |                |
+    | content1             | int  | YES  |     | NULL    |                |
+    | content2             | int  | YES  |     | NULL    |                |
+    | content3             | int  | YES  |     | NULL    |                |
+    | content4             | int  | YES  |     | NULL    |                |
+    | content5             | int  | YES  |     | NULL    |                |
+    | content6             | int  | YES  |     | NULL    |                |
+    | content7             | int  | YES  |     | NULL    |                |
+    | content8             | int  | YES  |     | NULL    |                |
+    | content9             | int  | YES  |     | NULL    |                |
+    | content10            | int  | YES  |     | NULL    |                |
+    +----------------------+------+------+-----+---------+----------------+
+    """
+
+    __tablename__ = 'user_bubble_size_info'
+
+    userBubbleSizeInfoId = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    userId = db.Column(db.Integer, ForeignKey('user.userId'), nullable=False)
+    userLearningStep = db.Column(db.Integer, nullable=False)
+    content1 = db.Column(db.Integer)
+    content2 = db.Column(db.Integer)
+    content3 = db.Column(db.Integer)
+    content4 = db.Column(db.Integer)
+    content5 = db.Column(db.Integer)
+    content6 = db.Column(db.Integer)
+    content7 = db.Column(db.Integer)
+    content8 = db.Column(db.Integer)
+    content9 = db.Column(db.Integer)
+    content10 = db.Column(db.Integer)
+
+    def __init__(self, usrId, usrLrnStep, content1, content2, content3, content4, content5, content6, content7, content8, content9, content10):
+        self.userId = usrId
+        self.userLearningStep = usrLrnStep
+        self.content1 = content1
+        self.content2 = content2
+        self.content3 = content3
+        self.content4 = content4
+        self.content5 = content5
+        self.content6 = content6
+        self.content7 = content7
+        self.content8 = content8
+        self.content9 = content9
+        self.content10 = content10
+
+    def __repr__(self):
+        return '<User %r %r %r %r %r %r %r %r %r %r %r %r %r>' % (self.userBubbleSizeInfoId, self.userId, self.userLearningStep, self.content1, self.content2, self.content3, self.content4, self.content5, self.content6, self.content7, self.content8, self.content9, self.content10)
+
+
+
 class Basic_step_info(db.Model):
     """
     +-----------------+------+------+-----+---------+----------------+
