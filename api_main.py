@@ -271,6 +271,7 @@ def quiz():
         ############################################################################# <여기까지>
 
 
+
 #[POST] 퀴즈 채점 및 학습 체크 api
 @app.route('/api/quizGrade', methods=['POST'])
 def quizGrade():
@@ -1103,8 +1104,11 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
+
 #Legacy APIs
 ############################################################################################################################
+
+
 
 #[POST] 전체 학습 페이지 api
 @app.route('/api/courseBubbleLegacy', methods=['POST'])
