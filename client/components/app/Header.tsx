@@ -121,6 +121,14 @@ export default function Header() {
                     >
                       학습유형검사 다시하기
                     </Button>
+                    <Button
+                      colorScheme="red"
+                      fontSize={13}
+                      variant="link"
+                      onClick={() => router.push("/")}
+                    >
+                      로그아웃
+                    </Button>
                   </PopoverFooter>
                 </PopoverContent>
               </Portal>
