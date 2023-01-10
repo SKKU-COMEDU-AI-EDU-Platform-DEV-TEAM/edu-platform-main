@@ -2,10 +2,14 @@ import { atom, selector } from "recoil";
 import { Point, User } from "../types";
 import { v1 } from "uuid";
 import { lectureList, TypeDescriptionList } from "../config";
+import { recoilPersist } from "recoil-persist";
+
+const { persistAtom } = recoilPersist();
 
 export const userState = atom<User | null>({
   key: `userState/${v1()}`,
-  default: null
+  default: null,
+  effects_UNSTABLE: [persistAtom]
 });
 
 export const typeSelector = selector({
@@ -26,7 +30,8 @@ export const stepSelector = selector({
 
 export const quizScoreState = atom<number[]>({
   key: `quizScoreState/${v1()}`,
-  default: []
+  default: [],
+  effects_UNSTABLE: [persistAtom]
 });
 
 export const bestScoreState = atom<number>({
