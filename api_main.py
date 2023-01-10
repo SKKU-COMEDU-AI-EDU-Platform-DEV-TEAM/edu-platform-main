@@ -746,14 +746,43 @@ def testMbti():
                 #F[0,1,2,3,4] T[6,7,8,9,10] | T [1 ~ 10] F
                 #J[0,1,2,3,4] P[6,7,8,9,10] | P [1 ~ 10] J
                 mbti = reqJson["mbti"]
+                mbtiTestDict = {}
                 for i in range(4):
                     if mbti[i] < 5:
+                        if i == 0:
+                            mbtiTestDict['E'] = (5 - mbti[i]) * 2
+                            mbtiTestDict['I'] = 0
+                        elif i == 1:
+                            mbtiTestDict['N'] = (5 - mbti[i]) * 2
+                            mbtiTestDict['S'] = 0
+                        elif i == 2:
+                            mbtiTestDict['F'] = (5 - mbti[i]) * 2
+                            mbtiTestDict['T'] = 0
+                        else:
+                            mbtiTestDict['J'] = (5 - mbti[i]) * 2
+                            mbtiTestDict['P'] = 0
+
                         mbti[i] = 10 - mbti[i]
+
                     else:
+                        if i == 0:
+                            mbtiTestDict['I'] = (mbti[i] - 5) * 2
+                            mbtiTestDict['E'] = 0
+                        elif i == 1:
+                            mbtiTestDict['S'] = (mbti[i] - 5) * 2
+                            mbtiTestDict['N'] = 0
+                        elif i == 2:
+                            mbtiTestDict['T'] = (mbti[i] - 5) * 2
+                            mbtiTestDict['F'] = 0
+                        else:
+                            mbtiTestDict['P'] = (mbti[i] - 5) * 2
+                            mbtiTestDict['J'] = 0
+
                         mbti[i] = 10 - mbti[i] + 1
 
-                mbtiTest = str(mbti)
-                mbtiTest = mbtiTest[1:len(mbtiTest)-1].replace(' ','')
+                #mbtiTest = str(mbti)
+                #mbtiTest = mbtiTest[1:len(mbtiTest)-1].replace(' ','')
+                mbtiTest = str(mbtiTestDict['E'])+','+str(mbtiTestDict['N'])+','+str(mbtiTestDict['F'])+','+str(mbtiTestDict['P'])+','+str(mbtiTestDict['I'])+','+str(mbtiTestDict['S'])+','+str(mbtiTestDict['T'])+','+str(mbtiTestDict['J'])
 
                 kolbTypes = ['Divergers', 'Assimilators', 'Convergers', 'Accommodators'] #분산자, 융합자, 수렴자, 적응자
                 userKolbTypeNum = clf.predict([mbti])[0]
