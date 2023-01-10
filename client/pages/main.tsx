@@ -61,7 +61,6 @@ export default function MainPage() {
       setKolb(arr1);
       var arr = [...data.rader];
       for (const v of data.rader) {
-        arr.push(10 - v);
       }
       setRader(arr);
       setTotalProgress(data.totalUserProgress);
