@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { userState } from "../recoil";
+import { stepSelector, userState } from "../recoil";
 import { Types, User } from "../types";
 import Layout from "../components/Layout";
 import CourseLayout from "../components/CourseLayout";
@@ -15,6 +15,7 @@ export default function CoursePage() {
   const user = useRecoilValue<User | null>(userState);
   const [metaverse, setMetaverse] = useState<string[]>([]);
   const [word, setWord] = useState<Types.Data[]>([]);
+  const step = useRecoilValue<string[]>(stepSelector);
 
   const course = async () => {
     const { data } = await axios.post("/api/course", {
@@ -42,7 +43,7 @@ export default function CoursePage() {
   return (
     <Layout>
       <CourseLayout
-        title="데이터분석기초 학습 콘텐츠"
+        title={`${step[0]} 학습 컨텐츠`}
         type={user!.type}
         metaverse={metaverse[0]}
       >
