@@ -3,7 +3,7 @@
     height: 100%;
     border-radius: 0px 0px 3px 3px;
     background-color: rgb(238, 238, 238);
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    box-shadow: 1px 1px 1px rgba(179, 179, 179, 0.6);
 }
 
 .quizDefinitionTitle {
@@ -16,7 +16,7 @@
     font-weight: 700;
     border-radius: 3px 3px 0px 0px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba(255, 255, 255, 0.95);
     background-color: rgba(0, 69, 38, 0.711);
     box-shadow: 1px 1px 1px rgba(179, 179, 179, 0.6);
 }

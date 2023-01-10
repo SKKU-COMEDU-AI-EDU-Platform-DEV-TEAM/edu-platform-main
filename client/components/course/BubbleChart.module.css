@@ -1,0 +1,60 @@
+.textTitle {
+    display: flex;
+    justify-content: left;
+    width: 100%;
+    height: 100%;
+    padding: 8px 8px 8px 17px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 3px 3px 0px 0px;
+    text-align: center;
+    color: rgb(255, 255, 255, 0.95);
+    background-color: rgba(0, 69, 38, 0.711);   
+    box-shadow: 1px 1px 1px rgba(179, 179, 179, 0.6);
+}
+
+.textTitle p {
+    font-size: 10px;
+    margin-left: auto;
+    margin-right: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.textBox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border-radius: 0px 0px 3px 3px;
+    background-color: rgb(238, 238, 238);
+    box-shadow: 1px 1px 1px rgba(179, 179, 179, 0.6);
+    padding: 12px 12px 12px 20px;
+    margin-bottom: 1px;
+    text-align: left;
+    color: rgb(0, 0, 0, 0.75);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.textTitle:hover + .textBox {
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.textBox h1 {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.textBox h2 {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.textTitle img {
+    width: 22px;
+    height: 22px;
+    margin-right: 3px;
+    object-fit: contain;
+}
