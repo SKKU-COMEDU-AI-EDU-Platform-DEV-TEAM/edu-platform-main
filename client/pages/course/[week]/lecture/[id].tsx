@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import CourseLayout from "../../../../components/CourseLayout";
 import { userState } from "../../../../recoil";
 import { Lecture, User } from "../../../../types";
-import { Box, Text, Stack, AspectRatio, StackDivider } from "@chakra-ui/react";
+import { Box, Text, Stack, AspectRatio, StackDivider, Button } from "@chakra-ui/react";
 import axios from "axios";
 import { useMutation } from "react-query";
 
@@ -72,6 +72,17 @@ export default function LecturePage() {
               <embed src={content?.pdf} type="application/pdf" />
             </AspectRatio>
           </Stack>
+          <Box display="flex" justifyContent={"right"}>
+            <Button
+              height="40px"
+              width="20%"
+              borderRadius={"5px"}
+              bgColor="rgb(144, 187, 144)"
+              onClick={() => router.push(`/course`)}
+            >
+              완료
+            </Button>
+          </Box>
         </>
       </CourseLayout>
     </Layout>
