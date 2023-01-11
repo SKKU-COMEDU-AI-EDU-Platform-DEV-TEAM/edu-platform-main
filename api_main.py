@@ -171,7 +171,7 @@ def main():
                 resultJson['kolbProba'] = kolbProba
                 resultJson['rader'] = rader
                 resultJson['totalUserProgress'] = dummy.mainJson['totalUserProgress'] #totalUserProgress는 더미데이터를 보내줍니다.
-                resultJson['userProgress'] = int((len(rmvDup) / len(courseData.integrated_version[queryRes.userLearningStep])) * 100)
+                resultJson['userProgress'] = (len(rmvDup) / len(courseData.integrated_version[queryRes.userLearningStep])) * 100
 
                 return jsonify(resultJson)
             else:
