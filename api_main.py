@@ -262,7 +262,7 @@ def quiz():
 
             if queryRes is not None:
                 #현재는 7주차에 대한 데이터를 보내줍니다.
-                if week == 7 :
+                if week == 7:
                     return jsonify(dummy.quizJson)
                 else:
                     return jsonify(dummy.quizJson2) #7주차가 아닌 것에는 프로토버전을 보내줍니다.
