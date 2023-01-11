@@ -40,6 +40,13 @@ export default function CoursePage() {
     router.push(link);
   };
 
+  const metaverseLearningCheck = async (week: number) => {
+    const { data } = await axios.post("/api/metaverse", {
+      week: week,
+      token: user!.token
+    });
+  };
+
   return (
     <Layout>
       <CourseLayout
@@ -58,6 +65,7 @@ export default function CoursePage() {
           metaverse={metaverse}
           type={user!.type}
           selectedCircle={selectedKeyHandler}
+          metaverseLearningCheck={metaverseLearningCheck}
         />
       </CourseLayout>
     </Layout>

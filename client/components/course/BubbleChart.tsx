@@ -4,10 +4,13 @@ import * as d3 from "d3";
 import { Simulation, SimulationNodeDatum } from "d3-force";
 import uuid from "react-uuid";
 import { Box, Link } from "@chakra-ui/react";
-import { Types } from "../../types";
+import { Types, User } from "../../types";
 import { schemePaired, schemeTableau10 } from "d3";
 import styles from "./BubbleChart.module.css";
 import icon from "./quizIcon.jpg";
+import axios from "axios";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../recoil";
 
 interface IBubbleChartState {
   data: Types.ForceData[];
@@ -23,6 +26,7 @@ interface IBubbleChartProps {
   metaverse: string[];
   type?: number;
   selectedCircle: (link: string) => void;
+  metaverseLearningCheck: (week: number) => void;
 }
 
 class BubbleChart extends React.Component<
@@ -127,6 +131,7 @@ class BubbleChart extends React.Component<
                   r={this.radiusScale(
                     (item as unknown as Types.ForceData).size
                   )}
+                  onClick={() => this.props.metaverseLearningCheck(week)}
                   fill={
                     week < 11
                       ? schemePaired[week - 1]
