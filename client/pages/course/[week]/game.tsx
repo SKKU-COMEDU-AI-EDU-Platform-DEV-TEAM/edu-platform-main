@@ -8,6 +8,8 @@ import CourseLayout from "../../../components/CourseLayout";
 import Score from "../../../components/game/Score";
 import Board from "../../../components/game/Board";
 import { VStack } from "@chakra-ui/react";
+import axios from "axios";
+import { useMutation } from "react-query";
 
 export default function GamePage() {
   const router = useRouter();
@@ -19,6 +21,16 @@ export default function GamePage() {
     const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     ids.sort(() => 0.5 - Math.random());
     setCardIds(ids);
+  }, []);
+
+  const game = async () => {
+    const { data } = await axios.post("/api/game/", {
+      week: week,
+      token: user!.token
+    });
+  };
+  useEffect(() => {
+    game();
   }, []);
 
   return (
