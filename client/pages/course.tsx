@@ -45,6 +45,7 @@ export default function CoursePage() {
       week: week,
       token: user!.token
     });
+    mutate();
   };
 
   return (
