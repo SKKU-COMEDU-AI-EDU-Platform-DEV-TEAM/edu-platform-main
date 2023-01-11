@@ -157,11 +157,13 @@ def main():
                 rader = list(rader.split(','))
                 rader = list(map(int, rader))
 
+                #사용자의 학습 진행도는 유형이 바뀌었어도 기존 스텝에 대하여 진행 사항이 있을 경우 합산됩니다.
+                #예를 들어 학습자가 lecture 유형으로 파이썬 기초 학습를 50% 진행했을 경우 quiz 타입으로 바뀌어도 파이썬 기초 학습 진행률은 50%입니다.
                 userProgQueryRes = db.session.query(Learning_check, Learning_contents).filter(Learning_check.learningContentId == Learning_contents.learningContentId, Learning_check.userId == queryRes.userId, Learning_contents.learningContentStep == queryRes.userLearningStep).all()
 
                 rmvDup = []
                 for i in range(len(userProgQueryRes)):
-                    rmvDup.append(userProgQueryRes[i][0].learningContentId)
+                    rmvDup.append(userProgQueryRes[i][1].learningContentWeek)
                 rmvDup = set(rmvDup)
 
                 resultJson['state'] = 'success'
