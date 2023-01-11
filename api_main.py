@@ -220,6 +220,15 @@ def course():
                     resultJson['data'][i]['week'] = i + 1
                     resultJson['metaverse'].append('https://app.gather.town/app/KxbGPczKS6ld3Fxt/SKKUMeta') #현재는 고정 값을 보내줍니다.
 
+                userProgQueryRes = db.session.query(Learning_check, Learning_contents).filter(Learning_check.learningContentId == Learning_contents.learningContentId, Learning_check.userId == queryRes.userId, Learning_contents.learningContentStep == queryRes.userLearningStep).all()
+
+                rmvDup = []
+                for i in range(len(userProgQueryRes)):
+                    rmvDup.append(userProgQueryRes[i][1].learningContentWeek)
+                rmvDup = set(rmvDup)
+
+                resultJson['complete'] = list(rmvDup)
+
                 return jsonify(resultJson)
             else:
                 return jsonify({'state':'fail', 'msg':'사용자 정보가 존재하지 않습니다.'})
