@@ -21,6 +21,8 @@ interface IBubbleChartProps {
   height: number;
   backgroundColor: string;
   textFillColor: string;
+  textCompleteColor: string;
+  complete: number[];
   minValue: number;
   maxValue: number;
   metaverse: string[];
@@ -139,7 +141,11 @@ class BubbleChart extends React.Component<
                   }
                 />
                 <text
-                  fill={this.props.textFillColor}
+                  fill={
+                    this.props.complete.indexOf(week) == -1
+                      ? this.props.textFillColor
+                      : this.props.textCompleteColor
+                  }
                   textAnchor="middle"
                   fontSize={`${fontSize}px`}
                   fontWeight="bold"
@@ -161,7 +167,11 @@ class BubbleChart extends React.Component<
                 }
               />
               <text
-                fill={this.props.textFillColor}
+                fill={
+                  this.props.complete.indexOf(week) == -1
+                    ? this.props.textFillColor
+                    : this.props.textCompleteColor
+                }
                 textAnchor="middle"
                 fontSize={`${fontSize}px`}
                 fontWeight="bold"
@@ -185,8 +195,9 @@ class BubbleChart extends React.Component<
             <p>자세히 보기 ▼</p>
           </div>
           <div className={styles.textBox}>
-            <h2>현재 학습자님에게 <b>필요한 학습 주제의 버블은 크게, 충분히 학습하였거나 아직 학습 단계가 아닌 주제의 버블은 작게</b> 표시되어 있습니다.</h2>
+            <h2>현재 학습자님에게 <b>필요한 학습 주제의 버블은 크게, 이미 내용을 어느 정도 알고 있는 학습 주제의 버블은 작게</b> 표시되어 있습니다.</h2>
             <h2>학습을 진행한 버블은 크기가 작아지고 나머지 버블들은 살짝 커지게 됩니다. 즉 <b>목표는 모든 버블(지식)의 크기를 같게 만드는 것</b>입니다!</h2>
+            <h2>또한 <b>학습을 진행한 버블의 주제 키워드는 회색으로 표시</b>되므로 학습에 참고하실 수 있습니다.</h2>
             <h2>멀티 모달의 다채로운 버블차트에서 당신에게 적합한 학습 주제를 선택해보세요!</h2>
           </div>
         </div>

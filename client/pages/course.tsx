@@ -16,6 +16,7 @@ export default function CoursePage() {
   const [metaverse, setMetaverse] = useState<string[]>([]);
   const [word, setWord] = useState<Types.Data[]>([]);
   const step = useRecoilValue<string[]>(stepSelector);
+  const [complete, setComplete] = useState<number[]>([]);
 
   const course = async () => {
     const { data } = await axios.post("/api/course", {
@@ -27,6 +28,7 @@ export default function CoursePage() {
     onSuccess: (data) => {
       setMetaverse(data.metaverse);
       setWord(data.data);
+      setComplete(data.complete);
     },
     onError: (err) => {
       alert(err);
@@ -60,6 +62,8 @@ export default function CoursePage() {
           width={1400}
           height={700}
           textFillColor="black"
+          textCompleteColor="gray"
+          complete={complete}
           backgroundColor="#fff"
           minValue={10}
           maxValue={60}
