@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, request, redirect, jsonify, session, url_for, app, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
