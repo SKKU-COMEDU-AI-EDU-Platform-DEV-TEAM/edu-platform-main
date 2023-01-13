@@ -337,48 +337,48 @@ def quizGrade():
                     db.session.add(newLearningCheckResult)
                     db.session.commit()
 
-                    bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
+                bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
 
-                    bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
+                bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
 
-                    #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
-                    stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
-                    if bubbleSizes[week - 1] > stdBubbleSize:
-                        
-                        #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
-                        gapSum = 0
-                        smallBubbleCnt = 0
+                #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
+                stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
+                if bubbleSizes[week - 1] > stdBubbleSize:
+                    
+                    #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
+                    gapSum = 0
+                    smallBubbleCnt = 0
+                    for i in range(10):
+                        if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
+                            break
+
+                        if bubbleSizes[i] < stdBubbleSize:
+                            gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
+                            smallBubbleCnt += 1
+
+                    #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
+                    if smallBubbleCnt > 0:
                         for i in range(10):
                             if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
                                 break
+                            
+                            if i == week - 1:
+                                bubbleSizes[i] = stdBubbleSize
+                            else:
+                                if bubbleSizes[i] < stdBubbleSize:
+                                    bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
 
-                            if bubbleSizes[i] < stdBubbleSize:
-                                gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
-                                smallBubbleCnt += 1
-
-                        #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
-                        if smallBubbleCnt > 0:
-                            for i in range(10):
-                                if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
-                                    break
-                                
-                                if i == week - 1:
-                                    bubbleSizes[i] = stdBubbleSize
-                                else:
-                                    if bubbleSizes[i] < stdBubbleSize:
-                                        bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
-
-                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
-                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
-                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
-                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
-                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
-                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
-                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
-                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
-                        bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
-                        bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
-                        db.session.commit()
+                    bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                    bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                    bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                    bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                    bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                    bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                    bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                    bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                    bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
+                    bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
+                    db.session.commit()
 
                 return jsonify({'state':'success'})
             else:
@@ -480,48 +480,48 @@ def lecture():
                     db.session.add(newLearningCheckResult)
                     db.session.commit()
 
-                    bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
+                bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
 
-                    bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
+                bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
 
-                    #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
-                    stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
-                    if bubbleSizes[week - 1] > stdBubbleSize:
-                        
-                        #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
-                        gapSum = 0
-                        smallBubbleCnt = 0
+                #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
+                stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
+                if bubbleSizes[week - 1] > stdBubbleSize:
+                    
+                    #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
+                    gapSum = 0
+                    smallBubbleCnt = 0
+                    for i in range(10):
+                        if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
+                            break
+
+                        if bubbleSizes[i] < stdBubbleSize:
+                            gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
+                            smallBubbleCnt += 1
+
+                    #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
+                    if smallBubbleCnt > 0:
                         for i in range(10):
                             if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
                                 break
+                            
+                            if i == week - 1:
+                                bubbleSizes[i] = stdBubbleSize
+                            else:
+                                if bubbleSizes[i] < stdBubbleSize:
+                                    bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
 
-                            if bubbleSizes[i] < stdBubbleSize:
-                                gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
-                                smallBubbleCnt += 1
-
-                        #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
-                        if smallBubbleCnt > 0:
-                            for i in range(10):
-                                if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
-                                    break
-                                
-                                if i == week - 1:
-                                    bubbleSizes[i] = stdBubbleSize
-                                else:
-                                    if bubbleSizes[i] < stdBubbleSize:
-                                        bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
-
-                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
-                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
-                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
-                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
-                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
-                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
-                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
-                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
-                        bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
-                        bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
-                        db.session.commit()
+                    bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                    bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                    bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                    bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                    bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                    bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                    bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                    bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                    bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
+                    bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
+                    db.session.commit()
 
                 #현재는 더미 데이터를 전송합니다.
                 return jsonify(dummy.lectureJson) 
@@ -567,48 +567,48 @@ def gameCheck():
                     db.session.add(newLearningCheckResult)
                     db.session.commit()
 
-                    bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
+                bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
 
-                    bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
+                bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
 
-                    #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
-                    stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
-                    if bubbleSizes[week - 1] > stdBubbleSize:
-                        
-                        #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
-                        gapSum = 0
-                        smallBubbleCnt = 0
+                #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
+                stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
+                if bubbleSizes[week - 1] > stdBubbleSize:
+                    
+                    #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
+                    gapSum = 0
+                    smallBubbleCnt = 0
+                    for i in range(10):
+                        if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
+                            break
+
+                        if bubbleSizes[i] < stdBubbleSize:
+                            gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
+                            smallBubbleCnt += 1
+
+                    #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
+                    if smallBubbleCnt > 0:
                         for i in range(10):
                             if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
                                 break
+                            
+                            if i == week - 1:
+                                bubbleSizes[i] = stdBubbleSize
+                            else:
+                                if bubbleSizes[i] < stdBubbleSize:
+                                    bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
 
-                            if bubbleSizes[i] < stdBubbleSize:
-                                gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
-                                smallBubbleCnt += 1
-
-                        #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
-                        if smallBubbleCnt > 0:
-                            for i in range(10):
-                                if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
-                                    break
-                                
-                                if i == week - 1:
-                                    bubbleSizes[i] = stdBubbleSize
-                                else:
-                                    if bubbleSizes[i] < stdBubbleSize:
-                                        bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
-
-                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
-                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
-                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
-                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
-                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
-                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
-                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
-                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
-                        bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
-                        bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
-                        db.session.commit()
+                    bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                    bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                    bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                    bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                    bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                    bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                    bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                    bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                    bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
+                    bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
+                    db.session.commit()
 
                 return jsonify({'state':'success'})
 
@@ -651,48 +651,48 @@ def metaverseCheck():
                     db.session.add(newLearningCheckResult)
                     db.session.commit()
 
-                    bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
+                bubbleInfoqueryRes = db.session.query(User_bubble_size_info).filter(User_bubble_size_info.userId == queryRes.userId, User_bubble_size_info.userLearningStep == queryRes.userLearningStep).first()
 
-                    bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
+                bubbleSizes = [bubbleInfoqueryRes.content1, bubbleInfoqueryRes.content2, bubbleInfoqueryRes.content3, bubbleInfoqueryRes.content4, bubbleInfoqueryRes.content5, bubbleInfoqueryRes.content6, bubbleInfoqueryRes.content7, bubbleInfoqueryRes.content8, bubbleInfoqueryRes.content9, bubbleInfoqueryRes.content10]
 
-                    #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
-                    stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
-                    if bubbleSizes[week - 1] > stdBubbleSize:
-                        
-                        #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
-                        gapSum = 0
-                        smallBubbleCnt = 0
+                #현재는 학습주차의 버블 크기가 100/(그 step의 학습주차 개수) 보다 크면 업데이트합니다.
+                stdBubbleSize = int(100 / len(courseData.integrated_version[queryRes.userLearningStep]))
+                if bubbleSizes[week - 1] > stdBubbleSize:
+                    
+                    #stdBubbleSize 보다 작은 bubble의 개수를 셉니다.
+                    gapSum = 0
+                    smallBubbleCnt = 0
+                    for i in range(10):
+                        if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
+                            break
+
+                        if bubbleSizes[i] < stdBubbleSize:
+                            gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
+                            smallBubbleCnt += 1
+
+                    #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
+                    if smallBubbleCnt > 0:
                         for i in range(10):
                             if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
                                 break
+                            
+                            if i == week - 1:
+                                bubbleSizes[i] = stdBubbleSize
+                            else:
+                                if bubbleSizes[i] < stdBubbleSize:
+                                    bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
 
-                            if bubbleSizes[i] < stdBubbleSize:
-                                gapSum = gapSum + (stdBubbleSize - bubbleSizes[i])
-                                smallBubbleCnt += 1
-
-                        #현재는 러프하게 수식을 적용했습니다. 추후 고도화하기 바랍니다.
-                        if smallBubbleCnt > 0:
-                            for i in range(10):
-                                if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) and i > 7:
-                                    break
-                                
-                                if i == week - 1:
-                                    bubbleSizes[i] = stdBubbleSize
-                                else:
-                                    if bubbleSizes[i] < stdBubbleSize:
-                                        bubbleSizes[i] = min(stdBubbleSize, bubbleSizes[i] + int((gapSum / smallBubbleCnt) / 2))
-
-                        bubbleInfoqueryRes.content1 = bubbleSizes[0]
-                        bubbleInfoqueryRes.content2 = bubbleSizes[1]
-                        bubbleInfoqueryRes.content3 = bubbleSizes[2]
-                        bubbleInfoqueryRes.content4 = bubbleSizes[3]
-                        bubbleInfoqueryRes.content5 = bubbleSizes[4]
-                        bubbleInfoqueryRes.content6 = bubbleSizes[5]
-                        bubbleInfoqueryRes.content7 = bubbleSizes[6]
-                        bubbleInfoqueryRes.content8 = bubbleSizes[7]
-                        bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
-                        bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
-                        db.session.commit()
+                    bubbleInfoqueryRes.content1 = bubbleSizes[0]
+                    bubbleInfoqueryRes.content2 = bubbleSizes[1]
+                    bubbleInfoqueryRes.content3 = bubbleSizes[2]
+                    bubbleInfoqueryRes.content4 = bubbleSizes[3]
+                    bubbleInfoqueryRes.content5 = bubbleSizes[4]
+                    bubbleInfoqueryRes.content6 = bubbleSizes[5]
+                    bubbleInfoqueryRes.content7 = bubbleSizes[6]
+                    bubbleInfoqueryRes.content8 = bubbleSizes[7]
+                    bubbleInfoqueryRes.content9 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[8]
+                    bubbleInfoqueryRes.content10 = None if (queryRes.userLearningStep == 1 or queryRes.userLearningStep == 2) else bubbleSizes[9]
+                    db.session.commit()
 
                 return jsonify({'state':'success'})
 
