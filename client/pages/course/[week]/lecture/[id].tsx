@@ -15,7 +15,7 @@ export default function LecturePage() {
   const [content, setContent] = useState<Lecture>();
   const user = useRecoilValue<User | null>(userState);
   const lecture = async () => {
-    const { data } = await axios.post("/api/lecture/", {
+    const { data } = await axios.post("/api/lecture", {
       week: week,
       id: id,
       token: user!.token

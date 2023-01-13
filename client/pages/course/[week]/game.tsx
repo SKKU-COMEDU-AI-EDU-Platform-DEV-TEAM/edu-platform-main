@@ -24,7 +24,7 @@ export default function GamePage() {
   }, []);
 
   const game = async () => {
-    const { data } = await axios.post("/api/game/", {
+    const { data } = await axios.post("/api/game", {
       week: week,
       token: user!.token
     });
