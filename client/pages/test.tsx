@@ -46,8 +46,8 @@ export default function TestPage() {
         >
           {userTry == 0 ? (
             <>
-              에듀버블스(가칭)에 방문하신 {user!.userName}님 환영합니다! <br />
-              에듀버블스는 adaptive learning을 기반한 코딩학습 툴로, 사용자의
+              AI-EDU에 방문하신 {user!.userName}님 환영합니다! <br />
+              AI-EDU는 adaptive learning을 기반한 코딩학습 툴로, 사용자의
               MBTI로 예측한 Kolb 학습자 유형과, 사용자의 학습 수준에 따라
               개개인에게 알맞은 학습 진도와 컨텐츠를 추천하고 있습니다.
               <br />
@@ -57,7 +57,7 @@ export default function TestPage() {
               스타일을 파악하여 그에 맞는 교육방식을 제공해주는 것이 필요합니다.
               <br />
               <br />
-              따라서 에듀버블스에서는 {user!.userName}님의 학습 성향에 따른
+              따라서 AI-EDU에서는 {user!.userName}님의 학습 성향에 따른
               학습자 친화적 컨텐츠 제공을 위하여 본격적인 학습을 시작하기에 앞서
               두 단계의 설문조사(MBTI, 학습 상태 점검)를 진행하고자 합니다.
               자신의 학습 유형을 확인해보고 유형에 따라 제공되는 새로운 학습
