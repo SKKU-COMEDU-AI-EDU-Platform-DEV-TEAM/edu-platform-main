@@ -45,7 +45,7 @@ export default function TestEndPage() {
           mt={10}
           wordBreak="keep-all"
         >
-          에듀버블스는 adaptive learning을 기반한 코딩학습 툴로, 사용자의 MBTI로
+          AI-EDU는 adaptive learning을 기반한 코딩학습 툴로, 사용자의 MBTI로
           예측한 Kolb 학습자 유형과, 사용자의 학습 수준에 따라 개개인에게 알맞은
           학습 진도와 컨텐츠를 추천합니다.
           <br /> <br />
